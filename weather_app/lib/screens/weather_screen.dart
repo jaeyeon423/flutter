@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/model/model.dart';
 
 class WeatherScreen extends StatefulWidget {
   WeatherScreen({this.parseWeatherData});
@@ -15,9 +16,12 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
+  Model model = Model();
   String cityName = "";
   double temp = 0.0;
   int temp2 = 0;
+  String des = "";
+  Widget icon = SvgPicture.asset('svg/Cloud-Lightning-Sun.svg', color: Colors.black87);
   var date = DateTime.now();
 
   @override
@@ -30,7 +34,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void updateDate(dynamic weatherData) {
     temp = weatherData['main']['temp'];
     temp2 = temp.round();
+    int condition = weatherData['weather'][0]['id'];
+    des = weatherData['weather'][0]['description'];
     cityName = weatherData['name'];
+    model.getWeatherIcon(condition);
   }
 
   String getSystemTime() {
@@ -84,7 +91,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               height: 150.0,
                             ),
                             Text(
-                              'Seoul',
+                              '$cityName',
                               style: GoogleFonts.lato(
                                 fontSize: 35.0,
                                 fontWeight: FontWeight.bold,
@@ -125,7 +132,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               height: 40.0,
                             ),
                             Text(
-                              '18\u2103',
+                              '$temp2\u2103',
                               style: GoogleFonts.lato(
                                 fontSize: 85.0,
                                 fontWeight: FontWeight.w300,
@@ -134,9 +141,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             ),
                             Row(
                               children: [
-                                SvgPicture.asset('svg/Cloud-Drizzle.svg'),
+                                icon,
                                 Text(
-                                  'cloud drizzle',
+                                  '$des',
                                   style: GoogleFonts.lato(
                                       fontSize: 16.0, color: Colors.white),
                                 ),
