@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   setState(() {
                     currentPage = 0;
+                    int a = 0;
                   });
                 },
                 icon: Icon(
