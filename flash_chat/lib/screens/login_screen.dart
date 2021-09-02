@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                SizedBox(height: 100.0,),
                 Hero(
                   tag: 'logo',
                   child: Container(
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 48.0,
                 ),
                 TextField(
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(color: Colors.black54),
                   onChanged: (value) {
                     //Do something with the user input.
@@ -54,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 8.0,
                 ),
                 TextField(
+                  obscureText: true,
                   onChanged: (value) {
                     //Do something with the user input.
                     password = value;
