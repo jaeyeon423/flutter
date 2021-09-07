@@ -5,7 +5,8 @@ import 'package:corona_copy/main.dart';
 import 'package:xml/xml.dart';
 
 void main() {
-  final bookshelfXml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  final bookshelfXml =
+      '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                             <response>
                                 <header>
                                     <resultCode>00</resultCode>
@@ -55,14 +56,73 @@ void main() {
   test('corona test', () {
     final document = XmlDocument.parse(bookshelfXml);
     final items = document.findAllElements('item');
+    var cobidStatics = <Covid19StatisticsModel>[];
     items.forEach((node) {
-      node.findAllElements('accDefRate').map((e) => e.text).forEach(print);
+      cobidStatics.add(Covid19StatisticsModel.fromXml(node));
       // print(node);
-
+    });
+    print(cobidStatics.length);
+    cobidStatics.forEach((element) {
+      print('${element.stateDt} : ${element.decideCnt}');
     });
   });
 }
 
-class Covid19StatisticsModel{
+class Covid19StatisticsModel {
+  String? accDefRate;
+  String? accExamCnt;
+  String? accExamCompCnt;
+  String? careCnt;
+  String? clearCnt;
+  String? createDt;
+  String? deathCnt;
+  String? decideCnt;
+  String? examCnt;
+  String? resutlNegCnt;
+  String? seq;
+  String? stateDt;
+  String? stateTime;
+  String? updateDt;
 
+  Covid19StatisticsModel({
+    this.accDefRate,
+    this.accExamCnt,
+    this.accExamCompCnt,
+    this.careCnt,
+    this.clearCnt,
+    this.createDt,
+    this.deathCnt,
+    this.decideCnt,
+    this.examCnt,
+    this.resutlNegCnt,
+    this.seq,
+    this.stateDt,
+    this.stateTime,
+    this.updateDt
+});
+  factory Covid19StatisticsModel.fromXml(XmlElement xml){
+    return Covid19StatisticsModel(
+        accDefRate: Xmlutils.searchResult(xml, 'accDefRate'),
+        accExamCnt: Xmlutils.searchResult(xml, 'accExamCnt'),
+        accExamCompCnt: Xmlutils.searchResult(xml, 'accExamCompCnt'),
+        careCnt: Xmlutils.searchResult(xml, 'careCnt'),
+        clearCnt: Xmlutils.searchResult(xml, 'clearCnt'),
+        createDt: Xmlutils.searchResult(xml, 'createDt'),
+        deathCnt: Xmlutils.searchResult(xml, 'deathCnt'),
+        decideCnt: Xmlutils.searchResult(xml, 'decideCnt'),
+        examCnt: Xmlutils.searchResult(xml, 'examCnt'),
+        resutlNegCnt: Xmlutils.searchResult(xml, 'resutlNegCnt'),
+        seq: Xmlutils.searchResult(xml, 'seq'),
+        stateDt: Xmlutils.searchResult(xml, 'stateDt'),
+        stateTime: Xmlutils.searchResult(xml, 'stateTime'),
+        updateDt: Xmlutils.searchResult(xml, 'updateDt'),
+    );
+  }
+}
+
+class Xmlutils{
+  static String searchResult(XmlElement xml, String key){
+    return xml.findAllElements(key).map((e) => e.text).isEmpty? "" :xml.findAllElements(key).map((e) => e.text).first;
+
+  }
 }
