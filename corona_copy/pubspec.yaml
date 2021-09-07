@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  xml: ^5.2.0
+  xml: ^5.1.2
   get: ^4.3.8
   dio: ^4.0.0
 
