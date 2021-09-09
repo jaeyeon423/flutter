@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder((){
         Get.put(CovidStatisticsController());
       }),
-      theme: ThemeData(primaryColor: Colors.blueAccent),
+      theme: ThemeData(primaryColor: Colors.white),
       home: App(),
     );
   }

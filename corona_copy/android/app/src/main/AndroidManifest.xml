@@ -2,7 +2,6 @@
     package="com.example.corona_copy">
    <application
         android:label="corona_copy"
-       android:userCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
