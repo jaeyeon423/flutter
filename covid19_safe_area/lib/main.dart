@@ -115,11 +115,11 @@ class ExampleState extends State<ExampleWidget> {
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey),
+                        color: Colors.white),
                     child: Text(
                       '증가율',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.lightBlueAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -135,11 +135,11 @@ class ExampleState extends State<ExampleWidget> {
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey),
+                        color: Colors.white),
                     child: Text(
                       '추가 확진자',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.lightBlueAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
