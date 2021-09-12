@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+enum ArrowDirection {UP, MIDDLE, DOWN}
+
 class ArrowClipPath extends CustomClipper<Path>{
   @override
   Path getClip(Size size) {
