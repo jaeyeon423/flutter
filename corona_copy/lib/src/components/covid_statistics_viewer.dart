@@ -1,4 +1,5 @@
 import 'package:corona_copy/src/canvas/arrow_clip_path.dart';
+import 'package:corona_copy/src/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 
 class CovidStatisticsViewer extends StatelessWidget {
@@ -24,12 +25,28 @@ class CovidStatisticsViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var color = Colors.black;
+
+    switch(upDown){
+      case ArrowDirection.UP:
+        color = Colors.deepOrangeAccent;
+        break;
+      case ArrowDirection.DOWN:
+        color = Colors.lightBlue;
+        break;
+      case ArrowDirection.MIDDLE:
+        break;
+    }
+
     return Container(
       child: Column(
         children: [
           Text(
             title,
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(
+              color: subValueColor,
+              fontSize: dense? 13 : 18,
+            ),
           ),
           SizedBox(
             height: 5,
@@ -40,22 +57,25 @@ class CovidStatisticsViewer extends StatelessWidget {
                 child: Container(
                   width: 20,
                   height: 20,
-                  color: Colors.orange,
+                  color: color,
                 ),
-                clipper: ArrowClipPath(),
+                clipper: ArrowClipPath(direction: upDown),
               ),
               Text(
-                addedCount.toInt().toString(),
+                DataUtils.numberFormat(addedCount),
                 style: TextStyle(
-                    color: Colors.redAccent,
-                    fontSize: 30,
+                    color: color,
+                    fontSize: dense ? 25 : 50,
                     fontWeight: FontWeight.bold),
               ),
             ],
           ),
           Text(
-            '${totalCount.toInt()}',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            DataUtils.numberFormat(totalCount),
+            style: TextStyle(
+              color: subValueColor,
+              fontSize: dense ? 15 : 20,
+            ),
           ),
         ],
       ),

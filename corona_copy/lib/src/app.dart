@@ -1,5 +1,6 @@
 import 'package:corona_copy/src/canvas/arrow_clip_path.dart';
 import 'package:corona_copy/src/controller/covid_statistics_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -66,7 +67,13 @@ class App extends GetView<CovidStatisticsController> {
       Positioned(
         top: headerTopZone + 60,
         right: 50,
-        child: CovidStatisticsViewer(addedCount: 1629, totalCount: 187362, title: '확진자', upDown: ArrowDirection.UP,),
+        child: CovidStatisticsViewer(
+          addedCount: 1629,
+          totalCount: 187362,
+          title: '확진자',
+          upDown: ArrowDirection.UP,
+          subValueColor: Colors.white,
+        ),
       )
     ];
   }
@@ -74,6 +81,59 @@ class App extends GetView<CovidStatisticsController> {
   Widget _todayStatistics() {
     return Row(
       children: [
+        Expanded(
+          child: CovidStatisticsViewer(
+            addedCount: 1629,
+            totalCount: 187362,
+            title: '격리해제',
+            upDown: ArrowDirection.UP,
+            dense: true,
+          ),
+        ),
+        Container(
+          height: 60,
+          child: VerticalDivider(
+            color: Colors.grey,
+          ),
+        ),
+        Expanded(
+          child: CovidStatisticsViewer(
+            addedCount: 1629,
+            totalCount: 187362,
+            title: '검사 중',
+            upDown: ArrowDirection.DOWN,
+            dense: true,
+          ),
+        ),
+        Container(
+          height: 60,
+          child: VerticalDivider(
+            color: Colors.grey,
+          ),
+        ),
+        Expanded(
+          child: CovidStatisticsViewer(
+            addedCount: 1629,
+            totalCount: 187362,
+            title: '사망자',
+            upDown: ArrowDirection.MIDDLE,
+            dense: true,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _covitTrendsChart() {
+    return Column(
+      children: [
+        Text(
+          "확진자 추이",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        )
       ],
     );
   }
@@ -124,9 +184,7 @@ class App extends GetView<CovidStatisticsController> {
                 child: Padding(
                   padding: const EdgeInsets.all(25),
                   child: Column(
-                    children: [
-                      _todayStatistics()
-                    ],
+                    children: [_todayStatistics(), _covitTrendsChart()],
                   ),
                 ),
               ),
