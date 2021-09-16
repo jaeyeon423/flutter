@@ -5,5 +5,7 @@ class DataUtils {
     return NumberFormat("###,###,###,###").format(value);
   }
 
-
+  static String simpleDayFormat(DateTime time) {
+    return DateFormat('MM.dd').format(time);
+  }
 }

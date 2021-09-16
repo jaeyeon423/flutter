@@ -1,5 +1,7 @@
 
+import 'package:corona_copy/src/utils/data_utils.dart';
 import 'package:corona_copy/src/utils/xml_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
 class Covid19StatisticsModel {
@@ -8,18 +10,18 @@ class Covid19StatisticsModel {
   double? accExamCompCnt;
   double? careCnt;
   double? clearCnt;
-  double? createDt;
+  String? createDt;
   double? deathCnt;
   double? decideCnt;
   double? examCnt;
   double? resultNegCnt;
   double? seq;
-  double? calcDecideCnt = 0;
-  double? calcExamCnt = 0;
-  double? calcDeathCnt = 0;
-  double? calcClearCnt = 0;
+  double calcDecideCnt = 0;
+  double calcExamCnt = 0;
+  double calcDeathCnt = 0;
+  double calcClearCnt = 0;
   String? CreateDt;
-  String? stateDt;
+  DateTime? stateDt;
   String? stateTime;
   String? updateDt;
 
@@ -40,6 +42,10 @@ class Covid19StatisticsModel {
     this.stateTime,
     this.updateDt
   });
+
+  factory Covid19StatisticsModel.empty(){
+    return Covid19StatisticsModel();
+  }
   factory Covid19StatisticsModel.fromXml(XmlElement xml){
     return Covid19StatisticsModel(
       accDefRate: Xmlutils.searchResultForDouble(xml, 'accDefRate'),
@@ -47,20 +53,36 @@ class Covid19StatisticsModel {
       accExamCompCnt: Xmlutils.searchResultForDouble(xml, 'accExamCompCnt'),
       careCnt: Xmlutils.searchResultForDouble(xml, 'careCnt'),
       clearCnt: Xmlutils.searchResultForDouble(xml, 'clearCnt'),
-      createDt: Xmlutils.searchResultForDouble(xml, 'createDt'),
+      createDt: Xmlutils.searchResultForString(xml, 'createDt'),
       deathCnt: Xmlutils.searchResultForDouble(xml, 'deathCnt'),
       decideCnt: Xmlutils.searchResultForDouble(xml, 'decideCnt'),
       examCnt: Xmlutils.searchResultForDouble(xml, 'examCnt'),
       resultNegCnt: Xmlutils.searchResultForDouble(xml, 'resutlNegCnt'),
       seq: Xmlutils.searchResultForDouble(xml, 'seq'),
-      stateDt: Xmlutils.searchResultForString(xml, 'stateDt'),
+      stateDt: Xmlutils.searchResultForString(xml, 'stateDt')!= ''? DateTime.parse(Xmlutils.searchResultForString(xml, 'stateDt')) : null,
       stateTime: Xmlutils.searchResultForString(xml, 'stateTime'),
       updateDt: Xmlutils.searchResultForString(xml, 'updateDt'),
     );
   }
 
   void updateCalcAboutYesterday(Covid19StatisticsModel yesterData){
-
+    _updateCalcDecideCnt(yesterData.decideCnt!);
+    _updateCalcDeathCnt(yesterData.deathCnt!);
+    _updateCalcClearCnt(yesterData.clearCnt!);
+    _updateCalcExamCnt(yesterData.examCnt!);
   }
+  void _updateCalcDecideCnt(double beforeCnt){
+    calcDecideCnt = decideCnt! - beforeCnt;
+  }
+  void _updateCalcDeathCnt(double beforeCnt){
+    calcDeathCnt = deathCnt! - beforeCnt;
+  }
+  void _updateCalcClearCnt(double beforeCnt){
+    calcClearCnt = clearCnt! - beforeCnt;
+  }
+  void _updateCalcExamCnt(double beforeCnt){
+    calcExamCnt = examCnt! - beforeCnt;
+  }
+  String get standardDayString => '${DataUtils.simpleDayFormat(stateDt!)} ${stateTime}';
 }
 

@@ -40,6 +40,7 @@ class CovidStatisticsViewer extends StatelessWidget {
 
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             title,
@@ -52,6 +53,7 @@ class CovidStatisticsViewer extends StatelessWidget {
             height: 5,
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClipPath(
                 child: Container(
@@ -61,6 +63,7 @@ class CovidStatisticsViewer extends StatelessWidget {
                 ),
                 clipper: ArrowClipPath(direction: upDown),
               ),
+              SizedBox(height: 5,),
               Text(
                 DataUtils.numberFormat(addedCount),
                 style: TextStyle(
