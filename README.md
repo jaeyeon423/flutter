@@ -1,4 +1,4 @@
 # flutter
-flutter study
-android reinstall
-window reinstall
+COVID PROJECT COMPLETE
+
+WHAT IS THE NEXT PROJECT?
