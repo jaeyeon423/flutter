@@ -29,9 +29,32 @@ class Home extends StatelessWidget {
               },
               child: Text("Named 라우트"),
             ),
+            ElevatedButton(
+              onPressed: () {
+                // Navigator.of(context)
+                //     .push(MaterialPageRoute(builder: (builder) => First()));
+                Get.toNamed("/next", arguments: User(name: "jykim", age: 30));
+              },
+              child: Text("arguments 라우트"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Navigator.of(context)
+                //     .push(MaterialPageRoute(builder: (builder) => First()));
+                Get.toNamed("/user/123123");
+              },
+              child: Text("동적 url"),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+class User {
+  String name;
+  int age;
+
+  User({required this.name, required this.age});
 }
