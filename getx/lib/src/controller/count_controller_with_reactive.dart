@@ -1,7 +1,14 @@
 import 'package:get/get.dart';
 
+class User {
+  String name;
+  int age;
+  User({required this.name, required this.age});
+}
+
 class CountControllerWithReactive extends GetxController{
   RxInt count = 0.obs;
+  Rx<User> user = User(name: "jaeyeon", age: 30).obs;
 
   void increase(){
     count++;

@@ -26,6 +26,9 @@ class ReactiveStateManagePage extends StatelessWidget {
               style: TextStyle(fontSize: 30),
             ),
             Obx(
+                ()=> Text("${Get.find<CountControllerWithReactive>().user().age}"),
+            ),
+            Obx(
               () => Text(
                 "${Get.find<CountControllerWithReactive>().count.value}",
                 style: TextStyle(fontSize: 50),
