@@ -23,12 +23,13 @@ class WithGetX extends StatelessWidget {
                 );
               }),
           ElevatedButton(
-              onPressed: () {
-                Get.find<CountControllerWithGetX>().increase();
-              },
-              child: Text(
-                "+",
-              ))
+            onPressed: () {
+              Get.find<CountControllerWithGetX>().increase();
+            },
+            child: Text(
+              "+",
+            ),
+          ),
         ],
       ),
     );
