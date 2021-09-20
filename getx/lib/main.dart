@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getx/src/binding/binding_page.dart';
+import 'package:getx/src/controller/count_controller_with_getx.dart';
+import 'package:getx/src/controller/dependency_controller.dart';
 import 'package:getx/src/home.dart';
+import 'package:getx/src/pages/bindingpage.dart';
 import 'package:getx/src/pages/named/first.dart';
 import 'package:getx/src/pages/named/second.dart';
 import 'package:getx/src/pages/next.dart';
@@ -32,6 +36,10 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: "/user/:uid",
             page: () => UserPage(),
+            transition: Transition.cupertinoDialog),
+        GetPage(
+            name: "/binding",
+            page: () => BindingPage(), binding: BindingPageBinding(),
             transition: Transition.cupertinoDialog),
       ],
     );
