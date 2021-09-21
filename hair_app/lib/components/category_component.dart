@@ -12,11 +12,23 @@ class CategoryComponent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ElevatedButton(
-            onPressed: () {
-              Get.toNamed('/list');
-            },
-            child: Text("$categoryName")),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.precision_manufacturing_sharp,
+            ),
+            TextButton(
+              onPressed: () {
+                Get.toNamed('/list');
+              },
+              child: Text(
+                "$categoryName",
+                style: TextStyle(color: Colors.lightBlue),
+              ),
+            ),
+          ],
+        ),
         RowComponent(),
         SizedBox(
           height: 30,

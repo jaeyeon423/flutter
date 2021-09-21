@@ -11,10 +11,26 @@ class RowComponent extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.white, padding: EdgeInsets.all(0)),
-            onPressed: () {
+          InkWell(
+            onTap: () {
+              Get.toNamed('/detail');
+            },
+            child: Image(
+              image: AssetImage('assets/images/first.png'),
+              width: 100,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Get.toNamed('/detail');
+            },
+            child: Image(
+              image: AssetImage('assets/images/first.png'),
+              width: 100,
+            ),
+          ),
+          InkWell(
+            onTap: () {
               Get.toNamed('/detail');
             },
             child: Image(
@@ -23,50 +39,30 @@ class RowComponent extends StatelessWidget {
               width: 100,
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.white, padding: EdgeInsets.all(0)),
-            onPressed: () {},
+          InkWell(
+            onTap: () {
+              Get.toNamed('/detail');
+            },
             child: Image(
               image: AssetImage('assets/images/first.png'),
               height: 100,
               width: 100,
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.white, padding: EdgeInsets.all(0)),
-            onPressed: () {},
+          InkWell(
+            onTap: () {
+              Get.toNamed('/detail');
+            },
             child: Image(
               image: AssetImage('assets/images/first.png'),
               height: 100,
               width: 100,
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.white, padding: EdgeInsets.all(0)),
-            onPressed: () {},
-            child: Image(
-              image: AssetImage('assets/images/first.png'),
-              height: 100,
-              width: 100,
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.white, padding: EdgeInsets.all(0)),
-            onPressed: () {},
-            child: Image(
-              image: AssetImage('assets/images/first.png'),
-              height: 100,
-              width: 100,
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: Colors.white, padding: EdgeInsets.all(0)),
-            onPressed: () {},
+          InkWell(
+            onTap: () {
+              Get.toNamed('/detail');
+            },
             child: Image(
               image: AssetImage('assets/images/first.png'),
               height: 100,

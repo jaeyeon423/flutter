@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("home page"),
+          title: Text("category page"),
         ),
         body: SingleChildScrollView(
           child: Column(
