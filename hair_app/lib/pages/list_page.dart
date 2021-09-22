@@ -5,7 +5,16 @@ class ListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("list page")),
+      backgroundColor: Color(0xfffffff0),
+      appBar: AppBar(
+        elevation: 0,
+        shadowColor: Color(0xfffffff0),
+        backgroundColor: Color(0xfffffff0),
+        title: Text(
+          "list page",
+          style: TextStyle(color: Colors.black38),
+        ),
+      ),
       body: GridView.count(
         // Create a grid with 2 columns. If you change the scrollDirection to
         // horizontal, this produces 2 rows.
@@ -19,8 +28,7 @@ class ListPage extends StatelessWidget {
                 },
                 child: Image(
                   image: AssetImage('assets/images/first.png'),
-                  width: double.infinity,
-                  height: 300,
+                  height: 120,
                 )),
           );
         }),

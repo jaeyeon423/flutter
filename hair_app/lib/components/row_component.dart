@@ -18,6 +18,7 @@ class RowComponent extends StatelessWidget {
             child: Image(
               image: AssetImage('assets/images/first.png'),
               width: 100,
+              height: 120,
             ),
           ),
           InkWell(
@@ -27,6 +28,8 @@ class RowComponent extends StatelessWidget {
             child: Image(
               image: AssetImage('assets/images/first.png'),
               width: 100,
+              height: 120
+              ,
             ),
           ),
           InkWell(
@@ -35,8 +38,9 @@ class RowComponent extends StatelessWidget {
             },
             child: Image(
               image: AssetImage('assets/images/first.png'),
-              height: 100,
               width: 100,
+              height: 120
+              ,
             ),
           ),
           InkWell(
@@ -45,8 +49,9 @@ class RowComponent extends StatelessWidget {
             },
             child: Image(
               image: AssetImage('assets/images/first.png'),
-              height: 100,
               width: 100,
+              height: 120
+              ,
             ),
           ),
           InkWell(
@@ -55,8 +60,9 @@ class RowComponent extends StatelessWidget {
             },
             child: Image(
               image: AssetImage('assets/images/first.png'),
-              height: 100,
               width: 100,
+              height: 120
+              ,
             ),
           ),
           InkWell(
@@ -65,8 +71,9 @@ class RowComponent extends StatelessWidget {
             },
             child: Image(
               image: AssetImage('assets/images/first.png'),
-              height: 100,
               width: 100,
+              height: 120
+              ,
             ),
           ),
         ],

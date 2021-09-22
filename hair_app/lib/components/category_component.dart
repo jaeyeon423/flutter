@@ -13,8 +13,11 @@ class CategoryComponent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(
+              width: 14,
+            ),
             Icon(
               Icons.precision_manufacturing_sharp,
             ),
@@ -24,7 +27,7 @@ class CategoryComponent extends StatelessWidget {
               },
               child: Text(
                 "$categoryName",
-                style: TextStyle(color: Colors.lightBlue),
+                style: TextStyle(color: Colors.black54),
               ),
             ),
           ],

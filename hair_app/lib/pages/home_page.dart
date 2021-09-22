@@ -9,8 +9,13 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xfffffff0),
         appBar: AppBar(
-          title: Text("category page"),
+          elevation: 0,
+          shadowColor: Color(0xfffffff0),
+          backgroundColor: Color(0xfffffff0),
+          foregroundColor: Color(0xfffffff0),
+          title: Text("category page", style: TextStyle(color: Colors.black38),),
         ),
         body: SingleChildScrollView(
           child: Column(
