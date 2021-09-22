@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.youtube_copy">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="youtube_copy"
         android:icon="@mipmap/ic_launcher">
