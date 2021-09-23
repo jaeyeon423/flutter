@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:youtube_copy/binding/init_binding.dart';
+import 'package:youtube_copy/src/binding/init_binding.dart';
 import 'package:youtube_copy/src/app.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 

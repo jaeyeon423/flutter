@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:youtube_copy/controller/app_controller.dart';
+import 'package:youtube_copy/src/controller/app_controller.dart';
+import 'package:youtube_copy/src/pages/explore.dart';
+import 'package:youtube_copy/src/pages/home.dart';
+import 'package:youtube_copy/src/pages/library.dart';
+import 'package:youtube_copy/src/pages/subscribe.dart';
 
 class App extends GetView<AppController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("app"),
-      ),
+      body: Obx(() {
+        switch(RouteName.values[controller.currentIndex.value]){
+          case RouteName.Home :
+            return Home();
+          case RouteName.Explore :
+            return Explore();
+          case RouteName.Add :
+            break;
+          case RouteName.Subscribe :
+            return Subscribe();
+          case RouteName.Library :
+            return Library();
+        }
+        return Container();
+      }),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -17,7 +33,7 @@ class App extends GetView<AppController> {
           showSelectedLabels: true,
           selectedItemColor: Colors.black,
           onTap: (index) {
-            controller.currentIndex(index);
+            controller.chagePageIndex(index);
           },
           items: [
             BottomNavigationBarItem(
