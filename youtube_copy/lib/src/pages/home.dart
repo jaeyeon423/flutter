@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:youtube_copy/src/components/custom_appbar.dart';
+import 'package:youtube_copy/src/components/video_widget.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -15,12 +17,11 @@ class Home extends StatelessWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 150,
-                    color: Colors.grey,
-                  ),
+                return GestureDetector(
+                  onTap: (){
+                    Get.toNamed('/detail/123123');
+                  },
+                  child: VideoWidget(),
                 );
               },
               childCount: 10,
