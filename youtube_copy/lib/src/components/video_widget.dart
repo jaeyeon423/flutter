@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_copy/src/models/video.dart';
+import 'package:intl/intl.dart';
 
 class VideoWidget extends StatelessWidget {
+  final Video video;
+
+  VideoWidget({required this.video});
+
   Widget _thumbnail() {
     return Container(
       height: 250,
       color: Colors.grey.withOpacity(0.5),
+      child: Image.network(
+        video.snippet.thumbnails.medium.url,
+        fit: BoxFit.fitHeight,
+      ),
     );
   }
 
@@ -20,14 +30,20 @@ class VideoWidget extends StatelessWidget {
                 .image,
             radius: 30,
           ),
-          SizedBox(width: 15,),
+          SizedBox(
+            width: 15,
+          ),
           Expanded(
             child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text("개남 유튜브 다시 보기 ", maxLines: 2,)),
+                    Expanded(
+                        child: Text(
+                      video.snippet.title,
+                      maxLines: 2,
+                    )),
                     IconButton(
                       alignment: Alignment.topCenter,
                       onPressed: () {},
@@ -41,7 +57,7 @@ class VideoWidget extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "개발 하는 남자",
+                      video.snippet.channelTitle,
                       style: TextStyle(
                           fontSize: 12, color: Colors.black.withOpacity(0.8)),
                     ),
@@ -53,7 +69,8 @@ class VideoWidget extends StatelessWidget {
                     ),
                     Text(" · "),
                     Text(
-                      "2021-09-23",
+                      DateFormat("yyyy-MM-dd")
+                          .format(video.snippet.publishTime),
                       style: TextStyle(
                           fontSize: 12, color: Colors.black.withOpacity(0.6)),
                     ),

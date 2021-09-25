@@ -47,7 +47,6 @@ class App extends GetView<AppController> {
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/svg/icons/compass_on.svg",
-                  width: 22,
                 ),
                 label: "search"),
             BottomNavigationBarItem(
@@ -62,21 +61,17 @@ class App extends GetView<AppController> {
             BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/svg/icons/subs_off.svg",
-                  width: 22,
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/svg/icons/subs_on.svg",
-                  width: 22,
                 ),
                 label: "subscribe"),
             BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/svg/icons/library_off.svg",
-                  width: 22,
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/svg/icons/library_on.svg",
-                  width: 22,
                 ),
                 label: "library"),
           ],
