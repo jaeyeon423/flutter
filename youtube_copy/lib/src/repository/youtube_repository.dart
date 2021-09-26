@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:youtube_copy/src/models/statistics.dart';
 import 'package:youtube_copy/src/models/youtube_video_result.dart';
 
 class YoutubeRepository extends GetConnect{
@@ -17,11 +18,18 @@ class YoutubeRepository extends GetConnect{
     if(respones.status.hasError) {
       return Future.error(respones.status);
     }else{
-      if(respones.body['items'].length > 0) {
-        return YoutubeVideoResult.fromJson(respones.body);
-      }else{
-        return YoutubeVideoResult.fromJson(respones.body);
-      }
+      return YoutubeVideoResult.fromJson(respones.body);
+    }
+  }
+
+  Future<Statistics> getVideoInfoById(String videoId) async{
+    String url = "/youtube/v3/videos?part=statistics&key=AIzaSyAaMzzdhEnzcTk16ourljiP48IcLEAUepo&id=VU3MBxr-TOc";
+    final respones = await get(url);
+    if(respones.status.hasError) {
+      return Future.error(respones.status);
+    }else{
+      Map<String, dynamic> data = respones.body['items'][0];
+      return Statistics.fromJson(data['statistics']);
     }
   }
 }
