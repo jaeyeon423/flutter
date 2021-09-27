@@ -1,4 +1,2 @@
 # flutter
-COVID PROJECT COMPLETE
-
-WHAT IS THE NEXT PROJECT?
+return from vacation
