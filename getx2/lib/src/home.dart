@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx2/src/pages/normal/first.dart';
+import 'package:getx2/src/pages/state/simage_state_manage_page.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -40,6 +41,13 @@ class Home extends StatelessWidget {
                 Get.toNamed('/user/123123?name=jaeyeon');
               },
               child: Text("동적 url 라우트"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Navigator.of(context).push(MaterialPageRoute(builder: (_) => FirstPage()));
+                Get.to(()=>SimpleStateManagePage());
+              },
+              child: Text("단순 상태 관리"),
             ),
           ],
         ),
