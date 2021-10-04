@@ -65,6 +65,13 @@ class Home extends StatelessWidget {
               },
               child: Text("의존성 관리 상태 관리"),
             ),
+            ElevatedButton(
+              onPressed: () {
+                // Navigator.of(context).push(MaterialPageRoute(builder: (_) => FirstPage()));
+                Get.toNamed('/binding');
+              },
+              child: Text("binding 관리 상태 관리"),
+            ),
           ],
         ),
       ),
