@@ -1,2 +1,2 @@
 # flutter
-to do : Getx repeat
+covid 19 second vacine
