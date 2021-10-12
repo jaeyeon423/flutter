@@ -50,4 +50,52 @@ List<Model> models = [
     description: '헤어스타일 설명 4',
     category: '여자 머리 상세',
   ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+  ),Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+  ),
+
 ];
