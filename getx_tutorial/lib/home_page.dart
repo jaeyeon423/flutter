@@ -86,17 +86,71 @@ class _HomePageState extends State<HomePage> {
               width: MediaQuery.of(context).size.width,
               height: 200,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    color.AppColor.gradientFirst.withOpacity(0.8),
-                    color.AppColor.gradientSecond.withOpacity(0.9),
-                  ]
-                ),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(80),
-                  topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      color.AppColor.gradientFirst.withOpacity(0.8),
+                      color.AppColor.gradientSecond.withOpacity(0.9),
+                    ],
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(80),
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      offset: Offset(5, 10),
+                      blurRadius: 10,
+                      color: color.AppColor.gradientSecond.withOpacity(0.2),
+                    )
+                  ]),
+              child: Container(
+                padding: const EdgeInsets.only(left: 20, top: 25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Next workout",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: color.AppColor.homePageContainerTextSmall,
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    Text(
+                      "Lags Toning",
+                      style: TextStyle(
+                        fontSize: 25,
+                        color: color.AppColor.homePageContainerTextSmall,
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    Text(
+                      "and Gluted Workout",
+                      style: TextStyle(
+                        fontSize: 25,
+                        color: color.AppColor.homePageContainerTextSmall,
+                      ),
+                    ),
+                    SizedBox(height: 25,),
+                    Row(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.timer, size: 20, color: color.AppColor.homePageContainerTextSmall,),
+                            SizedBox(width: 10,),
+                            Text("60 min", style: TextStyle(color: color.AppColor.homePageContainerTextSmall, fontSize: 15),),
+                          ],
+                        ),
+                        Expanded(child: Container()),
+                        Container(child: Icon(Icons.play_circle_fill, color: Colors.white, size: 60,),),
+                        SizedBox(width: 10,),
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
