@@ -9,9 +9,10 @@ List<Model> models = [
       'assets/images/s01.png',
       'assets/images/s01.png',
     ],
-    price: '\10000원',
+    price: '\140000원',
     description: '헤어스타일 설명 1',
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
   Model(
     name: 'Sample 2',
@@ -22,9 +23,9 @@ List<Model> models = [
       'assets/images/s02.png',
     ],
     price: '\10000원',
-    description:
-        "헤어스타일 설명 2",
+    description: "헤어스타일 설명 2",
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
   Model(
     name: 'Sample 3',
@@ -37,6 +38,7 @@ List<Model> models = [
     price: '\10000원',
     description: '헤어스타일 설명 3',
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
   Model(
     name: 'Sample 4',
@@ -49,6 +51,7 @@ List<Model> models = [
     price: '\10000원',
     description: '헤어스타일 설명 4',
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
   Model(
     name: 'Sample 4',
@@ -61,6 +64,7 @@ List<Model> models = [
     price: '\10000원',
     description: '헤어스타일 설명 4',
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
   Model(
     name: 'Sample 4',
@@ -73,6 +77,7 @@ List<Model> models = [
     price: '\10000원',
     description: '헤어스타일 설명 4',
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
   Model(
     name: 'Sample 4',
@@ -85,7 +90,9 @@ List<Model> models = [
     price: '\10000원',
     description: '헤어스타일 설명 4',
     category: '여자 머리 상세',
-  ),Model(
+    id: "kim423@naver.com",
+  ),
+  Model(
     name: 'Sample 4',
     image: [
       'assets/images/s02.png',
@@ -96,6 +103,84 @@ List<Model> models = [
     price: '\10000원',
     description: '헤어스타일 설명 4',
     category: '여자 머리 상세',
+    id: "kim423@naver.com",
   ),
-
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+    id: "kim423@naver.com",
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+    id: "kim423@naver.com",
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+    id: "kim423@naver.com",
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+    id: "kim423@naver.com",
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+    id: "kim423@naver.com",
+  ),
+  Model(
+    name: 'Sample 4',
+    image: [
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+      'assets/images/s02.png',
+    ],
+    price: '\10000원',
+    description: '헤어스타일 설명 4',
+    category: '여자 머리 상세',
+    id: "kim423@naver.com",
+  ),
 ];

@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: white,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,11 +29,17 @@ class HomePage extends StatelessWidget {
               child: TabBarButton(),
             ),
             Expanded(
-              child: ListView.builder(
+              child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 150,
+                      childAspectRatio: 1,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 10),
                   physics: BouncingScrollPhysics(),
                   itemCount: models.length,
                   itemBuilder: (builder, index) {
                     final model = models[index];
+                    print(index);
                     return ItemCard(model: model);
                   }),
             ),
@@ -55,7 +61,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     bottomNavButton(
                       onPress: () {},
-                      icon: Icons.home_outlined,
+                      icon: Icons.home_sharp,
+
                     ),
                     SpaceVH(width: 60),
                     bottomNavButton(

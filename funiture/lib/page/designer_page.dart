@@ -114,15 +114,12 @@ class _DetailsPageState extends State<DetailsPage> {
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(50.0),
                       ),
-                      child: TextButton(
+                      child: Center(
                         child: Text(
                           '디자이너 보기',
-                          style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)
+                          style: itemCardHeading.copyWith(color: white),
                         ),
-                        onPressed: (){
-
-                        },
-                      )
+                      ),
                     )
                   ],
                 )

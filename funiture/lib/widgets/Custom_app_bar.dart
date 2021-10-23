@@ -11,10 +11,13 @@ class CustomAppBar extends StatelessWidget {
       margin: EdgeInsets.only(top: 50.0),
       height: 40.0,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.menu),
+          Expanded(child: Container()),
+          Text("목동", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+          Icon(Icons.keyboard_arrow_down_outlined)
 
         ],
       ),

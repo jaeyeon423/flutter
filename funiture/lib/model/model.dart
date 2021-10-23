@@ -4,6 +4,7 @@ class Model {
   final String description;
   final String category;
   final List image;
+  final String id;
 
   Model({
     required this.name,
@@ -11,6 +12,8 @@ class Model {
     required this.description,
     required this.category,
     required this.image,
+    required this.id,
+
   });
 }
 

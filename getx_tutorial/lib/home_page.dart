@@ -9,10 +9,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List info = [];
 
-  List info =[];
-  _initData(){
-    DefaultAssetBundle.of(context).loadString("json/info.json").then((value){
+  _initData() {
+    DefaultAssetBundle.of(context).loadString("json/info.json").then((value) {
       info = json.decode(value);
     });
   }
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     // TODO: implement initState
-  _initData();
+    _initData();
     super.initState();
   }
 
@@ -302,92 +302,89 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 height: 300,
                 child: Expanded(
-                    child: OverflowBox(
-                      maxHeight: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                        itemCount: (info.length.toDouble()/2).toInt(),
-                  itemBuilder: (_, i) {
-                      int a = 2*i;
-                      int b = 2*i+1;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            height: 170,
-                            width: 170,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 3,
-                                    offset: Offset(5, 5),
-                                    color: color.AppColor.gradientSecond
-                                        .withOpacity(0.1)),
-                                BoxShadow(
-                                    blurRadius: 3,
-                                    offset: Offset(-5, -5),
-                                    color: color.AppColor.gradientSecond
-                                        .withOpacity(0.1))
-                              ],
-                              image: DecorationImage(
-                                image: AssetImage(info[i]['img']),
+                    child: ListView.builder(
+                      itemCount: (info.length.toDouble() / 2).toInt(),
+                      itemBuilder: (_, i) {
+                        int a = 2 * i;
+                        int b = 2 * i + 1;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              height: (MediaQuery.of(context).size.width-90)/2,
+                              width: 170,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 3,
+                                      offset: Offset(5, 5),
+                                      color: color.AppColor.gradientSecond
+                                          .withOpacity(0.1)),
+                                  BoxShadow(
+                                      blurRadius: 3,
+                                      offset: Offset(-5, -5),
+                                      color: color.AppColor.gradientSecond
+                                          .withOpacity(0.1))
+                                ],
+                                image: DecorationImage(
+                                  image: AssetImage(info[i]['img']),
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Align(
-                              alignment: Alignment.bottomCenter,
-                                child: Text(
-                                  info[a]['title'],
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: color.AppColor.homePageDetail,
+                              child: Center(
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                    info[a]['title'],
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: color.AppColor.homePageDetail,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            height: 170,
-                            width: 170,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 3,
-                                    offset: Offset(5, 5),
-                                    color: color.AppColor.gradientSecond
-                                        .withOpacity(0.1)),
-                                BoxShadow(
-                                    blurRadius: 3,
-                                    offset: Offset(-5, -5),
-                                    color: color.AppColor.gradientSecond
-                                        .withOpacity(0.1))
-                              ],
-                              image: DecorationImage(
-                                image: AssetImage(info[i]['img']),
+                            Container(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              height: (MediaQuery.of(context).size.width-90)/2,
+                              width: 170,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 3,
+                                      offset: Offset(5, 5),
+                                      color: color.AppColor.gradientSecond
+                                          .withOpacity(0.1)),
+                                  BoxShadow(
+                                      blurRadius: 3,
+                                      offset: Offset(-5, -5),
+                                      color: color.AppColor.gradientSecond
+                                          .withOpacity(0.1))
+                                ],
+                                image: DecorationImage(
+                                  image: AssetImage(info[i]['img']),
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Text(
-                                  info[b]['title'],
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: color.AppColor.homePageDetail,
+                              child: Center(
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                    info[b]['title'],
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: color.AppColor.homePageDetail,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                  },
-                ),
+                          ],
+                        );
+                      },
                     )),
               )
             ],
