@@ -30,10 +30,10 @@ List<Model> models = [
   Model(
     name: 'Sample 3',
     image: [
-      'assets/images/s01.png',
-      'assets/images/s01.png',
-      'assets/images/s01.png',
-      'assets/images/s01.png',
+      'assets/images/s03.png',
+      'assets/images/s03.png',
+      'assets/images/s03.png',
+      'assets/images/s03.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 3',
@@ -43,10 +43,10 @@ List<Model> models = [
   Model(
     name: 'Sample 4',
     image: [
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
+      'assets/images/s04.png',
+      'assets/images/s04.png',
+      'assets/images/s04.png',
+      'assets/images/s04.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 4',
@@ -56,10 +56,10 @@ List<Model> models = [
   Model(
     name: 'Sample 4',
     image: [
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
+      'assets/images/s05.png',
+      'assets/images/s05.png',
+      'assets/images/s05.png',
+      'assets/images/s05.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 4',
@@ -69,10 +69,10 @@ List<Model> models = [
   Model(
     name: 'Sample 4',
     image: [
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
+      'assets/images/s06.png',
+      'assets/images/s06.png',
+      'assets/images/s06.png',
+      'assets/images/s06.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 4',
@@ -82,10 +82,10 @@ List<Model> models = [
   Model(
     name: 'Sample 4',
     image: [
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
+      'assets/images/s07.png',
+      'assets/images/s07.png',
+      'assets/images/s07.png',
+      'assets/images/s07.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 4',
@@ -95,10 +95,10 @@ List<Model> models = [
   Model(
     name: 'Sample 4',
     image: [
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
+      'assets/images/s08.png',
+      'assets/images/s08.png',
+      'assets/images/s08.png',
+      'assets/images/s08.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 4',
@@ -108,10 +108,10 @@ List<Model> models = [
   Model(
     name: 'Sample 4',
     image: [
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
-      'assets/images/s02.png',
+      'assets/images/s09.png',
+      'assets/images/s09.png',
+      'assets/images/s09.png',
+      'assets/images/s09.png',
     ],
     price: '\10000원',
     description: '헤어스타일 설명 4',

@@ -1,24 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:uidesign03/api/storage_service.dart';
 import 'package:uidesign03/core/color.dart';
-import 'package:uidesign03/core/space.dart';
 import 'package:uidesign03/core/text_style.dart';
-import 'package:uidesign03/model/model.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class DetailsPage extends StatefulWidget {
-  final Model model;
-  const DetailsPage({Key? key, required this.model}) : super(key: key);
+class DesignerPage extends StatefulWidget {
+  final String designer_id;
+
+  const DesignerPage({Key? key, required this.designer_id}) : super(key: key);
 
   @override
-  _DetailsPageState createState() => _DetailsPageState();
+  _DesignerPageState createState() => _DesignerPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> {
+class _DesignerPageState extends State<DesignerPage> {
   int selectIndex = 0;
   int qty = 1;
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    final Storage storage = Storage();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -34,98 +38,87 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
         centerTitle: true,
         title: Text(
-          widget.model.category,
+          "디자이너 페이지",
           style: itemCardHeading,
         ),
-        actions: [
-        ],
+        actions: [],
       ),
       body: Column(
         children: [
-          Container(
-            child: Align(
-              alignment: Alignment.center,
-              child: Image.asset(
-                widget.model.image[selectIndex],
-                fit: BoxFit.cover,
-                width: height / 2,
-              ),
+          Center(
+            child: ElevatedButton(
+              onPressed: () async {
+                final results = await FilePicker.platform.pickFiles(
+                  allowMultiple: false,
+                  type: FileType.custom,
+                  allowedExtensions: ['png', 'jpg'],
+                );
+                if (results == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("no file selected")));
+                  return null;
+                }
+                final path = results.files.single.path!;
+                final fileName = results.files.single.name;
+
+                print(path);
+                print(fileName);
+
+                storage
+                    .uploadFile(path, fileName)
+                    .then((value) => print("done"));
+              },
+              child: Text("Upload file"),
             ),
           ),
-          SizedBox(height: 10,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (int i = 0; i < widget.model.image.length; i++)
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      selectIndex = i;
-                    });
-                  },
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                    child: Image.asset(widget.model.image[i]),
+          FutureBuilder(
+            future: storage.listFiles(),
+            builder: (BuildContext context,
+                AsyncSnapshot<firebase_storage.ListResult> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                return Container(
+                  height: 50,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.items.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(onPressed: (){}, child: Text(snapshot.data!.items[index].name),),
+                      );
+                    },
                   ),
-                )
-            ],
+                );
+              } else {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return CircularProgressIndicator();
+                }
+                return Container();
+              }
+            },
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.model.name,
-                      style: heading.copyWith(fontSize: 28.0),
-                    ),
-                  ],
-                ),
-                SpaceVH(height: 20.0),
-                Text(
-                  "파마 : 100000원 \n 기장 : 30000원 \n 기타 : 10000원",
-                  style: itemCardDes,
-                ),
-                SpaceVH(height: 20.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: 'Total Price\n',
-                          style: subHeading,
-                        ),
-                        TextSpan(
-                          text: widget.model.price,
-                          style: itemCardHeading,
-                        ),
-                      ]),
-                    ),
-                    Container(
-                      height: 40.0,
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(50.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          '디자이너 보기',
-                          style: itemCardHeading.copyWith(color: white),
-                        ),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
+          FutureBuilder(
+            future: storage.downloadURL('s01.png'),
+            builder: (BuildContext context,
+                AsyncSnapshot<String> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                return Container(
+                  height: 300,
+                  width: 250,
+                  child: Image.network(snapshot.data!, fit: BoxFit.cover,),
+                );
+              } else {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return CircularProgressIndicator();
+                }
+                return Container();
+              }
+            },
+          ),
         ],
       ),
     );

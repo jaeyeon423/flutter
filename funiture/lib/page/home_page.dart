@@ -39,7 +39,6 @@ class HomePage extends StatelessWidget {
                   itemCount: models.length,
                   itemBuilder: (builder, index) {
                     final model = models[index];
-                    print(index);
                     return ItemCard(model: model);
                   }),
             ),
