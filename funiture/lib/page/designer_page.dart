@@ -21,8 +21,36 @@ class _DesignerPageState extends State<DesignerPage> {
 
   @override
   Widget build(BuildContext context) {
+    int cur_index = 1;
     final height = MediaQuery.of(context).size.height;
     final Storage storage = Storage();
+
+    Widget futuer_container(int num) {
+      print(num);
+      return FutureBuilder(
+        future: storage.downloadURL('s0${num}.png'),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            return Container(
+              height: 300,
+              width: 250,
+              child: Image.network(
+                snapshot.data!,
+                fit: BoxFit.cover,
+              ),
+            );
+          } else {
+            if (snapshot.connectionState == ConnectionState.waiting ||
+                !snapshot.hasData) {
+              return CircularProgressIndicator();
+            }
+            return Container();
+          }
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -78,37 +106,22 @@ class _DesignerPageState extends State<DesignerPage> {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
                 return Container(
-                  height: 50,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: snapshot.data!.items.length,
+                  height: 550,
+                  width: 350,
+                  child: GridView.builder(
+                    itemCount: snapshot.data!.items.length-1,
                     itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(onPressed: (){}, child: Text(snapshot.data!.items[index].name),),
+                      return Container(
+                        child: futuer_container(index + 1),
                       );
                     },
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                    ),
                   ),
-                );
-              } else {
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    !snapshot.hasData) {
-                  return CircularProgressIndicator();
-                }
-                return Container();
-              }
-            },
-          ),
-          FutureBuilder(
-            future: storage.downloadURL('s01.png'),
-            builder: (BuildContext context,
-                AsyncSnapshot<String> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return Container(
-                  height: 300,
-                  width: 250,
-                  child: Image.network(snapshot.data!, fit: BoxFit.cover,),
                 );
               } else {
                 if (snapshot.connectionState == ConnectionState.waiting ||
