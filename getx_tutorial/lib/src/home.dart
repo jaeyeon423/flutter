@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_tutorial/src/pages/normal/first.dart';
+import 'package:getx_tutorial/src/pages/simple_state_manage_page.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -39,6 +40,12 @@ class Home extends StatelessWidget {
               },
               child: Text("동적 url"),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(SimpleStateManagePage());
+              },
+              child: Text("단순 상태관리"),
+            ),
           ],
         ),
       ),
@@ -46,7 +53,7 @@ class Home extends StatelessWidget {
   }
 }
 
-class User{
+class User {
   String name;
   int age;
 
