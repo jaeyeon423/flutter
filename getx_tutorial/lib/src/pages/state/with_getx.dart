@@ -29,7 +29,7 @@ class WithGetX extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              _controllerWithGetX.increase("first");
+              _controllerWithGetX.increase();
             },
             child: Text(
               "+",
@@ -38,7 +38,7 @@ class WithGetX extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              _controllerWithGetX.increase("second");
+              _controllerWithGetX.increase();
             },
             child: Text(
               "+",
