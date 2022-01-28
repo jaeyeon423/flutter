@@ -17,6 +17,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       backgroundColor: Palette.backgroundColor,
       body: Stack(
         children: [
+          //배경
           Positioned(
             top: 0,
             right: 0,
@@ -33,16 +34,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                           text: 'Welecome',
-                          style: TextStyle(
+                          style: const TextStyle(
                               letterSpacing: 1.0,
                               fontSize: 25,
                               color: Colors.white),
                           children: [
                             TextSpan(
-                                text: 'to Jaeyeon Chat!',
-                                style: TextStyle(
+                                text: isSignupScreen ? ' to Jaeyeon Chat!' : ' back',
+                                style: const TextStyle(
                                   letterSpacing: 1.0,
                                   fontSize: 25,
                                   color: Colors.white,
@@ -50,8 +51,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 ))
                           ]),
                     ),
-                    const Text(
-                      'Signup to continue',
+                    Text(
+                      isSignupScreen ?  'Signup to continue' : 'Sigin to continue',
                       style: TextStyle(
                         letterSpacing: 1.0,
                         color: Colors.white,
@@ -62,13 +63,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               ),
             ),
           ),
-          Positioned(
+          //텍스트 폼 필드
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
             top: 180,
-            child: Container(
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeIn,
               padding: EdgeInsets.all(20),
-              height: 280,
+              height: isSignupScreen ? 280 : 250,
               width: MediaQuery.of(context).size.width - 40,
-              margin: EdgeInsets.symmetric(horizontal: 20.0),
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15.0),
@@ -141,7 +147,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       ),
                     ],
                   ),
+                  if(isSignupScreen)
                   Container(
+                    margin: const EdgeInsets.only(top: 20),
                     child: Form(
                       child: Column(
                         children: [
@@ -167,8 +175,151 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   Radius.circular(35.0),
                                 ),
                               ),
+                              hintText: 'User Name',
+                              hintStyle: TextStyle(
+                                color: Palette.textColor1,
+                                fontSize: 14,
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Palette.iconColor,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              hintText: 'email',
+                              hintStyle: TextStyle(
+                                color: Palette.textColor1,
+                                fontSize: 14,
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Palette.iconColor,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              hintText: 'Password',
+                              hintStyle: TextStyle(
+                                color: Palette.textColor1,
+                                fontSize: 14,
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if(!isSignupScreen)
+                  Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Form(
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Palette.iconColor,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              hintText: 'email ',
+                              hintStyle: TextStyle(
+                                color: Palette.textColor1,
+                                fontSize: 14,
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Palette.iconColor,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              hintText: 'Password',
+                              hintStyle: TextStyle(
+                                color: Palette.textColor1,
+                                fontSize: 14,
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -177,6 +328,74 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               ),
             ),
           ),
+          //버튼
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
+            top: isSignupScreen ? 430 : 400,
+            right: 0,
+            left: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Colors.orange,
+                        Colors.red,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(35),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: Offset(0, 1),
+                      )
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          //signup
+          Positioned(
+              top: MediaQuery.of(context).size.height - 125,
+              right: 0,
+              left: 0,
+              child: Column(
+                children: [
+                  Text(isSignupScreen ? 'or Signup with' : 'or Signin with'),
+                  SizedBox(height: 10,),
+                  TextButton.icon(
+                    onPressed: () {},
+                    icon: Icon(Icons.add),
+                    label: Text('Google'),
+                    style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        minimumSize: Size(155, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        backgroundColor: Palette.googleColor),
+                  )
+                ],
+              )),
         ],
       ),
     );
