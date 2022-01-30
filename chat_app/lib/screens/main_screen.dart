@@ -1,5 +1,7 @@
 import 'package:chat_app/config/palette.dart';
+import 'package:chat_app/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userName = '';
   String userEmail = '';
   String userPassword = '';
+  final _authentication = FirebaseAuth.instance;
 
   void _tryValidation() {
     final isValid = _formKey.currentState!.validate();
@@ -72,7 +75,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         isSignupScreen
                             ? 'Signup to continue'
                             : 'Sigin to continue',
-                        style: TextStyle(
+                        style: const TextStyle(
                           letterSpacing: 1.0,
                           color: Colors.white,
                         ),
@@ -176,6 +179,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             child: Column(
                               children: [
                                 TextFormField(
+                                  onChanged: (value) {
+                                    userName = value;
+                                  },
                                   key: ValueKey(1),
                                   validator: (value) {
                                     if (value!.isEmpty || value.length < 4) {
@@ -219,6 +225,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  onChanged: (value) {
+                                    userEmail = value;
+                                  },
                                   key: ValueKey(2),
                                   validator: (value) {
                                     if (value!.isEmpty ||
@@ -263,6 +273,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  obscureText: true,
+                                  onChanged: (value) {
+                                    userPassword = value;
+                                  },
                                   key: ValueKey(3),
                                   validator: (value) {
                                     if (value!.isEmpty || value.length < 6) {
@@ -314,6 +328,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             child: Column(
                               children: [
                                 TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  onChanged: (value) {
+                                    userEmail = value;
+                                  },
                                   key: ValueKey(4),
                                   validator: (value) {
                                     if (value!.isEmpty ||
@@ -358,6 +376,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  obscureText: true,
+                                  onChanged: (value) {
+                                    userPassword = value;
+                                  },
                                   key: ValueKey(5),
                                   validator: (value) {
                                     if (value!.isEmpty || value.length < 6) {
@@ -423,8 +445,58 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: GestureDetector(
-                    onTap: () {
-                      _tryValidation();
+                    onTap: () async {
+                      if (isSignupScreen) {
+                        _tryValidation();
+                        try {
+                          final newUser = await _authentication
+                              .createUserWithEmailAndPassword(
+                            email: userEmail,
+                            password: userPassword,
+                          );
+
+                          if (newUser.user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return ChatScreen();
+                                },
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          print(e);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content:
+                                Text('please check your email and password'),
+                            backgroundColor: Colors.blue,
+                          ));
+                        }
+                      } else {
+                        _tryValidation();
+
+                        try {
+                          final newUser =
+                              await _authentication.signInWithEmailAndPassword(
+                            email: userEmail,
+                            password: userPassword,
+                          );
+                          if (newUser.user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return ChatScreen();
+                                },
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(
