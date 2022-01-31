@@ -5,8 +5,7 @@ class FoodCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      width: 400,
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(

@@ -1,5 +1,7 @@
 import 'package:delivery_app/components/food_category.dart';
 import 'package:delivery_app/components/icon_content.dart';
+import 'package:delivery_app/components/room_content.dart';
+import 'package:delivery_app/components/room_list.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -14,10 +16,24 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         toolbarHeight: 40,
         actions: [
-          Center(child: Text('가나다라마바사', style: TextStyle(color: Colors.black54, fontSize: 20),)),
-          IconButton(onPressed: (){}, tooltip:'매탄',icon: Icon(Icons.location_on), iconSize: 20, color: Colors.black54,),
+          Center(
+              child: Text(
+            '매탄성일아파트',
+            style: TextStyle(color: Colors.black54, fontSize: 20),
+          )),
+          IconButton(
+            onPressed: () {},
+            tooltip: '매탄',
+            icon: Icon(Icons.location_on),
+            iconSize: 20,
+            color: Colors.black54,
+          ),
         ],
-        leading: IconButton(icon: Icon(Icons.menu), onPressed: (){}, color: Colors.black54,),
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {},
+          color: Colors.black54,
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
       ),
@@ -29,9 +45,12 @@ class _MainScreenState extends State<MainScreen> {
             width: MediaQuery.of(context).size.width - 50,
             color: Colors.black54,
           ),
+          SizedBox(
+            height: 10,
+          ),
+          RoomList(),
         ],
       ),
     );
   }
 }
-
