@@ -26,7 +26,7 @@ class RoomContent extends StatelessWidget {
           color: Colors.blue.withOpacity(0.4),
           borderRadius: BorderRadius.circular(15)),
       margin: const EdgeInsets.all(10),
-      height: 100,
+      height: 80,
       child: Row(
         children: [
           Container(
@@ -43,10 +43,14 @@ class RoomContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(name),
-                Text('정원 : ${people_num}/10'),
-                Text('거리 : ${distance}km'),
-                Text('예상시간 :20-30분'),
+                Text(name, style: TextStyle(fontSize: 30),),
+                Row(
+                  children: [
+                    Expanded(child: Container()),
+                    Text('${people_num}/10' , style: TextStyle(fontSize: 20),),
+                    SizedBox(width: 10,),
+                  ],
+                ),
               ],
             ),
           ),

@@ -5,31 +5,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class RoomList extends StatelessWidget {
+  RoomList({required this.category_num});
+
+  final category_num;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('rooms').snapshots(),
+          stream: category_num == 0
+              ? FirebaseFirestore.instance.collection('rooms').snapshots()
+              : FirebaseFirestore.instance
+                  .collection('rooms')
+                  .where('category', isEqualTo: category_num)
+                  .snapshots(),
           builder: (context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             }
             final chatDocs = snapshot.data!.docs;
-            int count = 0;
-            chatDocs.forEach((value){
-              print(value['category']);
-              print(category_num);
-              if(value['category'] == category_num){
-                print(value['name']);
-              }
-            });
+
             return ListView.builder(
               itemCount: chatDocs.length,
               itemBuilder: (context, index) {
-                return category_num == chatDocs[index]['category'] ? GestureDetector(
-                  onTap: (){
+                return GestureDetector(
+                  onTap: () {
                     Get.toNamed('/detail');
                   },
                   child: RoomContent(
@@ -41,20 +43,7 @@ class RoomList extends StatelessWidget {
                     distance: chatDocs[index]['distance'],
                     bank_info: chatDocs[index]['bank_info'],
                   ),
-                ) : category_num == 0 ? GestureDetector(
-                  onTap: (){
-                    Get.toNamed('/detail');
-                  },
-                  child: RoomContent(
-                    id: chatDocs[index].id,
-                    name: chatDocs[index]['name'],
-                    category: chatDocs[index]['category'],
-                    people_num: chatDocs[index]['people_num'],
-                    delivery_status: chatDocs[index]['delivery_status'],
-                    distance: chatDocs[index]['distance'],
-                    bank_info: chatDocs[index]['bank_info'],
-                  ),
-                ) : Text('.');
+                );
               },
             );
           },

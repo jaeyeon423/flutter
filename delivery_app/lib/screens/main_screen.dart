@@ -1,4 +1,3 @@
-import 'package:delivery_app/chatting/chat/message.dart';
 import 'package:delivery_app/components/food_category.dart';
 import 'package:delivery_app/components/icon_content.dart';
 import 'package:delivery_app/components/room_content.dart';
@@ -14,17 +13,27 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  var category_food = ['전체','한식','치킨','중식','양식','디저트'];
-  List<String> foodList= [];
+  var category_food = ['전체', '한식', '치킨', '중식', '양식', '디저트'];
+  List<String> foodList = [];
 
-  Widget _button_cate(int cate_num){
+  Widget _button_cate(int cate_num) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      child: ElevatedButton(onPressed: (){
-        setState(() {
-          category_num = cate_num;
-        });
-      }, child: Text(category_food[cate_num]), ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            category_num = cate_num;
+          });
+        },
+        child: Text(category_food[cate_num]),
+        style: ElevatedButton.styleFrom(
+          primary: category_num == cate_num ? Colors.lightBlueAccent : Colors.grey,
+          shape: new RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))
+        ),
+      ),
     );
   }
 
@@ -58,32 +67,31 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 20,
+          ),
           Container(
             height: 50,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                for(var i = 0; i < 5; i++)
-                  Container(child: _button_cate(i), width: 100,),
+                for (var i = 0; i < 5; i++)
+                  Container(
+                    child: _button_cate(i),
+                    width: 100,
+                  ),
               ],
             ),
           ),
-          SizedBox(height: 10,),
-          Container(
-            height: 2,
-            width: MediaQuery.of(context).size.width - 50,
-            color: Colors.black54,
-          ),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
-          RoomList(),
+          RoomList(category_num: category_num,),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Text('만들기'),
-        onPressed: (){
+        onPressed: () {
           Get.toNamed('/create');
         },
       ),
@@ -94,7 +102,8 @@ class _MainScreenState extends State<MainScreen> {
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,
-        currentIndex: _selectedIndex, //현재 선택된 Index
+        currentIndex: _selectedIndex,
+        //현재 선택된 Index
         onTap: (int index) {
           // setState(() {
           //   _selectedIndex = index;
@@ -102,18 +111,17 @@ class _MainScreenState extends State<MainScreen> {
         },
         items: [
           BottomNavigationBarItem(
-            title: Text('Favorites'),
+            label: 'Favorites',
             icon: Icon(Icons.favorite),
           ),
           BottomNavigationBarItem(
-            title: Text('Search'),
+            label: 'Search',
             icon: Icon(Icons.search),
           ),
           BottomNavigationBarItem(
-            title: Text('My Page'),
+            label: 'My Page',
             icon: Icon(Icons.person),
           ),
-
         ],
       ),
     );

@@ -20,7 +20,6 @@ class _FoodCategoryState extends State<FoodCategory> {
               onTap: () {
                 setState(() {
                   category_num = 0;
-                  print('전체');
                 });
               },
               child: Container(
@@ -43,7 +42,6 @@ class _FoodCategoryState extends State<FoodCategory> {
             GestureDetector(
               onTap: () {
                 setState(() {
-                  print('치킨');
                   category_num = 2;
                 });
               },
@@ -55,7 +53,6 @@ class _FoodCategoryState extends State<FoodCategory> {
             GestureDetector(
               onTap: () {
                 setState(() {
-                  print('중식');
                   category_num = 3;
                 });
               },
@@ -67,7 +64,6 @@ class _FoodCategoryState extends State<FoodCategory> {
             GestureDetector(
               onTap: () {
                 setState(() {
-                  print('양식');
                   category_num = 4;
                 });
               },
@@ -79,7 +75,6 @@ class _FoodCategoryState extends State<FoodCategory> {
             GestureDetector(
               onTap: () {
                 setState(() {
-                  print('디저트');
                   category_num = 5;
                 });
               },

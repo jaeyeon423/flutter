@@ -1,4 +1,3 @@
-import 'package:delivery_app/chatting/chat/chat_screen.dart';
 import 'package:delivery_app/screens/create_screen.dart';
 import 'package:delivery_app/screens/detail_screen.dart';
 import 'package:delivery_app/screens/main_screen.dart';
