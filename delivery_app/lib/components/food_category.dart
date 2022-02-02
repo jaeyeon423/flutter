@@ -1,4 +1,5 @@
 import 'package:delivery_app/components/icon_content.dart';
+import 'package:delivery_app/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
 class FoodCategory extends StatelessWidget {
@@ -10,13 +11,23 @@ class FoodCategory extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            Container(
-              child: IconContent(icon: Icons.android_outlined, label: '전체'),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+            GestureDetector(
+              onTap: (){
+                category_num = 0;
+              },
+              child: Container(
+                child: IconContent(icon: Icons.android_outlined, label: '전체'),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+              ),
             ),
-            Container(
-              child: IconContent(icon: Icons.android_outlined, label: '한식'),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+            GestureDetector(
+              onTap: (){
+                category_num = 1;
+              },
+              child: Container(
+                child: IconContent(icon: Icons.android_outlined, label: '한식'),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+              ),
             ),
             Container(
               child: IconContent(icon: Icons.android_outlined, label: '치킨'),

@@ -1,8 +1,11 @@
+import 'package:delivery_app/chatting/chat/message.dart';
 import 'package:delivery_app/components/food_category.dart';
 import 'package:delivery_app/components/icon_content.dart';
 import 'package:delivery_app/components/room_content.dart';
 import 'package:delivery_app/components/room_list.dart';
 import 'package:flutter/material.dart';
+
+int category_num = 0;
 
 class MainScreen extends StatefulWidget {
   @override
@@ -48,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
           SizedBox(
             height: 10,
           ),
-          RoomList(),
+          Message(),
         ],
       ),
     );

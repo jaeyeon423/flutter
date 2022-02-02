@@ -1,4 +1,5 @@
 import 'package:delivery_app/chatting/chat/chat_screen.dart';
+import 'package:delivery_app/screens/detail_screen.dart';
 import 'package:delivery_app/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,7 +10,7 @@ import 'package:get/get.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp2());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,21 +19,20 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => ChatScreen()),
+        GetPage(name: '/', page: () => LoginPage()),
+        GetPage(name: '/detail', page: () => DetailScreen()),
       ],
     );
   }
 }
 
-class MyApp2 extends StatelessWidget {
-  const MyApp2({Key? key}) : super(key: key);
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         body: Authentication(),
-      ),
     );
   }
 }
@@ -49,7 +49,7 @@ class Authentication extends StatelessWidget {
             EmailProviderConfiguration(),
           ],);
         }else{
-          return ChatScreen();
+          return MainScreen();
         }
       },
       stream: FirebaseAuth.instance.authStateChanges(),
