@@ -18,11 +18,17 @@ class Message extends StatelessWidget {
             }
             final chatDocs = snapshot.data!.docs;
             int count = 0;
-
+            chatDocs.forEach((value){
+              print(value['category']);
+              print(category_num);
+              if(value['category'] == category_num){
+                print(value['name']);
+              }
+            });
             return ListView.builder(
               itemCount: chatDocs.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
+                return category_num == chatDocs[index]['category'] ? GestureDetector(
                   onTap: (){
                     Get.toNamed('/detail');
                   },
@@ -35,7 +41,20 @@ class Message extends StatelessWidget {
                     distance: chatDocs[index]['distance'],
                     bank_info: chatDocs[index]['bank_info'],
                   ),
-                );
+                ) : category_num == 0 ? GestureDetector(
+                  onTap: (){
+                    Get.toNamed('/detail');
+                  },
+                  child: RoomContent(
+                    id: chatDocs[index].id,
+                    name: chatDocs[index]['name'],
+                    category: chatDocs[index]['category'],
+                    people_num: chatDocs[index]['people_num'],
+                    delivery_status: chatDocs[index]['delivery_status'],
+                    distance: chatDocs[index]['distance'],
+                    bank_info: chatDocs[index]['bank_info'],
+                  ),
+                ) : Text('.');
               },
             );
           },

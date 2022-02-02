@@ -29,9 +29,14 @@ class RoomContent extends StatelessWidget {
       height: 100,
       child: Row(
         children: [
-          Icon(
-            Icons.circle,
-            size: 100,
+          Container(
+            height: 100,
+            width: 100,
+            child: Center(child: Text('image')),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.grey,
+            ),
           ),
           Expanded(
             child: Column(
