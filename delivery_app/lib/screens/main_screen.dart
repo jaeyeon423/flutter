@@ -9,19 +9,34 @@ import 'package:get/get.dart';
 
 int category_num = 0;
 
+
 class MainScreen extends StatefulWidget {
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+  void _getUserInfo() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('user');
+    await users
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        print('Document data: ${documentSnapshot.data()}');
+      } else {
+        print('Document does not exist on the database');
+        users.doc(FirebaseAuth.instance.currentUser!.email).set({
+          'delivery_status': 0,
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
-    print(FirebaseAuth.instance.currentUser!.email);
-    print(FirebaseAuth.instance.currentUser!.displayName);
-    print(FirebaseAuth.instance.currentUser!.isAnonymous);
+    _getUserInfo();
     super.initState();
   }
 
@@ -42,9 +57,10 @@ class _MainScreenState extends State<MainScreen> {
         },
         child: Text(category_food[cate_num]),
         style: ElevatedButton.styleFrom(
-          primary: category_num == cate_num ? Colors.lightBlueAccent : Colors.grey,
-          shape: new RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))
-        ),
+            primary:
+                category_num == cate_num ? Colors.lightBlueAccent : Colors.grey,
+            shape: new RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30))),
       ),
     );
   }
@@ -98,7 +114,9 @@ class _MainScreenState extends State<MainScreen> {
           SizedBox(
             height: 20,
           ),
-          RoomList(category_num: category_num,),
+          RoomList(
+            category_num: category_num,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -120,6 +138,7 @@ class _MainScreenState extends State<MainScreen> {
           // setState(() {
           //   _selectedIndex = index;
           // });
+          FirebaseAuth.instance.signOut();
         },
         items: [
           BottomNavigationBarItem(

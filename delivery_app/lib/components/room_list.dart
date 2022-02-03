@@ -32,7 +32,7 @@ class RoomList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Get.toNamed('/detail');
+                    Get.toNamed('/detail', arguments: {'room_id' : chatDocs[index].id});
                   },
                   child: RoomContent(
                     id: chatDocs[index].id,
