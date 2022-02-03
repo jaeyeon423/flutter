@@ -42,6 +42,7 @@ class RoomList extends StatelessWidget {
                     delivery_status: chatDocs[index]['delivery_status'],
                     distance: chatDocs[index]['distance'],
                     bank_info: chatDocs[index]['bank_info'],
+                    pickup_location: chatDocs[index]['pickup_location'],
                   ),
                 );
               },

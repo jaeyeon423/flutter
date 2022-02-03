@@ -9,6 +9,7 @@ class RoomContent extends StatelessWidget {
     required this.delivery_status,
     required this.distance,
     required this.bank_info,
+    required this.pickup_location,
   });
 
   final String id;
@@ -18,40 +19,57 @@ class RoomContent extends StatelessWidget {
   final int delivery_status;
   final double distance;
   final String bank_info;
+  final String pickup_location;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(15)),
-      margin: const EdgeInsets.all(10),
-      height: 80,
-      child: Row(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black45,
+            spreadRadius: 0.1,
+            blurRadius: 3,
+            offset: Offset(1.5, 1.5),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      height: 350,
+      child: Column(
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            child: Center(child: Text('image')),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.grey,
-            ),
+          Image(
+            image: AssetImage('images/${category}.png'),
+            fit: BoxFit.fill,
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(name, style: TextStyle(fontSize: 30),),
-                Row(
-                  children: [
-                    Expanded(child: Container()),
-                    Text('${people_num}/10' , style: TextStyle(fontSize: 20),),
-                    SizedBox(width: 10,),
-                  ],
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    name,
+                    style: TextStyle(fontSize: 30),
+                  ),
+                  Row(
+                    children: [
+                      Text('수령받을 장소 : ${pickup_location}'),
+                      Expanded(child: Container()),
+                      Text(
+                        '${people_num}/10',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

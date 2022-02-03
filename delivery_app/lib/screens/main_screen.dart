@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_app/components/food_category.dart';
 import 'package:delivery_app/components/icon_content.dart';
 import 'package:delivery_app/components/room_content.dart';
 import 'package:delivery_app/components/room_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +15,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(FirebaseAuth.instance.currentUser!.email);
+    print(FirebaseAuth.instance.currentUser!.displayName);
+    print(FirebaseAuth.instance.currentUser!.isAnonymous);
+    super.initState();
+  }
+
   var category_food = ['전체', '한식', '치킨', '중식', '양식', '디저트'];
   List<String> foodList = [];
 
