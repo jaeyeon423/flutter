@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 
 class DetailScreen extends StatelessWidget {
 
-  void _order() async {
+  Future<bool> getUserInfo() async{
+    print(Get.arguments['room_id']);
     bool can_order = false;
-
     DocumentReference user = FirebaseFirestore.instance
         .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.email);
@@ -17,9 +17,9 @@ class DetailScreen extends StatelessWidget {
         if (documentSnapshot['delivery_status'] == 0) {
           can_order = true;
           print('order start');
-          user.update({
-            'delivery_status' : 1,
-          });
+          // user.update({
+          //   'delivery_status' : 1,
+          // });
         }else{
           print('can not order');
         }
@@ -27,14 +27,18 @@ class DetailScreen extends StatelessWidget {
         print('Document does not exist on the database');
       }
     });
-    print('can_order : ${can_order}');
+    return can_order;
+  }
+
+  Future<void> setRoomInfo(bool can_order, String room_id) async{
     if (can_order) {
       print('order processing');
+      print(room_id);
       DocumentReference room = FirebaseFirestore.instance
           .collection('rooms')
-          .doc(Get.arguments['room_id']);
+          .doc(room_id);
 
-      room.get().then((DocumentSnapshot documentSnapshot) {
+      await room.get().then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.exists) {
           print('Document data: ${documentSnapshot['people_num']}');
           room.update(
@@ -44,6 +48,11 @@ class DetailScreen extends StatelessWidget {
         }
       });
     }
+  }
+
+  void _order(String room_id) async {
+    bool can_order = await getUserInfo();
+    await setRoomInfo(can_order, room_id);
   }
 
   const DetailScreen({Key? key}) : super(key: key);
@@ -58,7 +67,8 @@ class DetailScreen extends StatelessWidget {
         child: ElevatedButton(
           child: Text('참여하기'),
           onPressed: () {
-
+            print(Get.arguments['room_id']);
+            _order(Get.arguments['room_id']);
             Get.back();
           },
         ),
