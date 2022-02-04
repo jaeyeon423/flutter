@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 
 int category_num = 0;
 
-
 class MainScreen extends StatefulWidget {
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -45,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _button_cate(int cate_num) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
       ),
@@ -55,12 +54,15 @@ class _MainScreenState extends State<MainScreen> {
             category_num = cate_num;
           });
         },
-        child: Text(category_food[cate_num]),
+        child: Text(category_food[cate_num], style: TextStyle(color: Colors.black54),),
         style: ElevatedButton.styleFrom(
-            primary:
-                category_num == cate_num ? Colors.lightBlueAccent : Colors.grey,
-            shape: new RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30))),
+          primary: Colors.white,
+          side: BorderSide(
+            color: category_num == cate_num ? Colors.black54 : Colors.white,
+            width: 2,
+
+          )
+        ),
       ),
     );
   }
@@ -100,15 +102,18 @@ class _MainScreenState extends State<MainScreen> {
           ),
           Container(
             height: 50,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (var i = 0; i < 5; i++)
-                  Container(
-                    child: _button_cate(i),
-                    width: 100,
-                  ),
-              ],
+            child: Container(
+              color: Colors.white,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  for (var i = 0; i < 5; i++)
+                    Container(
+                      child: _button_cate(i),
+                      width: 100,
+                    ),
+                ],
+              ),
             ),
           ),
           SizedBox(

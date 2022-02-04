@@ -13,6 +13,7 @@ class RoomList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: StreamBuilder(
           stream: category_num == 0
               ? FirebaseFirestore.instance.collection('rooms').snapshots()
@@ -32,7 +33,6 @@ class RoomList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Get.toNamed('/detail', arguments: {'room_id' : chatDocs[index].id});
                   },
                   child: RoomContent(
                     id: chatDocs[index].id,
