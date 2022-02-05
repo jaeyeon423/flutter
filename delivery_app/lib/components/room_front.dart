@@ -10,7 +10,7 @@ class RoomFront extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
+      height: 150,
       decoration: boxDecoration,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

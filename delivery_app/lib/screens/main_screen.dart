@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_app/components/food_category.dart';
-import 'package:delivery_app/components/icon_content.dart';
 import 'package:delivery_app/components/room_content.dart';
 import 'package:delivery_app/components/room_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,8 +14,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  CollectionReference users = FirebaseFirestore.instance.collection('user');
+  CollectionReference rooms = FirebaseFirestore.instance.collection('rooms');
+
+
   void _getUserInfo() async {
-    CollectionReference users = FirebaseFirestore.instance.collection('user');
     await users
         .doc(FirebaseAuth.instance.currentUser!.email)
         .get()
@@ -40,8 +42,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   var category_food = ['전체', '한식', '치킨', '중식', '양식', '디저트'];
-  List<String> foodList = [];
-
   Widget _button_cate(int cate_num) {
     return Container(
       margin: const EdgeInsets.all(5),
@@ -98,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Column(
         children: [
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Container(
             height: 50,
@@ -143,19 +143,27 @@ class _MainScreenState extends State<MainScreen> {
           // setState(() {
           //   _selectedIndex = index;
           // });
-          FirebaseAuth.instance.signOut();
+          if(index ==0)
+            FirebaseAuth.instance.signOut();
+          switch(index){
+            case 0:
+              FirebaseAuth.instance.signOut();
+              break;
+            case 1:
+              Get.toNamed('/current_status');
+          }
         },
         items: [
           BottomNavigationBarItem(
-            label: 'Favorites',
-            icon: Icon(Icons.favorite),
-          ),
-          BottomNavigationBarItem(
-            label: 'Search',
+            label: '검색',
             icon: Icon(Icons.search),
           ),
           BottomNavigationBarItem(
-            label: 'My Page',
+            label: '배달 현황',
+            icon: Icon(Icons.motorcycle),
+          ),
+          BottomNavigationBarItem(
+            label: '프로필',
             icon: Icon(Icons.person),
           ),
         ],

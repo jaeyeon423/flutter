@@ -18,9 +18,10 @@ class DetailScreen extends StatelessWidget {
         if (documentSnapshot['delivery_status'] == 0) {
           can_order = true;
           print('order start');
-          // user.update({
-          //   'delivery_status' : 1,
-          // });
+          user.update({
+            'delivery_status' : 1,
+            'current_room' : room_id,
+          });
         } else {
           print('can not order');
         }

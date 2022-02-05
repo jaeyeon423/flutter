@@ -1,4 +1,5 @@
 import 'package:delivery_app/screens/create_screen.dart';
+import 'package:delivery_app/screens/current_status.dart';
 import 'package:delivery_app/screens/detail_screen.dart';
 import 'package:delivery_app/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => LoginPage()),
         GetPage(name: '/create', page: () => CreateScreen()),
+        GetPage(name: '/current_status', page: ()=> CurrentStatus())
       ],
     );
   }
