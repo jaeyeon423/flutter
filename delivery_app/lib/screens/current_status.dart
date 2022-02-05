@@ -11,6 +11,10 @@ class CurrentStatus extends StatelessWidget {
         .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.email);
 
+    user.get().then((value) {
+      value.data();
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text("현재 배달 상태"),
