@@ -22,7 +22,9 @@ class RoomList extends StatelessWidget {
           builder: (context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return  Center(
+                child: CircularProgressIndicator(),
+              );
             }
             final chatDocs = snapshot.data!.docs;
 

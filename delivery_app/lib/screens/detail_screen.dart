@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class DetailScreen extends StatelessWidget {
   DetailScreen({required this.room_id});
@@ -42,6 +43,7 @@ class DetailScreen extends StatelessWidget {
         if (documentSnapshot.exists) {
           print('Document data: ${documentSnapshot['people_num']}');
           room.update({'people_num': documentSnapshot['people_num'] + 1});
+          Get.toNamed('/current_status');
         } else {
           print('Document does not exist on the database');
         }

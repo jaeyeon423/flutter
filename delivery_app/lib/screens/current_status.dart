@@ -70,7 +70,7 @@ class _CurrentStatusState extends State<CurrentStatus> {
   Widget _show_status(){
     if(delivery_status == 0){
       return Container(
-        child: Text('배달중인 상품이 없습니다.'),
+        child: CircularProgressIndicator(),
       );
     }else{
       print(name);
