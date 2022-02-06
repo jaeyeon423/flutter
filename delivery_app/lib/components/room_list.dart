@@ -1,8 +1,6 @@
 import 'package:delivery_app/components/room_content.dart';
-import 'package:delivery_app/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 
 class RoomList extends StatelessWidget {
   RoomList({required this.category_num});

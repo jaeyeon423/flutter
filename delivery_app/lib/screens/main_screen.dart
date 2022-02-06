@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delivery_app/components/food_category.dart';
-import 'package:delivery_app/components/room_content.dart';
 import 'package:delivery_app/components/room_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +58,6 @@ class _MainScreenState extends State<MainScreen> {
           side: BorderSide(
             color: category_num == cate_num ? Colors.black54 : Colors.white,
             width: 2,
-
           )
         ),
       ),
