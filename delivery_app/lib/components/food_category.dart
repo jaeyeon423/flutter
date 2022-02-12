@@ -6,10 +6,7 @@ class FoodCategory extends StatefulWidget {
   State<FoodCategory> createState() => _FoodCategoryState();
 }
 
-
-
 class _FoodCategoryState extends State<FoodCategory> {
-
   var category_food = ['전체', '한식', '치킨', '중식', '양식', '디저트'];
 
   Widget _button_cate(int cate_num) {
@@ -24,18 +21,21 @@ class _FoodCategoryState extends State<FoodCategory> {
             category_num = cate_num;
           });
         },
-        child: Text(category_food[cate_num], style: TextStyle(color: Colors.black54),),
+        child: Text(
+          category_food[cate_num],
+          style: TextStyle(color: Colors.black54),
+        ),
         style: ElevatedButton.styleFrom(
-            primary: Colors.white,
-            side: BorderSide(
-              color: category_num == cate_num ? Colors.black54 : Colors.white,
-              width: 2,
-
-            )
+          primary: Colors.white,
+          side: BorderSide(
+            color: category_num == cate_num ? Colors.black54 : Colors.white,
+            width: 2,
+          ),
         ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(

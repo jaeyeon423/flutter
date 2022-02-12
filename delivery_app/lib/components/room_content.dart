@@ -25,77 +25,44 @@ class RoomContent extends StatelessWidget {
   final String bank_info;
   final String pickup_location;
 
-  _renderContent(context) {
-    return Card(
-      elevation: 0.0,
-      child: FlipCard(
-        direction: FlipDirection.HORIZONTAL,
-        speed: 1000,
-        onFlipDone: (status) {
-          print(status);
-        },
-        front: RoomFront(name:name, category: category, people_num: people_num),
-        back: Container(
-          height: 170,
-          decoration: boxDecoration,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('가게 이름 : ${name} (${category})'),
-              Text('현재 주문 인원 :${people_num}'),
-              Text('주문 상태 : ${delivery_status}'),
-              Text('식당 거리 : ${distance}'),
-              Text('돈 보낼 곳 : ${bank_info}'),
-              Text('받을 장소 : ${pickup_location}'),
-              DetailScreen(room_id: id,),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
-      // child: Column(
-      //   children: [
-      //     Image(
-      //       image: AssetImage('images/${category}.png'),
-      //       fit: BoxFit.fill,
-      //     ),
-      //     Expanded(
-      //       child: Padding(
-      //         padding: const EdgeInsets.all(8.0),
-      //         child: Column(
-      //           crossAxisAlignment: CrossAxisAlignment.start,
-      //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //           children: [
-      //             Text(
-      //               name,
-      //               style: TextStyle(fontSize: 30),
-      //             ),
-      //             Row(
-      //               children: [
-      //                 Text('수령받을 장소 : ${pickup_location}'),
-      //                 Expanded(child: Container()),
-      //                 Text(
-      //                   '${people_num}/10',
-      //                   style: TextStyle(fontSize: 20),
-      //                 ),
-      //                 SizedBox(
-      //                   width: 10,
-      //                 ),
-      //               ],
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
-      child: _renderContent(context),
+      margin: const EdgeInsets.all(10),
+      height: 150,
+      decoration: boxDecoration,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(10), topLeft: Radius.circular(10)),
+            child: Image(
+              image: AssetImage('images/${category}.png'),
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          Column(
+            children: [
+              Text(
+                '${name}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Expanded(child: Container()),
+              Text(
+                '${people_num} / 20',
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+        ],
+      ),
     );
   }
 }

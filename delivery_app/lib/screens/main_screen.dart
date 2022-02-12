@@ -15,7 +15,6 @@ class _MainScreenState extends State<MainScreen> {
   CollectionReference users = FirebaseFirestore.instance.collection('user');
   CollectionReference rooms = FirebaseFirestore.instance.collection('rooms');
 
-
   void _getUserInfo() async {
     await users
         .doc(FirebaseAuth.instance.currentUser!.email)
@@ -34,7 +33,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _getUserInfo();
     super.initState();
   }
@@ -52,14 +50,16 @@ class _MainScreenState extends State<MainScreen> {
             category_num = cate_num;
           });
         },
-        child: Text(category_food[cate_num], style: TextStyle(color: Colors.black54),),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.white,
-          side: BorderSide(
-            color: category_num == cate_num ? Colors.black54 : Colors.white,
-            width: 2,
-          )
+        child: Text(
+          category_food[cate_num],
+          style: TextStyle(color: Colors.black54),
         ),
+        style: ElevatedButton.styleFrom(
+            primary: Colors.white,
+            side: BorderSide(
+              color: category_num == cate_num ? Colors.black54 : Colors.white,
+              width: 2,
+            )),
       ),
     );
   }
@@ -70,18 +70,15 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 40,
-        actions: [
-          Center(
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: Center(
               child: Text(
-            '매탄성일아파트',
-            style: TextStyle(color: Colors.black54, fontSize: 20),
-          )),
-          IconButton(
-            onPressed: () {},
-            tooltip: '매탄',
-            icon: Icon(Icons.location_on),
-            iconSize: 20,
-            color: Colors.black54,
+                '매탄성일아파트',
+                style: TextStyle(color: Colors.black54, fontSize: 20),
+              ),
+            ),
           ),
         ],
         leading: IconButton(
@@ -94,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Container(
@@ -113,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           RoomList(
@@ -121,12 +118,12 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Text('만들기'),
-        onPressed: () {
-          Get.toNamed('/create');
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: const Text('만들기'),
+      //   onPressed: () {
+      //     Get.toNamed('/create');
+      //   },
+      // ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.grey,
@@ -140,9 +137,8 @@ class _MainScreenState extends State<MainScreen> {
           // setState(() {
           //   _selectedIndex = index;
           // });
-          if(index ==0)
-            FirebaseAuth.instance.signOut();
-          switch(index){
+          if (index == 0) FirebaseAuth.instance.signOut();
+          switch (index) {
             case 0:
               FirebaseAuth.instance.signOut();
               break;
