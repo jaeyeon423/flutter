@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:insta_clone/src/components/image_data.dart';
 import 'package:insta_clone/src/controller/bottom_nav_controller.dart';
+import 'package:insta_clone/src/pages/home.dart';
 
 class App extends GetView<BottomNavController> {
   const App({Key? key}) : super(key: key);
@@ -11,15 +12,30 @@ class App extends GetView<BottomNavController> {
     return Obx(
       () => WillPopScope(
         child: Scaffold(
-          appBar: AppBar(),
           body: IndexedStack(
             index: controller.pageIndex.value,
             children: [
-              Container(child: Center(child: Text("home"),),),
-              Container(child: Center(child: Text("search"),),),
-              Container(child: Center(child: Text("add"),),),
-              Container(child: Center(child: Text("activity"),),),
-              Container(child: Center(child: Text("mypage"),),),
+              Home(),
+              Container(
+                child: Center(
+                  child: Text("search"),
+                ),
+              ),
+              Container(
+                child: Center(
+                  child: Text("add"),
+                ),
+              ),
+              Container(
+                child: Center(
+                  child: Text("activity"),
+                ),
+              ),
+              Container(
+                child: Center(
+                  child: Text("mypage"),
+                ),
+              ),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
