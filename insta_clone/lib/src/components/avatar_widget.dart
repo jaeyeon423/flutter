@@ -16,14 +16,14 @@ class AvatarWidget extends StatelessWidget {
       required this.thumbPath,
       this.nickname,
       required this.type,
-      this.size})
+      this.size = 65})
       : super(key: key);
 
   Widget type1Widget() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
@@ -35,14 +35,25 @@ class AvatarWidget extends StatelessWidget {
         shape: BoxShape.circle,
         color: Colors.grey,
       ),
+      child: type2Widget(),
+    );
+  }
+
+  Widget type2Widget() {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.all(2),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(65),
+        borderRadius: BorderRadius.circular(size!),
         child: Container(
-          width: 65,
-          height: 65,
+          width: size,
+          height: size,
           child: CachedNetworkImage(
             imageUrl:
-                "https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/e0e7a4585b557d74708f6e8dced9b91e.png",
+            thumbPath,
             fit: BoxFit.cover,
           ),
         ),
@@ -57,6 +68,7 @@ class AvatarWidget extends StatelessWidget {
         return type1Widget();
         break;
       case AvatarType.TYPE2:
+        return type2Widget();
       case AvatarType.TYPE3:
         return Container();
         break;
