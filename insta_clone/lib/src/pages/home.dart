@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insta_clone/src/components/avatar_widget.dart';
 import 'package:insta_clone/src/components/image_data.dart';
+import 'package:insta_clone/src/components/post_widget.dart';
 
 class Home extends StatelessWidget {
   Widget _myStory() {
@@ -40,7 +41,9 @@ class Home extends StatelessWidget {
   }
 
   Widget _postList(){
-    return Row();
+    return Column(
+      children: List.generate(50, (index) => PostWidget()).toList(),
+    );
   }
 
   Widget _storyBoardList() {
@@ -89,7 +92,7 @@ class Home extends StatelessWidget {
       body: ListView(
         children: [
           _storyBoardList(),
-          // _postList(),
+          _postList(),
         ],
       ),
     );
