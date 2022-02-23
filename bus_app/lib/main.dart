@@ -1,3 +1,5 @@
+import 'package:bus_app/src/app.dart';
+import 'package:bus_app/src/binding/init_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,22 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'hp bus app',
-      home: Home(),
-    );
-  }
-}
-
-
-class Home extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "통근 버스"),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "셔틀 버스"),
-        ],
-      ),
+      initialBinding: InitBinding(),
+      home: App(),
     );
   }
 }
