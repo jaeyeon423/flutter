@@ -20,7 +20,6 @@ class BottomNavController extends GetxController{
   }
 
   void _changePage(int value){
-    print(value);
     pageIndex(value);
   }
 
