@@ -1,5 +1,6 @@
 import 'package:bus_app/src/controller/bottom_nav_controller.dart';
 import 'package:bus_app/src/pages/commute_page.dart';
+import 'package:bus_app/src/pages/shuttle_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,16 +11,14 @@ class App extends GetView<BottomNavController> {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        body: IndexedStack(
-          index: controller.pageIndex.value,
-          children: [
-            CommutePage(),
-            Container(
-              child: Center(
-                child: Text("shuttle"),
-              ),
-            ),
-          ],
+        body: SafeArea(
+          child: IndexedStack(
+            index: controller.pageIndex.value,
+            children: [
+              CommutePage(),
+              ShuttlePage(),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

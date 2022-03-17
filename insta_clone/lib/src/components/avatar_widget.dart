@@ -52,12 +52,26 @@ class AvatarWidget extends StatelessWidget {
           width: size,
           height: size,
           child: CachedNetworkImage(
-            imageUrl:
-            thumbPath,
+            imageUrl: thumbPath,
             fit: BoxFit.cover,
           ),
         ),
       ),
+    );
+  }
+
+  Widget type3Widget() {
+    return Row(
+      children: [
+        type1Widget(),
+        Text(
+          nickname ?? '',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        )
+      ],
     );
   }
 
@@ -66,13 +80,10 @@ class AvatarWidget extends StatelessWidget {
     switch (type) {
       case AvatarType.TYPE1:
         return type1Widget();
-        break;
       case AvatarType.TYPE2:
         return type2Widget();
       case AvatarType.TYPE3:
-        return Container();
-        break;
+        return type3Widget();
     }
-    return Container();
   }
 }
