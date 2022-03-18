@@ -136,23 +136,23 @@ class PostWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _header(),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           _image(),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           _infoCount(),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           _infoDescriptor(),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           _replyTextBtn(),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           // _dataAgo(),
