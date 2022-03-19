@@ -18,6 +18,7 @@ class BottomNavController extends GetxController {
   List<int> bottomHistory = [0];
 
   Future<bool> willPopAction() async {
+    print("will pop action called");
     if (bottomHistory.length == 1) {
       showDialog(
           context: Get.context!,
