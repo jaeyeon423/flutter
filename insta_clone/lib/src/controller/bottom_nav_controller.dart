@@ -44,7 +44,6 @@ class BottomNavController extends GetxController {
 
       bottomHistory.removeLast();
       var index = bottomHistory.last;
-      print(bottomHistory);
       changeBottmNav(index, hasGesture: false);
       return false;
     }
@@ -70,6 +69,5 @@ class BottomNavController extends GetxController {
     pageIndex(value);
     if (!hasGesture) return;
     if (bottomHistory.last != value) bottomHistory.add(value);
-    print(bottomHistory);
   }
 }
