@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_eample/src/pages/normal/first.dart';
+import 'package:getx_eample/src/pages/simple_state_manage.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -31,6 +32,12 @@ class Home extends StatelessWidget {
               },
               child: Text("Named argument route"),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(()=>SimpleStateManagePage());
+              },
+              child: Text("단순 상태 관리"),
+            )
           ],
         ),
       ),
