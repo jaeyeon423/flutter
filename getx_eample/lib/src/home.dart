@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_eample/src/active_state_manage.dart';
+import 'package:getx_eample/src/pages/dependencys/dependency_manage_page.dart';
 import 'package:getx_eample/src/pages/normal/first.dart';
 import 'package:getx_eample/src/simple_state_manage.dart';
 
@@ -44,6 +45,12 @@ class Home extends StatelessWidget {
                 Get.to(()=>ActiveStateManagePage());
               },
               child: Text("반응형 상태 관리"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(()=>DependencyManagePage( ));
+              },
+              child: Text("의존성 관리"),
             )
           ],
         ),
