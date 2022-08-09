@@ -12,25 +12,31 @@ class ChickenGame extends FlameGame {
   double chickenScaleFactor = 3.0;
 
   late SpriteComponent chickenSprite;
+  late SpriteAnimationComponent chicken;
   @override
   Future<void> onLoad() async {
     super.onLoad();
     print('load the assets for the game');
     Image chickenImage = await images.load('chicken.png');
-    chickenSprite = SpriteComponent.fromImage(
+    var chickenAnimation = SpriteAnimation.fromFrameData(
       chickenImage,
-      srcSize: Vector2(32, 34),
-      srcPosition: Vector2(32, 0),
-      size: Vector2(32, 34) * chickenScaleFactor,
-      position: Vector2.all(100),
+      SpriteAnimationData.sequenced(
+        amount: 14,
+        stepTime: 0.1,
+        textureSize: Vector2(32, 34),
+      ),
     );
-    add(chickenSprite);
+    chicken = SpriteAnimationComponent()
+      ..animation = chickenAnimation
+      ..size = Vector2(32, 34) * chickenScaleFactor
+      ..position = Vector2.all(100);
+    add(chicken);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    chickenSprite.y += 1;
-    chickenSprite.x += 1;
+    chicken.y += 1;
+    chicken.x += 1;
   }
 }
