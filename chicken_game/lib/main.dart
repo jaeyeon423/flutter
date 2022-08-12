@@ -32,7 +32,7 @@ class ChickenGame extends FlameGame with HasDraggables, HasCollisionDetection {
     print('2. load the assets for the game');
 
     print('3. load map');
-    var homeMap = await TiledComponent.load('level.tmx', Vector2(16, 16));
+    var homeMap = await TiledComponent.load('level_1.tmx', Vector2(16, 16));
     print('4. add map to game');
     add(homeMap);
     double mapHeight = 16.0 * homeMap.tileMap.map.height;

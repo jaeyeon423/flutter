@@ -11,9 +11,9 @@ class Fruit extends SpriteComponent with HasGameRef, CollisionCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    sprite = await gameRef.loadSprite('world/Apple.png')
-      ..srcSize = Vector2.all(32);
-    size = Vector2.all(32);
+    sprite = await gameRef.loadSprite('world/pineapple_3x.png')
+      ..srcSize = Vector2.all(96);
+    size = Vector2.all(96);
     position = Vector2(fruit.x, fruit.y);
 
     add(RectangleHitbox(
