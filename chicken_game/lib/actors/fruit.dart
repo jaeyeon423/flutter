@@ -1,3 +1,4 @@
+import 'package:chicken_game/actors/charlie.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:tiled/tiled.dart';
@@ -10,22 +11,24 @@ class Fruit extends SpriteComponent with HasGameRef, CollisionCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
     sprite = await gameRef.loadSprite('world/Apple.png')
       ..srcSize = Vector2.all(32);
-
     size = Vector2.all(32);
-
     position = Vector2(fruit.x, fruit.y);
 
-    add(
-      RectangleHitbox(
+    add(RectangleHitbox(
         size: Vector2(fruit.width, fruit.height),
         anchor: Anchor.center,
-        position: size / 2,
-      ),
-    );
+        position: size / 2));
 
     debugMode = true;
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is Charlie) {
+      removeFromParent();
+    }
   }
 }
