@@ -40,11 +40,15 @@ class Charlie extends SpriteAnimationComponent
 
     // chicken is moving vertically
     if (moveUp && y > 0) {
-      y += chickenVectorY;
+      if (!collided || collidedDirection == JoystickDirection.down) {
+        y += chickenVectorY;
+      }
     }
 
     if (moveDown && y < gameRef.size[1]) {
-      y += chickenVectorY;
+      if (!collided || collidedDirection == JoystickDirection.up) {
+        y += chickenVectorY;
+      }
     }
 
     if (gameRef.joystick.relativeDelta[0] < 0 && chickenFlipped) {
