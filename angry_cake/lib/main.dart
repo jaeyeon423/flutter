@@ -1,3 +1,4 @@
+import 'package:angry_cake/actors/enemy.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
@@ -27,10 +28,11 @@ class MyGame extends Forge2DGame with HasTappables {
     add(Ground(gameSize));
     add(Player());
 
-    add(Obstacle(Vector2(60, -6), await loadSprite('pig.webp')));
-    add(Obstacle(Vector2(60, 0), await loadSprite('crate.png')));
-    add(Obstacle(Vector2(60, 8), await loadSprite('crate.png')));
-    add(Obstacle(Vector2(60, 16), await loadSprite('crate.png')));
-    add(Obstacle(Vector2(60, 24), await loadSprite('crate.png')));
+    add(Enemy(Vector2(60, -6), await loadSprite('pig.webp')));
+    // add(Obstacle(Vector2(60, 0), await loadSprite('barrel.png')));
+    // add(Obstacle(Vector2(60, 10), await loadSprite('crate.png')));
+    // add(Obstacle(Vector2(60, 20), await loadSprite('crate.png')));
+    // add(Obstacle(Vector2(60, 30), await loadSprite('crate.png')));
+    // add(Obstacle(Vector2(60, 40), await loadSprite('crate.png')));
   }
 }

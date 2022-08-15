@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/audio_pool.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 class Player extends BodyComponent with Tappable {
@@ -18,6 +19,9 @@ class Player extends BodyComponent with Tappable {
       ..sprite = await gameRef.loadSprite('red.webp')
       ..size = Vector2.all(6)
       ..anchor = Anchor.center);
+    // FlameAudio.bgm.initialize();
+    // FlameAudio.bgm.play('birds_intro.mp3', volume: 0.8);
+    // Future.delayed(const Duration(seconds: 10), () => FlameAudio.bgm.stop());
   }
 
   @override
@@ -30,8 +34,11 @@ class Player extends BodyComponent with Tappable {
 
   @override
   bool onTapDown(TapDownInfo info) {
-    launchSfx.start(volume: 0.8);
-    body.applyLinearImpulse(Vector2(30, -15) * 25);
+    // launchSfx.start(volume: 0.8);
+    // FlameAudio.bgm.stop();
+    // Future.delayed(
+    //     const Duration(microseconds: 500), () => flyingSfx.start(volume: 0.8));
+    body.applyLinearImpulse(Vector2(20, -10) * 100);
     return false;
   }
 }
