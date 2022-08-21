@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/chicken_game/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/chicken_game/build" />
+      <excludeFolder url="file://$MODULE_DIR$/chicken_game/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_tu/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_tu/build" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_tu/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_state/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_state/build" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_state/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/angry_cake/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/angry_cake/build" />
+      <excludeFolder url="file://$MODULE_DIR$/angry_cake/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/covid_api/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/covid_api/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/covid_api/build" />
+      <excludeFolder url="file://$MODULE_DIR$/getx/build" />
+      <excludeFolder url="file://$MODULE_DIR$/getx/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/getx/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/timer/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/timer/build" />
+      <excludeFolder url="file://$MODULE_DIR$/timer/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_study/build" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_study/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/getx_study/.pub" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart Packages" level="project" />
+  </component>
+</module>
