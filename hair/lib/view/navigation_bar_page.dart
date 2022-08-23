@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:hair/controller/navigation_controller.dart';
+import 'package:hair/view/designer_list_page.dart';
 import 'package:hair/view/home_page.dart';
 import 'package:hair/view/profile_page.dart';
 import 'package:hair/view/setting_page.dart';
@@ -14,7 +15,7 @@ class NavigationBarPage extends StatelessWidget {
 
   final screen = [
     HomePage(),
-    ProfilePage(),
+    DesignerList(),
     SettingPage(),
   ];
 
@@ -29,11 +30,11 @@ class NavigationBarPage extends StatelessWidget {
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
-          type: BottomNavigationBarType.shifting,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white38,
+          // type: BottomNavigationBarType.shifting,
+          selectedItemColor: Colors.orange,
+          unselectedItemColor: Colors.black,
           showSelectedLabels: true,
-          showUnselectedLabels: false,
+          showUnselectedLabels: true,
           onTap: (index) {
             bottomNavigationController.changeIndex(index);
           },
@@ -45,8 +46,8 @@ class NavigationBarPage extends StatelessWidget {
               backgroundColor: Colors.deepOrange,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
+              icon: Icon(Icons.book),
+              label: '예약하기',
               backgroundColor: Colors.deepPurpleAccent,
             ),
             BottomNavigationBarItem(
