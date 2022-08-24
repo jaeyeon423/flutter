@@ -28,6 +28,9 @@ class HomePage extends StatelessWidget {
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(100),
                         ),
+                        child: Center(
+                          child: Text("날짜"),
+                        ),
                       ),
                     ],
                   );
@@ -37,10 +40,73 @@ class HomePage extends StatelessWidget {
             Container(
               height: 370,
               color: Colors.red,
+              child: Center(child: Text("image")),
             ),
             Container(
               height: 170,
               color: Colors.orange,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        width: 65,
+                        height: 65,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             )
           ],
         ),
