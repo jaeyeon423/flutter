@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hair/widgets/hour_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -10,31 +11,35 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: 30,
+            ),
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: 100,
+              height: 150,
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 100,
-                itemBuilder: (BuildContext context, int index) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        width: 70,
-                        height: 70,
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Center(
-                          child: Text("날짜"),
-                        ),
+                itemCount: 12,
+                itemBuilder: ((context, index) {
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 80,
+                      margin: const EdgeInsets.only(left: 20, right: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: index == 11 ? Colors.blueGrey : Colors.black12,
                       ),
-                    ],
+                      child: HourlyDetails(
+                        index: index,
+                        cardIndex: 1,
+                        temp: 1,
+                        timestamp: 1,
+                        weatherIcon: "sun",
+                      ),
+                    ),
                   );
-                },
+                }),
               ),
             ),
             Container(
