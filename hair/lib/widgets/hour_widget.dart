@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
+import 'package:hair/controller/day_list_controller.dart';
 
 class day_list extends StatelessWidget {
-  const day_list({
+  day_list({
     Key? key,
   }) : super(key: key);
+
+  DayListController dayListController = Get.put(DayListController());
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +20,26 @@ class day_list extends StatelessWidget {
         itemCount: 12,
         itemBuilder: ((context, index) {
           return GestureDetector(
-            onTap: () {},
-            child: Container(
-              width: 80,
-              margin: const EdgeInsets.only(left: 20, right: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: index == 11 ? Colors.blueGrey : Colors.black12,
-              ),
-              child: HourlyDetails(
-                index: index,
-                cardIndex: 1,
-                temp: 1,
-                timestamp: 1,
-                weatherIcon: "sun",
+            onTap: () {
+              dayListController.changeIndex(index);
+            },
+            child: Obx(
+              () => Container(
+                width: 80,
+                margin: const EdgeInsets.only(left: 20, right: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: index == dayListController.selectedDat.value
+                      ? Colors.blueGrey
+                      : Colors.black12,
+                ),
+                child: HourlyDetails(
+                  index: index,
+                  cardIndex: dayListController.selectedDat.value,
+                  temp: 1,
+                  timestamp: 1,
+                  weatherIcon: "sun",
+                ),
               ),
             ),
           );
@@ -72,7 +83,7 @@ class HourlyDetails extends StatelessWidget {
           margin: const EdgeInsets.only(top: 5),
           child: Text('8/${index + 1}',
               style: TextStyle(
-                color: 11 == index ? Colors.white : Colors.black,
+                color: cardIndex == index ? Colors.white : Colors.black,
               )),
         )
       ],
