@@ -8,7 +8,7 @@ class day_list extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150,
+      height: 120,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
