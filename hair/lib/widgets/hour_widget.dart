@@ -1,6 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:hair/controller/day_list_controller.dart';
 
 class day_list extends StatelessWidget {
@@ -16,8 +16,10 @@ class day_list extends StatelessWidget {
       height: 120,
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListView.builder(
+        dragStartBehavior: DragStartBehavior.down,
         scrollDirection: Axis.horizontal,
         itemCount: 12,
+        controller: ScrollController(initialScrollOffset: 1000.0),
         itemBuilder: ((context, index) {
           return GestureDetector(
             onTap: () {
@@ -29,14 +31,15 @@ class day_list extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 20, right: 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: index == dayListController.selectedDat.value
-                      ? Colors.blueGrey
-                      : Colors.black12,
+                  border: index == dayListController.selectedDat.value
+                    ? Border.all(color: Colors.black87, width: 2, ) : null,
+                  // color: index == dayListController.selectedDat.value
+                  //     ? Colors.blueGrey
+                  //     : Colors.black12,
                 ),
                 child: HourlyDetails(
                   index: index,
                   cardIndex: dayListController.selectedDat.value,
-                  temp: 1,
                   timestamp: 1,
                   weatherIcon: "sun",
                 ),
@@ -50,7 +53,6 @@ class day_list extends StatelessWidget {
 }
 
 class HourlyDetails extends StatelessWidget {
-  int temp;
   int timestamp;
   int cardIndex;
   int index;
@@ -59,7 +61,6 @@ class HourlyDetails extends StatelessWidget {
   HourlyDetails(
       {Key? key,
       required this.timestamp,
-      required this.temp,
       required this.index,
       required this.cardIndex,
       required this.weatherIcon})
@@ -70,20 +71,15 @@ class HourlyDetails extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
+        SizedBox(height: 10,),
         Container(
-          margin: const EdgeInsets.only(top: 10),
-        ),
-        Container(
-          child: Icon(
-            Icons.face,
-            size: 50,
-          ),
+          child: Image(image: AssetImage('assets/images/20220822.jpg'), width: 60, height: 60,)
         ),
         Container(
           margin: const EdgeInsets.only(top: 5),
           child: Text('8/${index + 1}',
               style: TextStyle(
-                color: cardIndex == index ? Colors.white : Colors.black,
+                color: Colors.black,
               )),
         )
       ],

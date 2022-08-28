@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hair/widgets/hour_widget.dart';
+import 'package:hair/widgets/image_slider_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,76 +16,13 @@ class HomePage extends StatelessWidget {
               height: 30,
             ),
             day_list(),
-            Container(
-              height: 370,
-              color: Colors.red,
-              child: Center(child: Text("image")),
-            ),
+            ImageSliderDemo(),
             Container(
               height: 170,
               color: Colors.orange,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        width: 65,
-                        height: 65,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              child: Center(
+                child: Text("예약 시스템"),
+              )
             )
           ],
         ),
