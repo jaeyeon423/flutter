@@ -5,6 +5,5 @@ class DayListController extends GetxController {
 
   void changeIndex(int index) {
     selectedDat.value = index;
-    print(selectedDat.value);
   }
 }
