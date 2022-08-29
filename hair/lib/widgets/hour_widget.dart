@@ -25,44 +25,29 @@ class day_list extends StatelessWidget {
         itemCount: 12,
         controller: auto_controller,
         itemBuilder: ((context, index) {
-          return AutoScrollTag(
-            key: ValueKey(dayListController.selectedDat.value),
-            index: dayListController.selectedDat.value,
-            controller: AutoScrollController(
-              viewportBoundaryGetter: () =>
-                  Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
-            ),
-            child: GestureDetector(
-              onTap: () async {
-                dayListController.changeIndex(index);
-                print(dayListController.selectedDat.value);
-                auto_controller.scrollToIndex(
-                  dayListController.selectedDat.value,
-                  preferPosition: AutoScrollPosition.begin,
-                );
-              },
-              child: Obx(
-                () => Container(
-                  width: 80,
-                  margin: const EdgeInsets.only(left: 20, right: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: index == dayListController.selectedDat.value
-                        ? Border.all(
-                            color: Colors.black87,
-                            width: 2,
-                          )
-                        : null,
-                    // color: index == dayListController.selectedDat.value
-                    //     ? Colors.blueGrey
-                    //     : Colors.black12,
-                  ),
-                  child: HourlyDetails(
-                    index: index,
-                    cardIndex: dayListController.selectedDat.value,
-                    timestamp: 1,
-                    weatherIcon: "sun",
-                  ),
+          return GestureDetector(
+            onTap: () async {
+              dayListController.changeIndex(index);
+              print(dayListController.selectedDat.value);
+            },
+            child: Obx(
+              () => Container(
+                width: 80,
+                margin: const EdgeInsets.only(left: 20, right: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: index == dayListController.selectedDat.value
+                      ? Border.all(
+                          color: Colors.black87,
+                          width: 2,
+                        )
+                      : null,
+                ),
+                child: HourlyDetails(
+                  index: index,
+                  cardIndex: dayListController.selectedDat.value,
+                  timestamp: 1,
+                  weatherIcon: "sun",
                 ),
               ),
             ),

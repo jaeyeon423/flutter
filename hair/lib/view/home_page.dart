@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hair/widgets/hair_image_widget.dart';
 import 'package:hair/widgets/hour_widget.dart';
 import 'package:hair/widgets/image_slider_widget.dart';
 
@@ -16,14 +17,13 @@ class HomePage extends StatelessWidget {
               height: 30,
             ),
             day_list(),
-            ImageSliderDemo(),
+            HairImageWidget(),
             Container(
-              height: 170,
-              color: Colors.orange,
-              child: Center(
-                child: Text("예약 시스템"),
-              )
-            )
+                height: 170,
+                color: Colors.orange,
+                child: Center(
+                  child: Text("예약 시스템"),
+                ))
           ],
         ),
       ),
