@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:hair/controller/navigation_controller.dart';
+import 'package:hair/view/booking_page.dart';
 import 'package:hair/view/designer_list_page.dart';
 import 'package:hair/view/home_page.dart';
 import 'package:hair/view/profile_page.dart';
@@ -30,7 +31,6 @@ class NavigationBarPage extends StatelessWidget {
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
-          // type: BottomNavigationBarType.shifting,
           selectedItemColor: Colors.orange,
           unselectedItemColor: Colors.black,
           showSelectedLabels: true,

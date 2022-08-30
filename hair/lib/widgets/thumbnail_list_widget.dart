@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:hair/controller/day_list_controller.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
-class day_list extends StatelessWidget {
-  day_list({
+class ThumbNailList extends StatelessWidget {
+  ThumbNailList({
     Key? key,
   }) : super(key: key);
 
@@ -44,11 +44,8 @@ class day_list extends StatelessWidget {
                         )
                       : null,
                 ),
-                child: HourlyDetails(
-                  index: index,
-                  cardIndex: dayListController.selectedDat.value,
-                  timestamp: 1,
-                  weatherIcon: "sun",
+                child: ThumbnailDetail(
+                  index: dayListController.selectedDat.value,
                 ),
               ),
             ),
@@ -59,19 +56,13 @@ class day_list extends StatelessWidget {
   }
 }
 
-class HourlyDetails extends GetView<DayListController> {
-  int timestamp;
-  int cardIndex;
+class ThumbnailDetail extends GetView<DayListController> {
   int index;
-  String weatherIcon;
 
-  HourlyDetails(
-      {Key? key,
-      required this.timestamp,
-      required this.index,
-      required this.cardIndex,
-      required this.weatherIcon})
-      : super(key: key);
+  ThumbnailDetail({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

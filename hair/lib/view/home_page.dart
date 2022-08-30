@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hair/view/booking_page.dart';
 import 'package:hair/widgets/hair_image_widget.dart';
-import 'package:hair/widgets/hour_widget.dart';
-import 'package:hair/widgets/image_slider_widget.dart';
+import 'package:hair/widgets/thumbnail_list_widget.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +17,20 @@ class HomePage extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            day_list(),
+            ThumbNailList(),
             HairImageWidget(),
             Container(
-                height: 170,
-                color: Colors.orange,
+              height: 75,
+              color: Colors.orange,
+              child: GestureDetector(
+                onTap: () {
+                  Get.to(() => BookingPage());
+                },
                 child: Center(
                   child: Text("예약 시스템"),
-                ))
+                ),
+              ),
+            ),
           ],
         ),
       ),
