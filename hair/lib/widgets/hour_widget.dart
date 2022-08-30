@@ -15,6 +15,7 @@ class day_list extends StatelessWidget {
     final AutoScrollController auto_controller = AutoScrollController(
       viewportBoundaryGetter: () =>
           Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+      initialScrollOffset: 1000,
     );
     return Container(
       height: 120,
@@ -58,7 +59,7 @@ class day_list extends StatelessWidget {
   }
 }
 
-class HourlyDetails extends StatelessWidget {
+class HourlyDetails extends GetView<DayListController> {
   int timestamp;
   int cardIndex;
   int index;
@@ -82,7 +83,7 @@ class HourlyDetails extends StatelessWidget {
         ),
         Container(
             child: Image(
-          image: AssetImage('assets/images/20220822.jpg'),
+          image: AssetImage('assets/images/${index}.jpg'),
           width: 60,
           height: 60,
         )),

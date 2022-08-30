@@ -9,8 +9,13 @@ class HairImageWidget extends GetView<DayListController> {
   Widget build(BuildContext context) {
     return Container(
       height: 400,
-}"),),
-
+      color: Colors.red,
+      child: Obx(
+        () => Image(
+          image:
+              AssetImage('assets/images/${controller.selectedDat.value}.jpg'),
+        ),
+      ),
     );
   }
 }
