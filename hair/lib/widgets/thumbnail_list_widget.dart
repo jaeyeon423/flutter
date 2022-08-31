@@ -46,6 +46,7 @@ class ThumbNailList extends StatelessWidget {
                 ),
                 child: ThumbnailDetail(
                   index: dayListController.selectedDat.value,
+                  cardIndex: index,
                 ),
               ),
             ),
@@ -58,10 +59,12 @@ class ThumbNailList extends StatelessWidget {
 
 class ThumbnailDetail extends GetView<DayListController> {
   int index;
+  int cardIndex;
 
   ThumbnailDetail({
     Key? key,
     required this.index,
+    required this.cardIndex,
   }) : super(key: key);
 
   @override
@@ -74,13 +77,13 @@ class ThumbnailDetail extends GetView<DayListController> {
         ),
         Container(
             child: Image(
-          image: AssetImage('assets/images/${index}.jpg'),
+          image: AssetImage('assets/images/${cardIndex}.jpg'),
           width: 60,
           height: 60,
         )),
         Container(
           margin: const EdgeInsets.only(top: 5),
-          child: Text('8/${index + 1}',
+          child: Text('8/${cardIndex + 1}',
               style: TextStyle(
                 color: Colors.black,
               )),
