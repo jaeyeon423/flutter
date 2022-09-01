@@ -22,13 +22,27 @@ class HomePage extends StatelessWidget {
             Container(
               height: 75,
               color: Colors.orange,
-              child: GestureDetector(
-                onTap: () {
-                  Get.to(() => BookingPage());
-                },
-                child: Center(
-                  child: Text("예약 시스템"),
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(() => BookingPage());
+                      },
+                      child: Center(
+                        child: Text("선택된 사진으로 예약 진행하기"),
+                      ),
+                    ),
+                    flex: 3,
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: Colors.blue,
+                      child: Center(child: Text("다른 사진 고르기")),
+                    ),
+                    flex: 1,
+                  )
+                ],
               ),
             ),
           ],

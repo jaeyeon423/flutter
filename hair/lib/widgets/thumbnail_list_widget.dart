@@ -36,12 +36,9 @@ class ThumbNailList extends StatelessWidget {
                 width: 80,
                 margin: const EdgeInsets.only(left: 20, right: 5),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
                   border: index == dayListController.selectedDat.value
-                      ? Border.all(
-                          color: Colors.black87,
-                          width: 2,
-                        )
+                      ? Border(
+                          bottom: BorderSide(color: Colors.black87, width: 2))
                       : null,
                 ),
                 child: ThumbnailDetail(
