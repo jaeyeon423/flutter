@@ -15,12 +15,14 @@ class DesignerList extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Container(
         // decoration: BoxDecoration(color: Colors.deepPurple),
         width: double.infinity,
         height: size.height,
         child: ListView.builder(
+          itemCount: 10,
           itemBuilder: (BuildContext context, int index) {
             return Container(
               padding: EdgeInsets.all(10),
@@ -63,7 +65,7 @@ class DesignerList extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    "부원장 소희 - 12년",
+                    "부원장 소희 - ${index}년",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text("아트라 광교점"),
