@@ -15,7 +15,9 @@ class LoginView extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return SignInScreen(
-              providerConfigs: [EmailProviderConfiguration()],
+              providerConfigs: [
+                EmailProviderConfiguration(),
+              ],
             );
           }
           return NavigationBarPage();

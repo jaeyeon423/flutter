@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hair_book/widget/designer_info_widget.dart';
 
@@ -26,7 +27,9 @@ class DesignerListView extends StatelessWidget {
                   prefixIcon: Icon(Icons.search),
                   suffixIcon: IconButton(
                     icon: Icon(Icons.clear),
-                    onPressed: () {},
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                    },
                   ),
                   hintText: '디자이너 찾기 (미용실)',
                   border: InputBorder.none,
