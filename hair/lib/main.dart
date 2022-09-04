@@ -6,9 +6,8 @@ import 'package:hair/view/navigation_bar_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  FirebaseApp app = await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
