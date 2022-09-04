@@ -1,4 +1,0 @@
-#Sun Jul 17 20:51:26 KST 2022
-base.0=/Users/jaeyeonkim/wc/flutter_study/get_bmi/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
