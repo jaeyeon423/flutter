@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:hair_book/navigator/navigation_bar_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:hair_book/view/login_view.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -22,7 +29,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/navigation_bar_page',
-          page: () => NavigationBarPage(),
+          page: () => LoginView(),
         ),
       ],
     );
