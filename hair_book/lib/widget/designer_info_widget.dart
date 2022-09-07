@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:hair_book/control/firebase_controller.dart';
 
 class DesignerInfoWidget extends StatefulWidget {
   const DesignerInfoWidget({
@@ -12,9 +14,9 @@ class DesignerInfoWidget extends StatefulWidget {
 }
 
 class _DesignerInfoWidgetState extends State<DesignerInfoWidget> {
+  FirebaseController ctr = Get.put(FirebaseController());
   CollectionReference product =
       FirebaseFirestore.instance.collection('designer_list');
-  CollectionReference user = FirebaseFirestore.instance.collection('user');
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

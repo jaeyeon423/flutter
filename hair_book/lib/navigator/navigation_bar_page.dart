@@ -36,7 +36,7 @@ class NavigationBarPage extends StatelessWidget {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.list_alt),
-              label: 'home',
+              label: 'list',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.book),
