@@ -17,6 +17,7 @@ class _DesignerInfoWidgetState extends State<DesignerInfoWidget> {
   FirebaseController ctr = Get.put(FirebaseController());
   CollectionReference product =
       FirebaseFirestore.instance.collection('designer_list');
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
