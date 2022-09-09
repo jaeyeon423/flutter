@@ -32,6 +32,7 @@ class FirebaseController extends GetxController {
           print('Document exists on the database${documentSnapshot['favor']}');
           List<dynamic> tmp_list = documentSnapshot['favor'];
           print(tmp_list);
+          favor_list = tmp_list.obs;
         }
       });
     }
