@@ -1,14 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 
 class FirebaseController extends GetxController {
   RxString? email;
-  RxList? favor_list;
+  RxList favor_list = [].obs;
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -24,11 +22,18 @@ class FirebaseController extends GetxController {
   }
 
   void readdata(RxString? cur_email) {
-    var documentSnapshot = FirebaseFirestore.instance
-        .collection("user")
-        .doc("$cur_email")
-        .collection('favor')
-        .snapshots();
-    print(documentSnapshot);
+    if (cur_email != null) {
+      FirebaseFirestore.instance
+          .collection('user')
+          .doc(cur_email.value)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          print('Document exists on the database${documentSnapshot['favor']}');
+          List<dynamic> tmp_list = documentSnapshot['favor'];
+          print(tmp_list);
+        }
+      });
+    }
   }
 }
