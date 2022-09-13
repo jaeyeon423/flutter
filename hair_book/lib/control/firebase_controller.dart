@@ -6,7 +6,7 @@ class FirebaseController extends GetxController {
   RxString? email;
   RxList favor_list = [].obs;
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -16,12 +16,12 @@ class FirebaseController extends GetxController {
       print(email);
 
       if (email != null) {
-        readdata(email);
+        favor_list = await readdata(email);
       }
     }
   }
 
-  void readdata(RxString? cur_email) {
+  Stream<RxList> readdata(RxString? cur_email) async* {
     if (cur_email != null) {
       FirebaseFirestore.instance
           .collection('user')
@@ -32,7 +32,8 @@ class FirebaseController extends GetxController {
           print('Document exists on the database${documentSnapshot['favor']}');
           List<dynamic> tmp_list = documentSnapshot['favor'];
           print(tmp_list);
-          favor_list = tmp_list.obs;
+          var f_list = tmp_list.obs;
+          return f_list;
         }
       });
     }
