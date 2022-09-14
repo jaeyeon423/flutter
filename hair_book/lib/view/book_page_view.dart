@@ -11,7 +11,17 @@ class BookPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("${firebaseController.email?.value}"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("${firebaseController.email?.value}"),
+            ElevatedButton(
+                onPressed: () {
+                  print("${firebaseController.favor_list}");
+                },
+                child: Text("print"))
+          ],
+        ),
       ),
     );
   }
