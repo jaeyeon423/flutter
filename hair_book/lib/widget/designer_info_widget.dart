@@ -39,6 +39,7 @@ class _DesignerInfoWidgetState extends State<DesignerInfoWidget> {
                 return ListView(
                   children: streamSnapshot.data!.docs
                       .map((DocumentSnapshot document) {
+                    print(document['index']);
                     if (ctr.favor_list.contains(document['index'])) {
                       return DesignerInfoDetail(
                         document: document,
