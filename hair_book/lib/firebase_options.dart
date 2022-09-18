@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '506411586069',
     projectId: 'hair-booking-922dc',
     storageBucket: 'hair-booking-922dc.appspot.com',
-    iosClientId: '506411586069-fg3k0d96vr6jktrrrhdggt3od8r8m7f6.apps.googleusercontent.com',
+    iosClientId:
+        '506411586069-fg3k0d96vr6jktrrrhdggt3od8r8m7f6.apps.googleusercontent.com',
     iosBundleId: 'com.example.hairBook',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '506411586069',
     projectId: 'hair-booking-922dc',
     storageBucket: 'hair-booking-922dc.appspot.com',
-    iosClientId: '506411586069-fg3k0d96vr6jktrrrhdggt3od8r8m7f6.apps.googleusercontent.com',
+    iosClientId:
+        '506411586069-fg3k0d96vr6jktrrrhdggt3od8r8m7f6.apps.googleusercontent.com',
     iosBundleId: 'com.example.hairBook',
   );
 }

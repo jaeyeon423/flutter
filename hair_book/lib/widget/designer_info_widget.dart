@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/instance_manager.dart';
+import 'package:get/get.dart';
 import 'package:hair_book/control/firebase_controller.dart';
 import 'package:hair_book/widget/designer_info_detail.dart';
 
@@ -36,18 +35,21 @@ class _DesignerInfoWidgetState extends State<DesignerInfoWidget> {
                 if (streamSnapshot.connectionState == ConnectionState.waiting) {
                   return Text("Loading");
                 }
-                return ListView(
-                  children: streamSnapshot.data!.docs
-                      .map((DocumentSnapshot document) {
-                    print(document['index']);
-                    if (ctr.favor_list.contains(document['index'])) {
-                      return DesignerInfoDetail(
-                        document: document,
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }).toList(),
+                return Obx(
+                  () => ListView(
+                    children: streamSnapshot.data!.docs
+                        .map((DocumentSnapshot document) {
+                      print(document['index']);
+                      if (ctr.favor_list.contains(document['index'])) {
+                        print(ctr.favor_list);
+                        return DesignerInfoDetail(
+                          document: document,
+                        );
+                      } else {
+                        return Container();
+                      }
+                    }).toList(),
+                  ),
                 );
               },
             ),
