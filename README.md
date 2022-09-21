@@ -6,3 +6,4 @@ hair booking app
 2. home 화면에서는 내가 등록한 디자이너의 리스트를 보여준다. \t
 3. designer list에는 모든 designer의 list를 보여준다. \n
 4. date:
+5. 직구대행
