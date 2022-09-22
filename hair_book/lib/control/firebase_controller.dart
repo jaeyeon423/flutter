@@ -14,6 +14,21 @@ class FirebaseController extends GetxController {
     super.onInit();
   }
 
+  //add user's favor list to firebase
+  void addFavor(int index) {
+    if (favor_list.contains(index)) {
+      favor_list.remove(index);
+    } else {
+      favor_list.add(index);
+    }
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(email!.value)
+        .collection('info')
+        .doc('favor')
+        .set({'favor_list': favor_list});
+  }
+
   // return Stream<List<int>> from firebase
   Stream<List<int>> get stream {
     return FirebaseFirestore.instance

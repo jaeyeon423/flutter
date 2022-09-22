@@ -38,7 +38,9 @@ class DesignerListView extends StatelessWidget {
             ),
           ),
         ),
-        body: DesignerInfoWidget(),
+        body: DesignerInfoWidget(
+          cur_page: PAGE.LIST,
+        ),
       ),
     );
   }

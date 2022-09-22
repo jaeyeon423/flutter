@@ -4,17 +4,15 @@ import 'package:get/get.dart';
 import 'package:hair_book/control/firebase_controller.dart';
 import 'package:hair_book/widget/designer_info_detail.dart';
 
-class DesignerInfoWidget extends StatefulWidget {
-  const DesignerInfoWidget({
-    Key? key,
-  }) : super(key: key);
+enum PAGE { LIST, BOOK }
 
-  @override
-  State<DesignerInfoWidget> createState() => _DesignerInfoWidgetState();
-}
+class DesignerInfoWidget extends StatelessWidget {
+  DesignerInfoWidget({Key? key, required this.cur_page}) : super(key: key);
 
-class _DesignerInfoWidgetState extends State<DesignerInfoWidget> {
+  PAGE cur_page;
+
   FirebaseController ctr = Get.put(FirebaseController());
+
   CollectionReference product =
       FirebaseFirestore.instance.collection('designer_list');
 
@@ -40,10 +38,13 @@ class _DesignerInfoWidgetState extends State<DesignerInfoWidget> {
                     children: streamSnapshot.data!.docs
                         .map((DocumentSnapshot document) {
                       print(document['index']);
-                      if (ctr.favor_list.contains(document['index'])) {
+                      if (ctr.favor_list.contains(document['index']) ||
+                          cur_page == PAGE.LIST) {
                         print(ctr.favor_list);
                         return DesignerInfoDetail(
                           document: document,
+                          favor: ctr.favor_list.contains(document['index']),
+                          index: document['index'],
                         );
                       } else {
                         return Container();

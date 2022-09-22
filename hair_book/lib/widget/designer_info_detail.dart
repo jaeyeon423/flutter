@@ -1,13 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hair_book/control/firebase_controller.dart';
 
 class DesignerInfoDetail extends StatelessWidget {
-  DesignerInfoDetail({super.key, required this.document});
+  DesignerInfoDetail(
+      {super.key,
+      required this.document,
+      required this.favor,
+      required this.index});
 
   DocumentSnapshot<Object?> document;
+  bool favor;
+  int index;
 
   @override
   Widget build(BuildContext context) {
+    FirebaseController controller = Get.put(FirebaseController());
     return Container(
       margin: EdgeInsets.symmetric(vertical: 2, horizontal: 2),
       width: MediaQuery.of(context).size.width,
@@ -100,11 +109,12 @@ class DesignerInfoDetail extends StatelessWidget {
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    // print(index);
+                    print(index);
+                    controller.addFavor(index);
                   },
                   child: Center(
                     child: Icon(
-                      Icons.star_rate,
+                      favor ? Icons.star_rate : Icons.star_border,
                     ),
                   ),
                 ),
