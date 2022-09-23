@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hair_book/control/firebase_controller.dart';
+import 'package:hair_book/control/navigation_controller.dart';
+import 'package:hair_book/view/my_page_view.dart';
 import 'package:hair_book/widget/designer_info_detail.dart';
 
 enum PAGE { LIST, BOOK }
@@ -15,6 +17,9 @@ class DesignerInfoWidget extends StatelessWidget {
 
   CollectionReference product =
       FirebaseFirestore.instance.collection('designer_list');
+
+  BottomNavigationController bottomNavigationController =
+      Get.put(BottomNavigationController());
 
   @override
   Widget build(BuildContext context) {
@@ -34,23 +39,32 @@ class DesignerInfoWidget extends StatelessWidget {
                   return Text("Loading");
                 }
                 return Obx(
-                  () => ListView(
-                    children: streamSnapshot.data!.docs
-                        .map((DocumentSnapshot document) {
-                      print(document['index']);
-                      if (ctr.favor_list.contains(document['index']) ||
-                          cur_page == PAGE.LIST) {
-                        print(ctr.favor_list);
-                        return DesignerInfoDetail(
-                          document: document,
-                          favor: ctr.favor_list.contains(document['index']),
-                          index: document['index'],
-                        );
-                      } else {
-                        return Container();
-                      }
-                    }).toList(),
-                  ),
+                  () => (ctr.favor_list.length == 0 && cur_page == PAGE.BOOK)
+                      ? Center(
+                          child: ElevatedButton(
+                              child: Text("Add Designer"),
+                              onPressed: () {
+                                bottomNavigationController.changeIndex(0);
+                              }),
+                        )
+                      : ListView(
+                          children: streamSnapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            print(document['index']);
+                            if (ctr.favor_list.contains(document['index']) ||
+                                cur_page == PAGE.LIST) {
+                              print(ctr.favor_list);
+                              return DesignerInfoDetail(
+                                document: document,
+                                favor:
+                                    ctr.favor_list.contains(document['index']),
+                                index: document['index'],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }).toList(),
+                        ),
                 );
               },
             ),

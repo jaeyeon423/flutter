@@ -20,6 +20,11 @@ class _MyPageViewState extends State<MyPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center());
+    return Scaffold(
+      body: WebView(
+        initialUrl:
+            'https://m.place.naver.com/hairshop/13502147/stylist/3782681?entry=plt',
+      ),
+    );
   }
 }
