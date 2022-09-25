@@ -9,8 +9,6 @@ class FirebaseController extends GetxController {
   void onInit() async {
     email = FirebaseAuth.instance.currentUser!.email?.obs;
     favor_list.bindStream(stream);
-    print("jaeyeon");
-    print(favor_list);
     super.onInit();
   }
 
@@ -22,12 +20,13 @@ class FirebaseController extends GetxController {
       favor_list.add(index);
       favor_list.sort();
     }
+    print(favor_list);
     FirebaseFirestore.instance
         .collection('user')
         .doc(email!.value)
         .collection('info')
         .doc('favor')
-        .set({'favor_list': favor_list});
+        .set({'list': favor_list});
   }
 
   // return Stream<List<int>> from firebase
@@ -38,10 +37,8 @@ class FirebaseController extends GetxController {
         .collection('info')
         .snapshots()
         .map((event) {
-      print("=======");
-      print(event.docs[0].data()['favor']);
-      print("=======");
-      return event.docs[0].data()['favor'].cast<int>() as List<int>;
+      // print(event.docs[0].data()['list']);
+      return event.docs[0].data()['list'].cast<int>() as List<int>;
     });
   }
 }
