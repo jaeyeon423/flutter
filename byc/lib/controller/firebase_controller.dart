@@ -20,6 +20,7 @@ class FirebaseController extends GetxController {
       favor_list.remove(index);
     } else {
       favor_list.add(index);
+      favor_list.sort();
     }
     FirebaseFirestore.instance
         .collection('user')
