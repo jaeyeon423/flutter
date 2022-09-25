@@ -1,3 +1,4 @@
+import 'package:byc/navigatior/navigation_bar_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
@@ -9,15 +10,15 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+        builder: (context, snapshot){
+          if(!snapshot.hasData){
             return SignInScreen(
               providerConfigs: [
                 EmailProviderConfiguration(),
               ],
             );
           }
-          return Container();
+          return NavigationBarPage();
         },
         stream: FirebaseAuth.instance.authStateChanges(),
       ),
