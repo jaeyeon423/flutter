@@ -23,12 +23,12 @@ class _DesignerBookingWebviewPage extends State<DesignerBookingWebviewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("DesignerBookingWebviewPage"),
+        title: Text("BookingWebviewPage"),
       ),
       body: Container(
           child: WebView(
             initialUrl:
-            'https://m.place.naver.com/hairshop/13502147/stylist/3782681?entry=plt',
+            'https://m.place.naver.com/restaurant/1961769435/booking?theme=place&entry=pll',
             javascriptMode: JavascriptMode.unrestricted,
           )),
     );
