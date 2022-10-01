@@ -11,6 +11,8 @@ class InfoRepository {
           queryParameters: {
             'ServiceKey':
                 '1o6bFW6NRZ8yhryfbdSI3TqL0ck14KZjKYGu16xoXLO6mLlD9yY%2BOxKhgCyZzn9yoD6KnMB9tATJ4Wquc0g%2BjA%3D%3D',
+            'dates': '20220822',
+            'pageNo': '2',
           }),
     );
   }
@@ -22,8 +24,9 @@ class InfoRepository {
     final document = XmlDocument.parse(response.data);
     final results = document.findAllElements('item');
     var tmp = results.map<InfoModel>((e) => InfoModel.fromXml(e)).toList();
+    print("");
     for (InfoModel i in tmp) {
-      print(i.bidtime);
+      print(i);
     }
     if (results.isNotEmpty) {
       return InfoModel.fromXml(results.first);
