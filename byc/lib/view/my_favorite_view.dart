@@ -1,4 +1,5 @@
 import 'package:byc/controller/bottom_navigation_bar_controller.dart';
+import 'package:byc/controller/database_controller.dart';
 import 'package:byc/controller/firebase_controller.dart';
 import 'package:byc/model/designer_info_model.dart';
 import 'package:byc/widget/disigner_summary_widget.dart';
@@ -16,6 +17,8 @@ class MyFavoriteView extends GetView<FirebaseController> {
 
   BottomNavigationBarController bottomNavigationController =
       Get.put(BottomNavigationBarController());
+
+  DatabaseController db_ctr = Get.put(DatabaseController());
 
   @override
   Widget build(BuildContext context) {
