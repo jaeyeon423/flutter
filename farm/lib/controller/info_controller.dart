@@ -34,7 +34,8 @@ class InfoController extends GetxController {
     var response = await _infoRepository.fetchInfo();
 
     if (response != null) {
-      info(response);
+      info(response.first);
+      info_list = response.obs;
     }
   }
 }

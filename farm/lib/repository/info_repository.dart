@@ -17,7 +17,7 @@ class InfoRepository {
     );
   }
 
-  Future<InfoModel> fetchInfo() async {
+  Future<List<InfoModel>> fetchInfo() async {
     var response = await _dio.get(
       '/RltmAucBrknewsService/getWltRltmAucBrknewsList',
     );
@@ -26,10 +26,10 @@ class InfoRepository {
     var tmp = results.map<InfoModel>((e) => InfoModel.fromXml(e)).toList();
     print("");
     for (InfoModel i in tmp) {
-      print(i);
+      print(i.price);
     }
     if (results.isNotEmpty) {
-      return InfoModel.fromXml(results.first);
+      return tmp;
     } else {
       return Future.value(null);
     }

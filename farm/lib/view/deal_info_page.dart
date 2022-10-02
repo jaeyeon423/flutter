@@ -12,15 +12,24 @@ class DealInfoPage extends GetView<InfoController> {
         title: Text('DealInfoPage'),
       ),
       body: Container(
-        child: Obx(() {
-          var info = controller.info.value;
-          return Column(
-            children: [
-              Text("data : ${info.bidtime}"),
-              Text("name : ${info.chulagtnm}"),
-            ],
-          );
-        }),
+        child: Obx(
+          () {
+            var info = controller.info.value;
+            var infoList = controller.info_list.value;
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                return Container(
+                  child: Column(
+                    children: [
+                      Text(infoList[index].price),
+                    ],
+                  ),
+                );
+              },
+              itemCount: 4,
+            );
+          },
+        ),
       ),
     );
   }

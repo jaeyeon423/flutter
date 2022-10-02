@@ -22,7 +22,7 @@ class DesignerSummaryWidget extends StatelessWidget {
     bool favor = controller.favor_list.contains(index!);
     return GestureDetector(
       onTap: () {
-        // Get.to(() => DesignerDetailView(designerInfoModel: designerInfoModel));
+        Get.to(() => DesignerDetailView(designerInfoModel: designerInfoModel));
         print(index);
       },
       child: Container(
