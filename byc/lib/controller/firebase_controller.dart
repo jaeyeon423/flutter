@@ -37,7 +37,6 @@ class FirebaseController extends GetxController {
         .collection('info')
         .snapshots()
         .map((event) {
-      // print(event.docs[0].data()['list']);
       return event.docs[0].data()['list'].cast<int>() as List<int>;
     });
   }

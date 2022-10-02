@@ -1,4 +1,5 @@
 import 'package:byc/firebase_options.dart';
+import 'package:byc/navigatior/navigation_bar_page.dart';
 import 'package:byc/view/designer_detail_view.dart';
 import 'package:byc/view/login_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,9 +20,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/Login_View',
+      initialRoute: '/navigation_bar_page',
       getPages: [
-        GetPage(name: '/Login_View', page: ()=> LoginView()),
+        GetPage(name: '/navigation_bar_page', page: ()=> NavigationBarPage()),
       ],
     );
   }
