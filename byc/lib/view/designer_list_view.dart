@@ -1,5 +1,4 @@
 import 'package:byc/controller/bottom_navigation_bar_controller.dart';
-import 'package:byc/controller/firebase_controller.dart';
 import 'package:byc/model/designer_info_model.dart';
 import 'package:byc/widget/disigner_summary_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,8 +7,6 @@ import 'package:get/get.dart';
 
 class DesignerListView extends StatelessWidget {
   DesignerListView({Key? key}) : super(key: key);
-
-  FirebaseController ctr = Get.put(FirebaseController());
 
   CollectionReference product =
       FirebaseFirestore.instance.collection('designer_list');

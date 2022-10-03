@@ -1,16 +1,13 @@
 import 'package:byc/controller/bottom_navigation_bar_controller.dart';
 import 'package:byc/controller/database_controller.dart';
-import 'package:byc/controller/firebase_controller.dart';
 import 'package:byc/model/designer_info_model.dart';
 import 'package:byc/widget/disigner_summary_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MyFavoriteView extends GetView<FirebaseController> {
+class MyFavoriteView extends GetView<DatabaseController> {
   MyFavoriteView({Key? key}) : super(key: key);
-
-  FirebaseController ctr = Get.put(FirebaseController());
 
   CollectionReference product =
       FirebaseFirestore.instance.collection('designer_list');
@@ -22,10 +19,6 @@ class MyFavoriteView extends GetView<FirebaseController> {
 
   @override
   Widget build(BuildContext context) {
-    String? mail = "";
-    if (controller.email?.value != null) {
-      mail = controller.email?.value;
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text("MyFavoriteView"),
@@ -56,8 +49,8 @@ class MyFavoriteView extends GetView<FirebaseController> {
                     : ListView(
                         children: streamSnapshot.data!.docs
                             .map((DocumentSnapshot document) {
-                          if (controller.favor_list
-                              .contains(document['index'])) {
+                          if (controller.favor_list.contains(document['index'])) {
+                            print("jaeyeon");
                             DesignerInfoModel designerInfoModel =
                                 DesignerInfoModel(
                               index: document['index'],

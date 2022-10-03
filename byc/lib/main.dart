@@ -1,8 +1,6 @@
 import 'package:byc/controller/database_controller.dart';
 import 'package:byc/firebase_options.dart';
 import 'package:byc/navigatior/navigation_bar_page.dart';
-import 'package:byc/view/designer_detail_view.dart';
-import 'package:byc/view/login_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
