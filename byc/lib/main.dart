@@ -1,3 +1,4 @@
+import 'package:byc/controller/database_controller.dart';
 import 'package:byc/firebase_options.dart';
 import 'package:byc/navigatior/navigation_bar_page.dart';
 import 'package:byc/view/designer_detail_view.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialRoute: '/navigation_bar_page',
+      initialBinding: BindingsBuilder(()=>Get.put(DatabaseController())),
       getPages: [
         GetPage(name: '/navigation_bar_page', page: ()=> NavigationBarPage()),
       ],
