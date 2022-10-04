@@ -21,6 +21,7 @@ dependencies:
   webview_flutter: ^3.0.4
   sqflite: ^2.1.0
   path: ^1.8.2
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:

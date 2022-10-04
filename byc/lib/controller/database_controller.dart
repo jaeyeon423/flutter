@@ -27,6 +27,7 @@ class DatabaseController extends GetxController {
       version: 1,
     );
 
+    insertFavor(Favorite(id: 1, name: "dong"));
     print(updateFavor());
     print(favor_list);
   }

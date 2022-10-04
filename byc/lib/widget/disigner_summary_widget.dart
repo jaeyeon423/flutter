@@ -1,5 +1,6 @@
 import 'package:byc/model/designer_info_model.dart';
 import 'package:byc/view/designer_detail_view.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +12,6 @@ class DesignerSummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     int? index = designerInfoModel.index;
     String? name = designerInfoModel.name;
     String? shop = designerInfoModel.shop;
@@ -22,20 +22,25 @@ class DesignerSummaryWidget extends StatelessWidget {
         Get.to(() => DesignerDetailView(designerInfoModel: designerInfoModel));
         print(index);
       },
-      child: Container(
-        padding: EdgeInsets.all(10),
-        height: 300,
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(width: 3, color: Colors.black26),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("${name}", style: TextStyle(fontSize: 30),)
-          ],
-        ),
+      child: ArticleWidget(),
+    );
+  }
+}
+
+class ArticleWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ExpandablePanel(
+      header: Text('article.title'),
+      collapsed: Text(
+        'article.body',
+        softWrap: true,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      expanded: Text(
+        'article.body',
+        softWrap: true,
       ),
     );
   }
