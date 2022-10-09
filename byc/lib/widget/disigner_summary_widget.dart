@@ -72,7 +72,7 @@ class DesignerSummaryWidget extends GetView<DatabaseController> {
             ),
             IconButton(
               onPressed: () {
-                if (controller.favor_list.contains(index)) {
+                if (!controller.favor_list.contains(index)) {
                   controller.insertFavor(Favorite(id: index!, name: name));
                   controller.updateFavor();
                 } else {

@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DesignerDetailView extends StatelessWidget {
-  DesignerDetailView({Key? key, required this.designerInfoModel}) : super(key: key);
+  DesignerDetailView({Key? key, required this.designerInfoModel})
+      : super(key: key);
 
   DesignerInfoModel designerInfoModel;
 
@@ -13,15 +14,24 @@ class DesignerDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("DesignerDetailView"),
+        title: Text(
+          "Designer Detail",
+          style: TextStyle(color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0.0,
       ),
       body: Center(
         child: Column(
           children: [
-            Text("${designerInfoModel.name} \n${designerInfoModel.year} \n${designerInfoModel.shop} \n${designerInfoModel.index} \n "),
-            ElevatedButton(onPressed: (){
-              Get.to(()=> DesignerInfoWebviewPage());
-            }, child: Text("예약하기")),
+            Text(
+                "${designerInfoModel.name} \n${designerInfoModel.year} \n${designerInfoModel.shop} \n${designerInfoModel.index} \n "),
+            ElevatedButton(
+                onPressed: () {
+                  Get.to(() => DesignerInfoWebviewPage());
+                },
+                child: Text("예약하기")),
           ],
         ),
       ),

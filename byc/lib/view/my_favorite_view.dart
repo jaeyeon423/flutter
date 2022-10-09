@@ -21,7 +21,13 @@ class MyFavoriteView extends GetView<DatabaseController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("MyFavoriteView"),
+        title: Text(
+          "My Favorite",
+          style: TextStyle(color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0.0,
       ),
       body: SingleChildScrollView(
         child: Container(
