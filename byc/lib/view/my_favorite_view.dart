@@ -49,8 +49,8 @@ class MyFavoriteView extends GetView<DatabaseController> {
                     : ListView(
                         children: streamSnapshot.data!.docs
                             .map((DocumentSnapshot document) {
-                          if (controller.favor_list.contains(document['index'])) {
-                            print("jaeyeon");
+                          if (controller.favor_list
+                              .contains(document['index'])) {
                             DesignerInfoModel designerInfoModel =
                                 DesignerInfoModel(
                               index: document['index'],

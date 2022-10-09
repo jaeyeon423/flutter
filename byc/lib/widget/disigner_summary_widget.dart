@@ -1,10 +1,11 @@
+import 'package:byc/controller/database_controller.dart';
 import 'package:byc/model/designer_info_model.dart';
 import 'package:byc/view/designer_detail_view.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class DesignerSummaryWidget extends StatelessWidget {
+class DesignerSummaryWidget extends GetView<DatabaseController> {
   DesignerSummaryWidget({Key? key, required this.designerInfoModel})
       : super(key: key);
 
@@ -17,11 +18,12 @@ class DesignerSummaryWidget extends StatelessWidget {
     String? shop = designerInfoModel.shop;
     int? year = designerInfoModel.year;
 
+    DatabaseController databaseController = Get.put(DatabaseController());
+
     return GestureDetector(
       onTap: () {
         Get.to(() => DesignerDetailView(designerInfoModel: designerInfoModel),
             transition: Transition.rightToLeft);
-        print(index);
       },
       child: Container(
         margin: EdgeInsets.all(10),
@@ -58,18 +60,33 @@ class DesignerSummaryWidget extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.yellow,
-                          size: 16,
-                        ),
                         Text(
-                          " 5.0 (1,000) | 10:00 ~ 20:00 | 커트 33,000~",
+                          "10:00 ~ 20:00  |  커트 33,000~",
                           style: TextStyle(fontSize: 13, color: Colors.black87),
                         ),
                       ],
                     ),
                   ],
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                if (controller.favor_list.contains(index)) {
+                  controller.insertFavor(Favorite(id: index!, name: name));
+                  controller.updateFavor();
+                } else {
+                  controller.deleteFavor(index!);
+                  controller.updateFavor();
+                }
+              },
+              icon: Obx(
+                () => Icon(
+                  controller.favor_list.contains(index)
+                      ? Icons.star
+                      : Icons.star_border,
+                  size: 30,
+                  color: Colors.yellow,
                 ),
               ),
             ),

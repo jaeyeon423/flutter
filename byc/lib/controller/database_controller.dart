@@ -26,10 +26,7 @@ class DatabaseController extends GetxController {
       // 수행하기 위한 경로를 제공합니다.
       version: 1,
     );
-
     insertFavor(Favorite(id: 1, name: "dong"));
-    print(updateFavor());
-    print(favor_list);
   }
 
   Future<void> insertFavor(Favorite favor) async {
@@ -48,6 +45,9 @@ class DatabaseController extends GetxController {
       print(maps[i]['id']);
       favor_list.add(maps[i]['id']);
       update(favor_list);
+      print("----");
+      print(favor_list);
+
       return Favorite(
         id: maps[i]['id'],
         name: maps[i]['name'],
