@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -19,10 +19,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: '/navigation_bar_page',
-      initialBinding: BindingsBuilder(()=>Get.put(DatabaseController())),
+      initialBinding: BindingsBuilder(() => Get.put(DatabaseController())),
       getPages: [
-        GetPage(name: '/navigation_bar_page', page: ()=> NavigationBarPage()),
+        GetPage(name: '/navigation_bar_page', page: () => NavigationBarPage()),
       ],
     );
   }

@@ -18,7 +18,13 @@ class DesignerListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("DesignerListView"),
+        title: Text(
+          "DesignerListView",
+          style: TextStyle(color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0.0,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -36,14 +42,14 @@ class DesignerListView extends StatelessWidget {
               return ListView(
                 children:
                     streamSnapshot.data!.docs.map((DocumentSnapshot document) {
-                      DesignerInfoModel designerInfoModel =
-                      DesignerInfoModel(
-                        index: document['index'],
-                        name: document['name'],
-                        shop: document['shop'],
-                        year: document['year'],
-                      );
-                  return DesignerSummaryWidget(designerInfoModel: designerInfoModel);
+                  DesignerInfoModel designerInfoModel = DesignerInfoModel(
+                    index: document['index'],
+                    name: document['name'],
+                    shop: document['shop'],
+                    year: document['year'],
+                  );
+                  return DesignerSummaryWidget(
+                      designerInfoModel: designerInfoModel);
                 }).toList(),
               );
             },
