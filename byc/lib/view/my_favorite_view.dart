@@ -46,7 +46,10 @@ class MyFavoriteView extends GetView<DatabaseController> {
                 () => controller.favor_list.length == 0
                     ? Center(
                         child: ElevatedButton(
-                          child: Text("Add Designer"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                          ),
+                          child: Text("디자이너 찾으러 가기"),
                           onPressed: () {
                             bottomNavigationController.changeIndex(0);
                           },
