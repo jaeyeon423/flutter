@@ -19,7 +19,7 @@ class DesignerListView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "DesignerListView",
+          "Designer List",
           style: TextStyle(color: Colors.black87),
         ),
         backgroundColor: Colors.white,

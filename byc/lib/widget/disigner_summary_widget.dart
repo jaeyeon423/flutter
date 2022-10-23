@@ -1,6 +1,7 @@
 import 'package:byc/controller/database_controller.dart';
 import 'package:byc/model/designer_info_model.dart';
 import 'package:byc/view/designer_detail_view.dart';
+import 'package:byc/widget/favorite_button_widget.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -70,26 +71,7 @@ class DesignerSummaryWidget extends GetView<DatabaseController> {
                 ),
               ),
             ),
-            IconButton(
-              onPressed: () {
-                if (controller.favor_list.contains(index)) {
-                  controller.insertFavor(Favorite(id: index!, name: name));
-                  controller.updateFavor();
-                } else {
-                  controller.deleteFavor(index!);
-                  controller.updateFavor();
-                }
-              },
-              icon: Obx(
-                () => Icon(
-                  controller.favor_list.contains(index)
-                      ? Icons.star
-                      : Icons.star_border,
-                  size: 30,
-                  color: Colors.yellow,
-                ),
-              ),
-            ),
+            FavoriteButtonn(index: index!, name: name)
           ],
         ),
       ),

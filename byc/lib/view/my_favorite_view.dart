@@ -21,7 +21,13 @@ class MyFavoriteView extends GetView<DatabaseController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("MyFavoriteView"),
+        title: Text(
+          "My Favorite",
+          style: TextStyle(color: Colors.black87),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0.0,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -40,7 +46,10 @@ class MyFavoriteView extends GetView<DatabaseController> {
                 () => controller.favor_list.length == 0
                     ? Center(
                         child: ElevatedButton(
-                          child: Text("Add Designer"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                          ),
+                          child: Text("디자이너 찾으러 가기"),
                           onPressed: () {
                             bottomNavigationController.changeIndex(0);
                           },
