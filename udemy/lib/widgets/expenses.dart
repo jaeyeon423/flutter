@@ -1,7 +1,8 @@
+import 'package:course1_roll_dice/widgets/new_expense.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
-import 'expenses_list.dart';
+import 'expenses_list/expenses_list.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _ExpensesState extends State<Expenses> {
   ];
 
   void _openAddExpenseOverlay() {
-    showModalBottomSheet(context: context, builder: (ctx){return Text('Modal botoom sheet');});
+    showModalBottomSheet(context: context, builder: (ctx)=> const NewExpense());
   }
 
   @override

@@ -1,7 +1,7 @@
-import 'package:course1_roll_dice/widgets/expense_item.dart';
+import 'package:course1_roll_dice/widgets/expenses_list/expense_item.dart';
 import 'package:flutter/material.dart';
 
-import '../models/expense.dart';
+import '../../models/expense.dart';
 
 class ExpensesList extends StatelessWidget {
   const ExpensesList({Key? key, required this.expense}) : super(key: key);
