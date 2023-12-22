@@ -1,4 +1,4 @@
-import 'package:course1_roll_dice/expenses.dart';
+import 'package:course1_roll_dice/widgets/expenses.dart';
 import 'package:flutter/material.dart';
 
 void main() {

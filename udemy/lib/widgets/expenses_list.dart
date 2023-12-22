@@ -1,6 +1,7 @@
+import 'package:course1_roll_dice/widgets/expense_item.dart';
 import 'package:flutter/material.dart';
 
-import 'models/expense.dart';
+import '../models/expense.dart';
 
 class ExpensesList extends StatelessWidget {
   const ExpensesList({Key? key, required this.expense}) : super(key: key);
@@ -11,7 +12,7 @@ class ExpensesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: expense.length,
-      itemBuilder: (ctx, index) => Text(expense[index].title),
+      itemBuilder: (ctx, index) => ExpenseItem(expense: expense[index]),
     );
   }
 }
