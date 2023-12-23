@@ -5,7 +5,9 @@ import 'package:course1_roll_dice/models/expense.dart';
 final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({Key? key}) : super(key: key);
+  const NewExpense({Key? key, required this.onAddExpense}) : super(key: key);
+
+  final void Function(Expense expense) onAddExpense;
 
   @override
   State<NewExpense> createState() => _NewExpenseState();
@@ -25,6 +27,39 @@ class _NewExpenseState extends State<NewExpense> {
     setState(() {
       _selectedDate = pickedDate;
     });
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsInvalid = (enteredAmount == null) || (enteredAmount < 0);
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Invalid input'),
+          content: const Text('Plase make sure a valid input'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: Text('Okay')),
+          ],
+        ),
+      );
+      return;
+    }
+    widget.onAddExpense(
+      Expense(
+        title: _titleController.text,
+        amount: enteredAmount,
+        date: _selectedDate!,
+        category: _selectedCategory,
+      ),
+    );
+    Navigator.pop(context);
   }
 
   @override
@@ -72,7 +107,9 @@ class _NewExpenseState extends State<NewExpense> {
               ),
             ],
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           Row(
             children: [
               DropdownButton(
@@ -87,13 +124,12 @@ class _NewExpenseState extends State<NewExpense> {
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      if(value == null) {
+                      if (value == null) {
                         return;
-                      }else{
+                      } else {
                         _selectedCategory = value;
                       }
                     });
-
                   }),
               const Spacer(),
               TextButton(
@@ -102,7 +138,8 @@ class _NewExpenseState extends State<NewExpense> {
                   },
                   child: const Text('cancel')),
               ElevatedButton(
-                  onPressed: () {}, child: const Text('save Expense'))
+                  onPressed: _submitExpenseData,
+                  child: const Text('save Expense'))
             ],
           )
         ],
