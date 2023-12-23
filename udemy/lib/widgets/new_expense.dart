@@ -1,5 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:course1_roll_dice/models/expense.dart';
+
+final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
   const NewExpense({Key? key}) : super(key: key);
@@ -11,11 +14,17 @@ class NewExpense extends StatefulWidget {
 class _NewExpenseState extends State<NewExpense> {
   var _titleController = TextEditingController();
   var _amountController = TextEditingController();
+  DateTime? _selectedDate;
+  Category _selectedCategory = Category.leisure;
 
-  void _presentDatePicker(){
+  void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
-    showDatePicker(context: context, firstDate: firstDate, lastDate: now);
+    final pickedDate = await showDatePicker(
+        context: context, firstDate: firstDate, lastDate: now);
+    setState(() {
+      _selectedDate = pickedDate;
+    });
   }
 
   @override
@@ -52,15 +61,41 @@ class _NewExpenseState extends State<NewExpense> {
               Expanded(
                 child: Row(
                   children: [
-                    const Text('Selected Date'),
-                    IconButton(onPressed: _presentDatePicker, icon: Icon(Icons.calendar_month))
+                    Text(_selectedDate == null
+                        ? "no date selected"
+                        : formatter.format(_selectedDate!)),
+                    IconButton(
+                        onPressed: _presentDatePicker,
+                        icon: Icon(Icons.calendar_month))
                   ],
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 20,),
           Row(
             children: [
+              DropdownButton(
+                  value: _selectedCategory,
+                  items: Category.values
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category.name.toString()),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      if(value == null) {
+                        return;
+                      }else{
+                        _selectedCategory = value;
+                      }
+                    });
+
+                  }),
+              const Spacer(),
               TextButton(
                   onPressed: () {
                     Navigator.pop(context);
