@@ -40,9 +40,11 @@ class _NewItemState extends State<NewItem> {
         ),
       );
 
+      final Map<String, dynamic> resData = json.decode(response.body);
+
       print(response.body);
       print(response.statusCode);
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(GroceryItem(id: resData['name'], name: _enteredName, quantity: _enteredQuantity, category: _selectedCategory!));
     }
   }
 
