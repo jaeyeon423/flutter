@@ -22,14 +22,14 @@ class _NewItemState extends State<NewItem> {
   var _selectedCategory = categories[Categories.vegetables];
   var _isSending = false;
 
-  void _saveItem() async{
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       setState(() {
         _isSending = true;
       });
-      final url = Uri.https(
-          'flutter-prep-b9c1c-default-rtdb.firebaseio.com', 'shopping-list.json');
+      final url = Uri.https('flutter-prep-b9c1c-default-rtdb.firebaseio.com',
+          'shopping-list.json');
       final response = await http.post(
         url,
         headers: {
@@ -48,7 +48,11 @@ class _NewItemState extends State<NewItem> {
 
       print(response.body);
       print(response.statusCode);
-      Navigator.of(context).pop(GroceryItem(id: resData['name'], name: _enteredName, quantity: _enteredQuantity, category: _selectedCategory!));
+      Navigator.of(context).pop(GroceryItem(
+          id: resData['name'],
+          name: _enteredName,
+          quantity: _enteredQuantity,
+          category: _selectedCategory!));
     }
   }
 
@@ -143,18 +147,26 @@ class _NewItemState extends State<NewItem> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: _isSending ? null : () {
-                        _formKey.currentState!.reset();
-                      },
-                      child: Text('Reset!')),
-                  ElevatedButton(onPressed: _isSending ? null : _saveItem, child: _isSending ? CircularProgressIndicator() : Text('Add Item'))
+                    onPressed: _isSending
+                        ? null
+                        : () {
+                            _formKey.currentState!.reset();
+                          },
+                    child: const Text('Reset!'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _isSending ? null : _saveItem,
+                    child: _isSending
+                        ? const CircularProgressIndicator()
+                        : const Text('Add Item'),
+                  ),
                 ],
               ),
             ],
