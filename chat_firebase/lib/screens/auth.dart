@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+final _firebase = FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -13,13 +16,38 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredEmail = '';
   var _enteredPassword = '';
 
-  void _submit() {
+  void _submit() async {
     final isValid = _formKey.currentState!.validate();
 
-    if(isValid) {
+    if (!isValid) {
+      return;
+    }
+
+    if (isValid) {
       _formKey.currentState!.save();
       print(_enteredEmail);
       print(_enteredPassword);
+    }
+
+    _formKey.currentState!.save();
+
+    try {
+      if (_isLogin) {
+        final userCredentials = await _firebase.signInWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
+      } else {
+        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.hashCode == 'email-already-in-use') {}
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? ' Authentication failed')));
     }
   }
 
@@ -52,13 +80,15 @@ class _AuthScreenState extends State<AuthScreen> {
                             keyboardType: TextInputType.emailAddress,
                             autocorrect: false,
                             textCapitalization: TextCapitalization.none,
-                            validator: (value){
-                              if(value == null || value.trim().isEmpty || !value.contains('@')){
+                            validator: (value) {
+                              if (value == null ||
+                                  value.trim().isEmpty ||
+                                  !value.contains('@')) {
                                 return 'Please enter a valid email address.';
                               }
                               return null;
                             },
-                            onSaved: (value){
+                            onSaved: (value) {
                               _enteredEmail = value!;
                             },
                           ),
@@ -66,13 +96,13 @@ class _AuthScreenState extends State<AuthScreen> {
                             decoration:
                                 const InputDecoration(labelText: 'Password'),
                             obscureText: true,
-                            validator: (value){
-                              if(value == null || value.trim().length < 6){
+                            validator: (value) {
+                              if (value == null || value.trim().length < 6) {
                                 return 'Password must be at least 6 characters long.';
                               }
                               return null;
                             },
-                            onSaved: (value){
+                            onSaved: (value) {
                               _enteredPassword = value!;
                             },
                           ),

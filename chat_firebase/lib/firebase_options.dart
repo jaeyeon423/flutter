@@ -53,11 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDvDIeesKx-U7SWRrimg1vgsWrRmjpLxSw',
-    appId: '1:983333823321:android:e9530c6ee7acf58189e248',
-    messagingSenderId: '983333823321',
-    projectId: 'chat-app-b0a5b',
-    databaseURL: 'https://chat-app-b0a5b-default-rtdb.firebaseio.com',
-    storageBucket: 'chat-app-b0a5b.appspot.com',
+    apiKey: 'AIzaSyDsoInn0gOAcBcbEjwE_75UrxhuRepLLSc',
+    appId: '1:776183779701:android:b2e9369cf4e821e9da033c',
+    messagingSenderId: '776183779701',
+    projectId: 'flutter-chat-app-8c5c2',
+    storageBucket: 'flutter-chat-app-8c5c2.appspot.com',
   );
 }

@@ -1,188 +1,26 @@
 {
   "project_info": {
-    "project_number": "983333823321",
-    "firebase_url": "https://chat-app-b0a5b-default-rtdb.firebaseio.com",
-    "project_id": "chat-app-b0a5b",
-    "storage_bucket": "chat-app-b0a5b.appspot.com"
+    "project_number": "776183779701",
+    "project_id": "flutter-chat-app-8c5c2",
+    "storage_bucket": "flutter-chat-app-8c5c2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:983333823321:android:6bfc18e8f5a84d9889e248",
-        "android_client_info": {
-          "package_name": "com.example.chat_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDvDIeesKx-U7SWRrimg1vgsWrRmjpLxSw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "983333823321-gl4bjo3k06v6p8tfacmqa8vmhfu9oc9b.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hairBook"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:983333823321:android:e9530c6ee7acf58189e248",
+        "mobilesdk_app_id": "1:776183779701:android:b2e9369cf4e821e9da033c",
         "android_client_info": {
           "package_name": "com.example.chat_firebase"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDvDIeesKx-U7SWRrimg1vgsWrRmjpLxSw"
+          "current_key": "AIzaSyDsoInn0gOAcBcbEjwE_75UrxhuRepLLSc"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "983333823321-gl4bjo3k06v6p8tfacmqa8vmhfu9oc9b.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hairBook"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:983333823321:android:aebb31498369547d89e248",
-        "android_client_info": {
-          "package_name": "com.example.delivery_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDvDIeesKx-U7SWRrimg1vgsWrRmjpLxSw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "983333823321-gl4bjo3k06v6p8tfacmqa8vmhfu9oc9b.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hairBook"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:983333823321:android:a0434d4639a1381289e248",
-        "android_client_info": {
-          "package_name": "com.example.flutter_login"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDvDIeesKx-U7SWRrimg1vgsWrRmjpLxSw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "983333823321-gl4bjo3k06v6p8tfacmqa8vmhfu9oc9b.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hairBook"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:983333823321:android:298a6e1ab09e0cfe89e248",
-        "android_client_info": {
-          "package_name": "com.example.hair_book"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDvDIeesKx-U7SWRrimg1vgsWrRmjpLxSw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "983333823321-6c1lcdkjdnjr178atur2dlnosfrgre26.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "983333823321-gl4bjo3k06v6p8tfacmqa8vmhfu9oc9b.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hairBook"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
