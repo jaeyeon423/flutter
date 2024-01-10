@@ -19,6 +19,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _enteredEmail = '';
+  var _enteredUsername = '';
   var _enteredPassword = '';
   var _isAuthenticating = false;
   File? _selectedImage;
@@ -55,7 +56,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         FirebaseFirestore.instance
           ..collection('users').doc(userCredentials.user!.uid).set({
-            'username': 'to be done...',
+            'username': _enteredUsername,
             'email': _enteredEmail,
             'image_url': imageUrl,
           });
@@ -117,6 +118,20 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                             onSaved: (value) {
                               _enteredEmail = value!;
+                            },
+                          ),
+                          if(!_isLogin)
+                          TextFormField(
+                            decoration: InputDecoration(labelText: 'user name'),
+                            enableSuggestions: false,
+                            validator: (value){
+                              if(value == null || value.isEmpty || value.trim().length < 4){
+                                return 'Please enter at least 4 characters';
+                              }
+                              return null;
+                            },
+                            onSaved: (value){
+                              _enteredUsername = value!;
                             },
                           ),
                           TextFormField(
