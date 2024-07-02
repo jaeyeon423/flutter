@@ -18,10 +18,14 @@ class _NewItemState extends State<NewItem> {
   var _enteredName = '';
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
+  var _isSending = false;
 
   void _saveItem() async{
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      setState(() {
+        _isSending = true;
+      });
       final url = Uri.https(
           'flutter-prep-baf78-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
@@ -139,14 +143,14 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {
+                    onPressed:_isSending ? null : () {
                       _formKey.currentState!.reset();
                     },
                     child: Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: _saveItem,
-                    child: Text('Add Item'),
+                    onPressed:_isSending ? null : _saveItem,
+                    child: _isSending ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(),) :Text('Add Item'),
                   ),
                 ],
               ),
