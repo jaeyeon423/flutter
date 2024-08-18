@@ -23,6 +23,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredPassword = '';
   File? _selectedFile;
 
+
   void _submit() async{
     final isValid = _form.currentState!.validate();
 
