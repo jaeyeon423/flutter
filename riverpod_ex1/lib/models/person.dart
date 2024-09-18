@@ -1,19 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Person extends Equatable {
   final int id;
   final String name;
   final String email;
-
-  Person({
+  const Person({
     required this.id,
     required this.name,
     required this.email,
   });
-
-  @override
-  String toString() => 'Person(id: $id, name: $name, email: $email)';
 
   Person copyWith({
     int? id,
@@ -26,6 +24,30 @@ class Person extends Equatable {
       email: email ?? this.email,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'name': name,
+      'email': email,
+    };
+  }
+
+  factory Person.fromMap(Map<String, dynamic> map) {
+    return Person(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      email: map['email'] as String,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Person.fromJson(String source) =>
+      Person.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  bool get stringify => true;
 
   @override
   List<Object> get props => [id, name, email];
