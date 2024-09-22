@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:riverpod_ex1/models/user.dart';
+import 'package:riverpod_ex1/pages/user_details_page.dart';
 import 'package:riverpod_ex1/repositories/fetch_users.dart';
 
 class UserListPage extends StatefulWidget {
@@ -91,6 +92,8 @@ class ListUsers extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final user = users[index];
         return ListTile(
+          onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => UserDetailsPage(user: user))),
           leading: CircleAvatar(
             child: Text(user.id.toString()),
           ),
