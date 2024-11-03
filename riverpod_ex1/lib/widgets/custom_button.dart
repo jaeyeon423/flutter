@@ -5,10 +5,10 @@ class CustomButton extends StatelessWidget {
   final String title;
   final Widget child;
   const CustomButton({
-    super.key,
+    Key? key,
     required this.title,
     required this.child,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,9 @@ class CustomButton extends StatelessWidget {
           },
           child: Text(
             title,
-            style: const TextStyle(fontSize: 20),
+            style: TextStyle(
+              fontSize: 18,
+            ),
           )),
     );
   }
