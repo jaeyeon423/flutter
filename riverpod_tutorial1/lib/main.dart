@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_tutorial1/pages/person_page.dart';
+import 'package:riverpod_tutorial1/pages/user_list_page.dart';
 import 'package:riverpod_tutorial1/widgets/custom_button.dart';
 
 void main() {
@@ -33,6 +34,10 @@ class MyHomePage extends StatelessWidget {
             CustomButton(
               title: 'Person',
               child: PersonPage(),
+            ),
+            CustomButton(
+              title: 'user Lsit',
+              child: UserListPage(),
             ),
           ],
         ),

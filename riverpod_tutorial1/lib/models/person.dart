@@ -7,7 +7,7 @@ class Person extends Equatable {
   final int id;
   final String name;
   final String email;
-  Person({
+  const Person({
     required this.id,
     required this.name,
     required this.email,
