@@ -23,10 +23,10 @@ final counterProvider = Provider.autoDispose.family<int, Counter>((ref, arg) {
   return arg.count;
 });
 
-final autoDisposefamilyHelloProvider =
+final autoDisposefamilyTestHelloProvider =
     Provider.autoDispose.family<String, String>((ref, name) {
   ref.onDispose(() {
-    print("[familyHelloProvider] onDispose");
+    print("[autoDisposefamilyTestHelloProvider($name)] onDispose");
   });
   return "hello $name";
 });
