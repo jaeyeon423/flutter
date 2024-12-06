@@ -13,32 +13,6 @@ class UserListPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('User List'),
       ),
-      // body: switch (userList) {
-      //   AsyncData(value: final users) => ListView.separated(
-      //       itemBuilder: (BuildContext context, int index) {
-      //         return const Divider();
-      //       },
-      //       separatorBuilder: (BuildContext context, int index) {
-      //         final user = users[index];
-      //         return ListTile(
-      //           title: Text(user.name),
-      //           subtitle: Text(user.username),
-      //           onTap: () {
-      //             Navigator.of(context).push(
-      //                 MaterialPageRoute(builder: (_) => UserDetailPage()));
-      //           },
-      //         );
-      //       },
-      //       itemCount: users.length,
-      //     ),
-      //   AsyncError(error: final e) => Center(
-      //       child: Text(
-      //         e.toString(),
-      //         style: const TextStyle(color: Colors.red),
-      //       ),
-      //     ),
-      //   _ => const Center(child: CircularProgressIndicator()),
-      // },
       body: userList.when(
         data: (users) {
           return ListView.separated(
@@ -52,7 +26,12 @@ class UserListPage extends ConsumerWidget {
                 subtitle: Text(user.username),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => UserDetailPage()));
+                    MaterialPageRoute(
+                      builder: (_) => UserDetailPage(
+                        userId: index,
+                      ),
+                    ),
+                  );
                 },
               );
             },
