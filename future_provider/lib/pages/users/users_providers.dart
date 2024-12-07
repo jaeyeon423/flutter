@@ -38,11 +38,12 @@ FutureOr<List<User>> userList(UserListRef ref) async {
 // });
 
 @riverpod
-FutureOr<User> UserDetail(UserDetailRef ref, int id) async {
+FutureOr<User> userDetail(UserDetailRef ref, int id) async {
   ref.onDispose(() {
-    print('[ UserDetailPage ]onDispose');
+    print('[userDetailProvider($id)] disposed');
   });
   final response = await ref.watch(dioProvider).get('/users/$id');
+  ref.keepAlive();
   final user = User.fromJson(response.data);
   return user;
 }

@@ -9,33 +9,39 @@ class UserListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userList = ref.watch(userListProvider);
+    print(userList);
     return Scaffold(
       appBar: AppBar(
         title: const Text('User List'),
       ),
       body: userList.when(
         data: (users) {
-          return ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              return const Divider();
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              final user = users[index];
-              return ListTile(
-                title: Text(user.name),
-                subtitle: Text(user.username),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => UserDetailPage(
-                        userId: index,
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(userListProvider),
+            color: Colors.red,
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return const Divider();
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                final user = users[index];
+                return ListTile(
+                  title: Text(user.name),
+                  subtitle: Text(user.username),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => UserDetailPage(
+                          userId: index,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-            itemCount: users.length,
+                    );
+                  },
+                );
+              },
+              itemCount: users.length,
+            ),
           );
         },
         error: (e, st) {

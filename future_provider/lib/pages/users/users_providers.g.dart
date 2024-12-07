@@ -20,7 +20,7 @@ final userListProvider = AutoDisposeFutureProvider<List<User>>.internal(
 );
 
 typedef UserListRef = AutoDisposeFutureProviderRef<List<User>>;
-String _$userDetailHash() => r'6608c0627e28fae548b689f025fbca080b5300bc';
+String _$userDetailHash() => r'621232196d75167c197cb05dac03903bede6b8c8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,16 +43,16 @@ class _SystemHash {
   }
 }
 
-/// See also [UserDetail].
-@ProviderFor(UserDetail)
+/// See also [userDetail].
+@ProviderFor(userDetail)
 const userDetailProvider = UserDetailFamily();
 
-/// See also [UserDetail].
+/// See also [userDetail].
 class UserDetailFamily extends Family<AsyncValue<User>> {
-  /// See also [UserDetail].
+  /// See also [userDetail].
   const UserDetailFamily();
 
-  /// See also [UserDetail].
+  /// See also [userDetail].
   UserDetailProvider call(
     int id,
   ) {
@@ -85,13 +85,13 @@ class UserDetailFamily extends Family<AsyncValue<User>> {
   String? get name => r'userDetailProvider';
 }
 
-/// See also [UserDetail].
+/// See also [userDetail].
 class UserDetailProvider extends AutoDisposeFutureProvider<User> {
-  /// See also [UserDetail].
+  /// See also [userDetail].
   UserDetailProvider(
     int id,
   ) : this._internal(
-          (ref) => UserDetail(
+          (ref) => userDetail(
             ref as UserDetailRef,
             id,
           ),
