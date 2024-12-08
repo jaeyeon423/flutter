@@ -19,22 +19,25 @@ class UserDetailPage extends ConsumerWidget {
         ),
         body: userDetail.when(
           data: (user) {
-            return ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                Text(
-                  user.name,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const Divider(),
-                UserInfo(Icons.account_circle, user.name, context),
-                SizedBox(height: 10),
-                UserInfo(Icons.email, user.email, context),
-                SizedBox(height: 10),
-                UserInfo(Icons.phone_enabled, user.phone, context),
-                SizedBox(height: 10),
-                UserInfo(Icons.web_rounded, user.website, context),
-              ],
+            return RefreshIndicator(
+              onRefresh: () async => ref.invalidate(userDetailProvider(userId)),
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Text(
+                    user.name,
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                  const Divider(),
+                  UserInfo(Icons.account_circle, user.name, context),
+                  SizedBox(height: 10),
+                  UserInfo(Icons.email, user.email, context),
+                  SizedBox(height: 10),
+                  UserInfo(Icons.phone_enabled, user.phone, context),
+                  SizedBox(height: 10),
+                  UserInfo(Icons.web_rounded, user.website, context),
+                ],
+              ),
             );
           },
           error: (e, st) {
