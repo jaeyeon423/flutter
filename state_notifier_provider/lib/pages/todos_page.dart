@@ -9,36 +9,37 @@ class TodosPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final todos = ref.watch(todosProvider);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Todos'),
-        ),
-        body: Column(
-          children: [
-            const AddTodo(),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView(
-                children: [
-                  for (final todo in todos)
-                    CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: todo.completed,
-                      onChanged: (value) {
-                        ref.read(todosProvider.notifier).toggleTodo(todo.id);
+      appBar: AppBar(
+        title: const Text('Todos'),
+      ),
+      body: Column(
+        children: [
+          const AddTodo(),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView(
+              children: [
+                for (final todo in todos)
+                  CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: todo.completed,
+                    onChanged: (value) {
+                      ref.read(todosProvider.notifier).toggleTodo(todo.id);
+                    },
+                    title: Text(todo.desc),
+                    secondary: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        ref.read(todosProvider.notifier).removeTodo(todo.id);
                       },
-                      title: Text(todo.desc),
-                      secondary: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          ref.read(todosProvider.notifier).removeTodo(todo.id);
-                        },
-                      ),
-                    )
-                ],
-              ),
-            )
-          ],
-        ));
+                    ),
+                  )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
