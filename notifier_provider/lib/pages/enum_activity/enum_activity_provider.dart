@@ -21,13 +21,16 @@ class EnumActivity extends _$EnumActivity {
 
     try {
       final response = await ref.read(dioProvider).get('?type=$activityType');
-      final activity = Activity.fromJson(response.data);
+      print(response);
+      final activity = Activity.fromJson(response.data[0]);
 
       state =
           state.copyWith(status: ActivityStatus.success, activity: activity);
     } catch (e) {
-      state =
-          state.copyWith(status: ActivityStatus.failure, error: e.toString());
+      state = state.copyWith(
+        status: ActivityStatus.failure,
+        error: e.toString(),
+      );
     }
   }
 }

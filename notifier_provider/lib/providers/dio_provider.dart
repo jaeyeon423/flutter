@@ -5,6 +5,9 @@ part 'dio_provider.g.dart';
 
 @riverpod
 Dio dio(DioRef ref) {
-  return Dio(BaseOptions(
-      baseUrl: 'https://bored-api.appbrewery.com/filter?type=recreational'));
+  return Dio(
+    BaseOptions(
+      baseUrl: 'https://bored-api.appbrewery.com/filter',
+    ),
+  );
 }
