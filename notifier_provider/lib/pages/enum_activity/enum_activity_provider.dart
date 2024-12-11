@@ -7,6 +7,7 @@ part 'enum_activity_provider.g.dart';
 
 @riverpod
 class EnumActivity extends _$EnumActivity {
+  int _errorCounter = 0;
   @override
   EnumActivityState build() {
     ref.onDispose(() {
@@ -18,8 +19,14 @@ class EnumActivity extends _$EnumActivity {
 
   Future<void> fetchActivity(String activityType) async {
     state = state.copyWith(status: ActivityStatus.loading);
+    print(activityType);
 
     try {
+      print('_errorCounter: $_errorCounter');
+      if (_errorCounter++ % 2 == 1) {
+        await Future.delayed(Duration(seconds: 5));
+        throw 'Fail to fetch activity';
+      }
       final response = await ref.read(dioProvider).get('?type=$activityType');
       print(response);
       final activity = Activity.fromJson(response.data[0]);
@@ -27,6 +34,7 @@ class EnumActivity extends _$EnumActivity {
       state =
           state.copyWith(status: ActivityStatus.success, activity: activity);
     } catch (e) {
+      // print(e);
       state = state.copyWith(
         status: ActivityStatus.failure,
         error: e.toString(),
