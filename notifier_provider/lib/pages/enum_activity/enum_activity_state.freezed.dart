@@ -20,7 +20,9 @@ mixin _$EnumActivityState {
   Activity get activity => throw _privateConstructorUsedError;
   String get error => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of EnumActivityState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $EnumActivityStateCopyWith<EnumActivityState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -46,6 +48,8 @@ class _$EnumActivityStateCopyWithImpl<$Res, $Val extends EnumActivityState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of EnumActivityState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -69,6 +73,8 @@ class _$EnumActivityStateCopyWithImpl<$Res, $Val extends EnumActivityState>
     ) as $Val);
   }
 
+  /// Create a copy of EnumActivityState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ActivityCopyWith<$Res> get activity {
@@ -100,6 +106,8 @@ class __$$EnumActivityStateImplCopyWithImpl<$Res>
       $Res Function(_$EnumActivityStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of EnumActivityState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -168,7 +176,9 @@ class _$EnumActivityStateImpl
   @override
   int get hashCode => Object.hash(runtimeType, status, activity, error);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of EnumActivityState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$EnumActivityStateImplCopyWith<_$EnumActivityStateImpl> get copyWith =>
@@ -188,8 +198,11 @@ abstract class _EnumActivityState implements EnumActivityState {
   Activity get activity;
   @override
   String get error;
+
+  /// Create a copy of EnumActivityState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EnumActivityStateImplCopyWith<_$EnumActivityStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

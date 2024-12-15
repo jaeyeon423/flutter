@@ -1,37 +1,39 @@
-import 'package:notifier_provider/models/activity.dart';
+import '../../models/activity.dart';
 
 sealed class SealedActivityState {
   const SealedActivityState();
 }
 
-final class SealedActivityStateInitial extends SealedActivityState {
-  const SealedActivityStateInitial();
+final class SealedActivityInitial extends SealedActivityState {
+  const SealedActivityInitial();
 
   @override
-  String toString() => 'SealedActivityStateInitial';
+  String toString() => 'SealedActivityInitial()';
 }
 
-final class SealedActivityStateLoading extends SealedActivityState {
-  const SealedActivityStateLoading();
+final class SealedActivityLoading extends SealedActivityState {
+  const SealedActivityLoading();
 
   @override
-  String toString() => 'SealedActivityStateLoading';
+  String toString() => 'SealedActivityLoading()';
 }
 
-final class SealedActivityStateSuccess extends SealedActivityState {
+final class SealedActivitySuccess extends SealedActivityState {
   final Activity activity;
-
-  const SealedActivityStateSuccess({required this.activity});
+  const SealedActivitySuccess({
+    required this.activity,
+  });
 
   @override
-  String toString() => 'SealedActivityStateSuccess';
+  String toString() => 'SealedActivitySuccess(activity: $activity)';
 }
 
-final class SealedActivityStateFailure extends SealedActivityState {
+final class SealedActivityFailure extends SealedActivityState {
   final String error;
-
-  const SealedActivityStateFailure({required this.error});
+  const SealedActivityFailure({
+    required this.error,
+  });
 
   @override
-  String toString() => 'SealedActivityStateFailure';
+  String toString() => 'SealedActivityFailure(error: $error)';
 }

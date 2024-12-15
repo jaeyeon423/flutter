@@ -27,8 +27,12 @@ mixin _$Activity {
   double get price => throw _privateConstructorUsedError;
   String get key => throw _privateConstructorUsedError;
 
+  /// Serializes this Activity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Activity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ActivityCopyWith<Activity> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -57,6 +61,8 @@ class _$ActivityCopyWithImpl<$Res, $Val extends Activity>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Activity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -121,6 +127,8 @@ class __$$ActivityImplCopyWithImpl<$Res>
       _$ActivityImpl _value, $Res Function(_$ActivityImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Activity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -221,12 +229,14 @@ class _$ActivityImpl with DiagnosticableTreeMixin implements _Activity {
             (identical(other.key, key) || other.key == key));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, activity, accessibility, type, participants, price, key);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Activity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ActivityImplCopyWith<_$ActivityImpl> get copyWith =>
@@ -264,8 +274,11 @@ abstract class _Activity implements Activity {
   double get price;
   @override
   String get key;
+
+  /// Create a copy of Activity
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ActivityImplCopyWith<_$ActivityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
