@@ -2,33 +2,58 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class Counter extends AsyncNotifier<int> {
   @override
-  FutureOr<int> build() async {
-    await waitSecont();
+  FutureOr<int> build() {
+    ref.onDispose(() {
+      print('[Counter] onDispose');
+    });
+
     return 0;
   }
+  // @override
+  // FutureOr<int> build() async {
+  //   ref.onDispose(() {
+  //     print('[Counter] onDispose');
+  //   });
+
+  //   await waitSecont();
+  //   return 0;
+  // }
 
   Future<void> waitSecont() => Future.delayed(const Duration(seconds: 1));
 
   Future<void> increment() async {
     state = const AsyncLoading();
 
-    try {
+    state = await AsyncValue.guard(() async {
       await waitSecont();
-      state = AsyncData(state.value! + 1);
-    } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
-    }
+      if (state.value! == 2) {
+        throw 'Fail to increment';
+      }
+      return state.value! + 1;
+    });
+
+    // try {
+    //   await waitSecont();
+    //   state = AsyncData(state.value! + 1);
+    // } catch (error, stackTrace) {
+    //   state = AsyncError(error, stackTrace);
+    // }
   }
 
   Future<void> decrement() async {
     state = const AsyncLoading();
-    try {
+
+    state = await AsyncValue.guard(() async {
       await waitSecont();
-      throw 'Fail to decrement';
-      state = AsyncData(state.value! - 1);
-    } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
-    }
+      return state.value! - 1;
+    });
+    // try {
+    //   await waitSecont();
+    //   throw 'Fail to decrement';
+    //   state = AsyncData(state.value! - 1);
+    // } catch (error, stackTrace) {
+    //   state = AsyncError(error, stackTrace);
+    // }
   }
 }
 
