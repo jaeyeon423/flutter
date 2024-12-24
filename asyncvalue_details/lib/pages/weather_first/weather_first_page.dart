@@ -54,6 +54,15 @@ class WeatherFirstPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AsyncValue Details - First'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              _selectedIndex = 1;
+              ref.invalidate(weatherFirstProvider);
+            },
+          )
+        ],
       ),
       body: Center(
         child: weather.when(
