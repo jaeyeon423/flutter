@@ -1,3 +1,0 @@
-## StreamProvider
-
-- Simple StreamProvider
