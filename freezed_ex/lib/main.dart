@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freezed_ex/pages/collections_page.dart';
 import 'package:freezed_ex/pages/mutable_person_page.dart';
 import 'package:freezed_ex/pages/person_page.dart';
 import 'package:freezed_ex/widgets/custom_button.dart';
@@ -37,6 +38,7 @@ class MyHomePage extends StatelessWidget {
           children: [
             CustomButton(title: 'Person', child: PersonPage()),
             CustomButton(title: 'Mutable Person', child: MutablePersonPage()),
+            CustomButton(title: 'Collections', child: CollectionsPage()),
           ],
         ),
       ),
