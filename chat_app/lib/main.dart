@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/auth.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class App extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      // home: ...
+      home: AuthScreen(),
     );
   }
 }
