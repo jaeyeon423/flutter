@@ -1,4 +1,4 @@
-package com.example.dday
+package com.jyk.dday
 
 import io.flutter.embedding.android.FlutterActivity
 
