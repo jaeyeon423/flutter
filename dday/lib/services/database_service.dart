@@ -1,16 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:flutter/material.dart';
-import 'dart:io';
 import '../models/dday_event.dart';
+import 'package:flutter/material.dart';
 
 class DatabaseService {
-  static final DatabaseService _instance = DatabaseService._internal();
   static Database? _database;
-
-  factory DatabaseService() => _instance;
-
-  DatabaseService._internal();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -19,15 +13,13 @@ class DatabaseService {
   }
 
   Future<Database> _initDatabase() async {
-    final path = join(await getDatabasesPath(), 'dday_database.db');
-
-    // Delete existing database file
-    final dbFile = File(path);
-    if (await dbFile.exists()) {
-      await dbFile.delete();
-    }
-
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
+    String path = join(await getDatabasesPath(), 'dday_database.db');
+    return await openDatabase(
+      path,
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -36,34 +28,18 @@ class DatabaseService {
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         targetDate TEXT NOT NULL,
-        countAsDayOne INTEGER NOT NULL,
-        color INTEGER NOT NULL,
-        showInNotification INTEGER NOT NULL
+        type TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        color INTEGER NOT NULL
       )
     ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Add color column if it doesn't exist
-      try {
-        await db.execute(
-          'ALTER TABLE dday_events ADD COLUMN color INTEGER NOT NULL DEFAULT 4280391411',
-        );
-      } catch (e) {
-        // Column might already exist, ignore the error
-      }
-    }
-
-    if (oldVersion < 3) {
-      // Add showInNotification column if it doesn't exist
-      try {
-        await db.execute(
-          'ALTER TABLE dday_events ADD COLUMN showInNotification INTEGER NOT NULL DEFAULT 0',
-        );
-      } catch (e) {
-        // Column might already exist, ignore the error
-      }
+      await db.execute(
+        'ALTER TABLE dday_events ADD COLUMN color INTEGER NOT NULL DEFAULT ${Colors.blue.value}',
+      );
     }
   }
 
@@ -73,9 +49,9 @@ class DatabaseService {
       'id': event.id,
       'title': event.title,
       'targetDate': event.targetDate.toIso8601String(),
-      'countAsDayOne': event.countAsDayOne ? 1 : 0,
+      'type': event.type.toString(),
+      'createdAt': event.createdAt.toIso8601String(),
       'color': event.color.value,
-      'showInNotification': event.showInNotification ? 1 : 0,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -88,9 +64,12 @@ class DatabaseService {
         id: maps[i]['id'],
         title: maps[i]['title'],
         targetDate: DateTime.parse(maps[i]['targetDate']),
-        countAsDayOne: maps[i]['countAsDayOne'] == 1,
+        type: DDayType.values.firstWhere(
+          (e) => e.toString() == maps[i]['type'],
+          orElse: () => DDayType.oneTime,
+        ),
+        createdAt: DateTime.parse(maps[i]['createdAt']),
         color: Color(maps[i]['color']),
-        showInNotification: maps[i]['showInNotification'] == 1,
       );
     });
   }
@@ -102,9 +81,9 @@ class DatabaseService {
       {
         'title': event.title,
         'targetDate': event.targetDate.toIso8601String(),
-        'countAsDayOne': event.countAsDayOne ? 1 : 0,
+        'type': event.type.toString(),
+        'createdAt': event.createdAt.toIso8601String(),
         'color': event.color.value,
-        'showInNotification': event.showInNotification ? 1 : 0,
       },
       where: 'id = ?',
       whereArgs: [event.id],

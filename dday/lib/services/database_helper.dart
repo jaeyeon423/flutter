@@ -4,12 +4,20 @@ import '../models/dday_event.dart';
 import 'package:flutter/material.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
+  static DatabaseHelper? _instance;
   static Database? _database;
 
-  factory DatabaseHelper() => _instance;
+  factory DatabaseHelper() {
+    _instance ??= DatabaseHelper._internal();
+    return _instance!;
+  }
 
   DatabaseHelper._internal();
+
+  static void resetInstance() {
+    _instance = null;
+    _database = null;
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -34,8 +42,6 @@ class DatabaseHelper {
         title TEXT NOT NULL,
         targetDate TEXT NOT NULL,
         type TEXT NOT NULL,
-        showInNotification INTEGER NOT NULL,
-        countAsDayOne INTEGER NOT NULL,
         createdAt TEXT NOT NULL,
         color INTEGER NOT NULL
       )
@@ -90,5 +96,17 @@ class DatabaseHelper {
   Future<int> deleteDDayEvent(String id) async {
     final db = await database;
     return await db.delete('dday_events', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteAllDDayEvents() async {
+    final db = await database;
+    await db.delete('dday_events');
+  }
+
+  Future<void> close() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+    }
   }
 }

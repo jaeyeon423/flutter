@@ -17,8 +17,6 @@ class _DDayInputScreenState extends ConsumerState<DDayInputScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late DateTime _selectedDate;
-  bool _showInNotification = false;
-  bool _countAsDayOne = false;
   late Color _selectedColor;
 
   final List<Color> _colorOptions = [
@@ -37,8 +35,6 @@ class _DDayInputScreenState extends ConsumerState<DDayInputScreen> {
     super.initState();
     _titleController = TextEditingController(text: widget.event?.title ?? '');
     _selectedDate = widget.event?.targetDate ?? DateTime.now();
-    _showInNotification = widget.event?.showInNotification ?? false;
-    _countAsDayOne = widget.event?.countAsDayOne ?? false;
     _selectedColor = widget.event?.color ?? Colors.blue;
   }
 
@@ -80,8 +76,6 @@ class _DDayInputScreenState extends ConsumerState<DDayInputScreen> {
             _buildDatePicker(),
             const SizedBox(height: 24),
             _buildColorPicker(),
-            const SizedBox(height: 24),
-            _buildSettingsOptions(),
             const SizedBox(height: 32),
             ElevatedButton(onPressed: _saveDDayEvent, child: const Text('저장')),
           ],
@@ -171,37 +165,6 @@ class _DDayInputScreenState extends ConsumerState<DDayInputScreen> {
     );
   }
 
-  Widget _buildSettingsOptions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '설정옵션',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        SwitchListTile(
-          title: const Text('상단바&잠금화면 노출'),
-          value: _showInNotification,
-          onChanged: (value) {
-            setState(() {
-              _showInNotification = value;
-            });
-          },
-        ),
-        SwitchListTile(
-          title: const Text('설정일부터 1일로 세기'),
-          value: _countAsDayOne,
-          onChanged: (value) {
-            setState(() {
-              _countAsDayOne = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
   Future<void> _showDatePicker(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -222,8 +185,6 @@ class _DDayInputScreenState extends ConsumerState<DDayInputScreen> {
         id: widget.event?.id,
         title: _titleController.text,
         targetDate: _selectedDate,
-        showInNotification: _showInNotification,
-        countAsDayOne: _countAsDayOne,
         createdAt: widget.event?.createdAt,
         color: _selectedColor,
       );

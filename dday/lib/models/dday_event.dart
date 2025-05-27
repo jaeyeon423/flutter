@@ -8,8 +8,6 @@ class DDayEvent {
   final String title;
   final DateTime targetDate;
   final DDayType type;
-  final bool showInNotification;
-  final bool countAsDayOne;
   final DateTime createdAt;
   final Color color;
 
@@ -18,8 +16,6 @@ class DDayEvent {
     required this.title,
     required this.targetDate,
     this.type = DDayType.oneTime,
-    this.showInNotification = false,
-    this.countAsDayOne = false,
     DateTime? createdAt,
     Color? color,
   }) : id = id ?? const Uuid().v4(),
@@ -32,8 +28,6 @@ class DDayEvent {
       'title': title,
       'targetDate': targetDate.toIso8601String(),
       'type': type.toString(),
-      'showInNotification': showInNotification ? 1 : 0,
-      'countAsDayOne': countAsDayOne ? 1 : 0,
       'createdAt': createdAt.toIso8601String(),
       'color': color.value,
     };
@@ -48,8 +42,6 @@ class DDayEvent {
         (e) => e.toString() == map['type'],
         orElse: () => DDayType.oneTime,
       ),
-      showInNotification: map['showInNotification'] == 1,
-      countAsDayOne: map['countAsDayOne'] == 1,
       createdAt: DateTime.parse(map['createdAt']),
       color: Color(map['color'] ?? Colors.blue.value),
     );
@@ -59,8 +51,6 @@ class DDayEvent {
     String? title,
     DateTime? targetDate,
     DDayType? type,
-    bool? showInNotification,
-    bool? countAsDayOne,
     Color? color,
   }) {
     return DDayEvent(
@@ -68,8 +58,6 @@ class DDayEvent {
       title: title ?? this.title,
       targetDate: targetDate ?? this.targetDate,
       type: type ?? this.type,
-      showInNotification: showInNotification ?? this.showInNotification,
-      countAsDayOne: countAsDayOne ?? this.countAsDayOne,
       createdAt: createdAt,
       color: color ?? this.color,
     );

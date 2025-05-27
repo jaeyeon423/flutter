@@ -47,14 +47,8 @@ class DDayCalculation extends _$DDayCalculation {
     final targetDate = event.targetDate;
     final difference = targetDate.difference(now).inDays;
 
-    if (event.countAsDayOne) {
-      if (difference == 0) return '오늘';
-      if (difference > 0) return 'D-$difference';
-      return '${difference.abs()}일째';
-    } else {
-      if (difference == 0) return 'D-Day';
-      if (difference > 0) return 'D-$difference';
-      return 'D+${difference.abs()}';
-    }
+    if (difference == 0) return 'D-Day';
+    if (difference > 0) return 'D-$difference';
+    return 'D+${difference.abs()}';
   }
 }

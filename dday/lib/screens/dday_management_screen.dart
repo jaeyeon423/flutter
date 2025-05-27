@@ -8,11 +8,12 @@ import '../services/database_service.dart';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import '../services/database_helper.dart';
 
 class DDayManagementScreen extends ConsumerWidget {
   const DDayManagementScreen({super.key});
 
-  Future<void> _deleteDatabase(BuildContext context) async {
+  Future<void> _deleteDatabase(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder:
@@ -36,12 +37,46 @@ class DDayManagementScreen extends ConsumerWidget {
       final dbPath = join(await getDatabasesPath(), 'dday_database.db');
       final dbFile = File(dbPath);
       if (await dbFile.exists()) {
+        await DatabaseHelper().close();
         await dbFile.delete();
+        DatabaseHelper.resetInstance();
+        ref.invalidate(dDayEventsProvider);
       }
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('데이터베이스가 삭제되었습니다.')));
+      }
+    }
+  }
+
+  Future<void> _deleteAllEvents(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('전체 삭제'),
+            content: const Text('모든 D-day 데이터를 삭제하시겠습니까?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('삭제'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed == true) {
+      await DatabaseHelper().deleteAllDDayEvents();
+      ref.invalidate(dDayEventsProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('모든 D-day 데이터가 삭제되었습니다.')));
       }
     }
   }
@@ -56,8 +91,8 @@ class DDayManagementScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_forever),
-            onPressed: () => _deleteDatabase(context),
-            tooltip: '데이터베이스 삭제',
+            onPressed: () => _deleteAllEvents(context, ref),
+            tooltip: '전체 삭제',
           ),
         ],
       ),
@@ -229,18 +264,6 @@ class DDayManagementScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    if (event.showInNotification || event.countAsDayOne) ...[
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children: [
-                          if (event.showInNotification)
-                            _buildTag('상단바 노출', Icons.notifications),
-                          if (event.countAsDayOne)
-                            _buildTag('1일부터 카운트', Icons.timer),
-                        ],
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -248,24 +271,6 @@ class DDayManagementScreen extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildTag(String text, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: Colors.grey[600]),
-          const SizedBox(width: 4),
-          Text(text, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-        ],
-      ),
     );
   }
 
