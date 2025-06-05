@@ -1,73 +1,85 @@
 import 'dart:io';
 
+import 'package:chat_app/auth_providers.dart'; // Updated import
 import 'package:chat_app/widgets/user_image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Added Riverpod import
 
-final _firebase = FirebaseAuth.instance;
+// final _firebase = FirebaseAuth.instance; // Removed, logic moved to provider
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends ConsumerStatefulWidget { // Changed to ConsumerStatefulWidget
   const AuthScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<AuthScreen> createState() => _AuthScreenState(); // Changed
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends ConsumerState<AuthScreen> { // Changed to ConsumerState
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _enteredEmail = '';
   var _enteredPassword = '';
   File? _selectedImage;
+  // var _isAuthenticating = false; // Replaced by watching the provider's state
 
-  void _submit() async {
+  void _submit() {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
       return;
     }
 
+    // Specific check for image during signup
     if (!_isLogin && _selectedImage == null) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please pick an image for your account.')),
+      );
       return;
     }
 
     _formKey.currentState!.save();
 
-    try {
-      if (_isLogin) {
-        final userCredentials = await _firebase.signInWithEmailAndPassword(
-          email: _enteredEmail,
-          password: _enteredPassword,
-        );
-      } else {
-        final userCredentials = await _firebase.createUserWithEmailAndPassword(
-          email: _enteredEmail,
-          password: _enteredPassword,
-        );
-
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('user_images')
-            .child('${userCredentials.user!.uid}.jpg');
-
-        await storageRef.putFile(_selectedImage!);
-        final imageUrl = await storageRef.getDownloadURL();
-        print(imageUrl);
-      }
-    } on FirebaseAuthException catch (error) {
-      if (error.code == 'email-already-in-use') {
-        print('Email already in use');
-      }
-
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(error.message ?? error.message!)));
+    // Call the notifier methods
+    if (_isLogin) {
+      ref.read(authNotifierProvider.notifier).signInWithEmailAndPassword(
+            _enteredEmail,
+            _enteredPassword,
+          );
+    } else {
+      ref.read(authNotifierProvider.notifier).signUpWithEmailAndPassword(
+            _enteredEmail,
+            _enteredPassword,
+            _selectedImage, // Pass the image here
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authAsyncValue = ref.watch(authNotifierProvider);
+    final isLoading = authAsyncValue is AsyncLoading;
+
+    // Listen to the provider for side-effects like showing SnackBars
+    ref.listen<AsyncValue<AuthScreenState>>(authNotifierProvider, (_, state) {
+      state.whenOrNull(
+        data: (authState) { // This is when AsyncData is emitted by the notifier
+          if (authState.status == AuthStatus.error && authState.errorMessage != null) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(authState.errorMessage!)),
+            );
+          }
+          // Successful authentication will trigger navigation via authStateChangesProvider
+        },
+        error: (error, stackTrace) { // This handles errors from the AsyncNotifier itself (e.g., during build)
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error.toString())), // Or a more user-friendly message
+          );
+        },
+      );
+    });
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
@@ -109,8 +121,10 @@ class _AuthScreenState extends State<AuthScreen> {
                             autocorrect: false,
                             textCapitalization: TextCapitalization.none,
                             validator: (value) {
-                              if (value!.isEmpty || !value.contains('@')) {
-                                return 'Invalid email address';
+                              if (value == null ||
+                                  value.trim().isEmpty ||
+                                  !value.contains('@')) {
+                                return 'Please enter a valid email address.';
                               }
                               return null;
                             },
@@ -124,8 +138,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             obscureText: true,
                             validator: (value) {
-                              if (value!.isEmpty || value.length < 7) {
-                                return 'Password must be at least 7 characters long';
+                              if (value == null || value.trim().length < 7) {
+                                return 'Password must be at least 7 characters long.';
                               }
                               return null;
                             },
@@ -134,28 +148,31 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                           ),
                           const SizedBox(height: 12),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.primaryContainer,
+                          if (isLoading)
+                            const CircularProgressIndicator(),
+                          if (!isLoading)
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primaryContainer,
+                              ),
+                              onPressed: _submit,
+                              child: Text(_isLogin ? "Login" : "Signup"),
                             ),
-                            onPressed: _submit,
-                            child: Text(_isLogin ? "Login" : "signup"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(
-                              _isLogin
-                                  ? "Create an account"
-                                  : "Already have an account? Login",
+                          if (!isLoading)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+                              child: Text(
+                                _isLogin
+                                    ? "Create an account"
+                                    : "I already have an account. Login.",
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
