@@ -1,0 +1,37 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  email: String
+  photoUrl: String
+}
+
+type Note @table {
+  owner: User!
+  title: String!
+  initialContent: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+  isPublic: Boolean
+}
+
+type AIResponse @table {
+  note: Note!
+  requestPrompt: String!
+  generatedText: String!
+  modelUsed: String!
+  createdAt: Timestamp!
+  rating: Int
+  tokenCount: Int
+}
+
+type Tag @table {
+  name: String!
+  createdAt: Timestamp!
+}
+
+type NoteTag @table(key: ["note", "tag"]) {
+  note: Note!
+  tag: Tag!
+  createdAt: Timestamp!
+}

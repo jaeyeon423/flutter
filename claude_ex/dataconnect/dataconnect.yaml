@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "claude_ex"
+location: "asia-east1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "claude_ex-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]
