@@ -4,10 +4,7 @@ import 'package:chat_app/models/chat_message.dart';
 import 'package:flutter/services.dart';
 
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({
-    super.key,
-    required this.message,
-  });
+  const MessageBubble({super.key, required this.message});
 
   final ChatMessage message;
 
@@ -22,7 +19,8 @@ class MessageBubble extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
         child: Row(
-          mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+          mainAxisAlignment:
+              isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if (!isMe) ...[
@@ -39,22 +37,24 @@ class MessageBubble extends StatelessWidget {
                 ),
                 child: CircleAvatar(
                   radius: 18,
-                  backgroundImage: message.userImage.isNotEmpty
-                      ? NetworkImage(message.userImage)
-                      : null,
+                  backgroundImage:
+                      message.userImage.isNotEmpty
+                          ? NetworkImage(message.userImage)
+                          : null,
                   backgroundColor: theme.colorScheme.secondary,
-                  child: message.userImage.isEmpty
-                      ? Text(
-                          message.userName.isNotEmpty 
-                              ? message.userName[0].toUpperCase()
-                              : '?',
-                          style: TextStyle(
-                            color: theme.colorScheme.onSecondary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
+                  child:
+                      message.userImage.isEmpty
+                          ? Text(
+                            message.userName.isNotEmpty
+                                ? message.userName[0].toUpperCase()
+                                : '?',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSecondary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                          : null,
                 ),
               ),
               const SizedBox(width: 12),
@@ -63,23 +63,36 @@ class MessageBubble extends StatelessWidget {
               child: GestureDetector(
                 onLongPress: () => _showMessageOptions(context),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: isMe 
-                        ? LinearGradient(
-                            colors: [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : null,
-                    color: isMe 
-                        ? null
-                        : theme.colorScheme.surface,
+                    gradient:
+                        isMe
+                            ? LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.primary.withValues(
+                                  alpha: 0.8,
+                                ),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                            : null,
+                    color: isMe ? null : theme.colorScheme.surface,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(20),
                       topRight: const Radius.circular(20),
-                      bottomLeft: isMe ? const Radius.circular(20) : const Radius.circular(6),
-                      bottomRight: isMe ? const Radius.circular(6) : const Radius.circular(20),
+                      bottomLeft:
+                          isMe
+                              ? const Radius.circular(20)
+                              : const Radius.circular(6),
+                      bottomRight:
+                          isMe
+                              ? const Radius.circular(6)
+                              : const Radius.circular(20),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -88,10 +101,15 @@ class MessageBubble extends StatelessWidget {
                         offset: const Offset(0, 2),
                       ),
                     ],
-                    border: !isMe ? Border.all(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.1),
-                      width: 1,
-                    ) : null,
+                    border:
+                        !isMe
+                            ? Border.all(
+                              color: theme.colorScheme.outline.withValues(
+                                alpha: 0.1,
+                              ),
+                              width: 1,
+                            )
+                            : null,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,9 +131,8 @@ class MessageBubble extends StatelessWidget {
                         message.text,
                         style: TextStyle(
                           fontSize: 16,
-                          color: isMe 
-                              ? Colors.white
-                              : theme.colorScheme.onSurface,
+                          color:
+                              isMe ? Colors.white : theme.colorScheme.onSurface,
                           height: 1.4,
                           letterSpacing: 0.1,
                         ),
@@ -129,9 +146,12 @@ class MessageBubble extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
-                              color: (isMe 
-                                  ? Colors.white.withValues(alpha: 0.8)
-                                  : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                              color:
+                                  (isMe
+                                      ? Colors.white.withValues(alpha: 0.8)
+                                      : theme.colorScheme.onSurface.withValues(
+                                        alpha: 0.6,
+                                      )),
                             ),
                           ),
                           if (isMe) ...[
@@ -164,22 +184,24 @@ class MessageBubble extends StatelessWidget {
                 ),
                 child: CircleAvatar(
                   radius: 18,
-                  backgroundImage: message.userImage.isNotEmpty
-                      ? NetworkImage(message.userImage)
-                      : null,
+                  backgroundImage:
+                      message.userImage.isNotEmpty
+                          ? NetworkImage(message.userImage)
+                          : null,
                   backgroundColor: theme.colorScheme.secondary,
-                  child: message.userImage.isEmpty
-                      ? Text(
-                          message.userName.isNotEmpty 
-                              ? message.userName[0].toUpperCase()
-                              : '?',
-                          style: TextStyle(
-                            color: theme.colorScheme.onSecondary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
+                  child:
+                      message.userImage.isEmpty
+                          ? Text(
+                            message.userName.isNotEmpty
+                                ? message.userName[0].toUpperCase()
+                                : '?',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSecondary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                          : null,
                 ),
               ),
             ],
@@ -194,57 +216,62 @@ class MessageBubble extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+      builder:
+          (context) => Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.copy),
-              title: const Text('Copy message'),
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: message.text));
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Message copied to clipboard'),
-                    duration: Duration(seconds: 2),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                );
-              },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.copy),
+                  title: const Text('Copy message'),
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: message.text));
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Message copied to clipboard'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.reply),
+                  title: const Text('Reply'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // TODO: Implement reply functionality
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: const Text('Message info'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // TODO: Show message details
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.reply),
-              title: const Text('Reply'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement reply functionality
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('Message info'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Show message details
-              },
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
+          ),
     );
   }
 

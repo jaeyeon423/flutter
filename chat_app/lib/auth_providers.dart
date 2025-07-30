@@ -1,90 +1,85 @@
-// lib/auth_providers.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:chat_app/firebase_providers.dart'; // Import the firebase providers
-import 'dart:io'; // Required for File type in AuthNotifier
+import 'package:chat_app/firebase_providers.dart';
+import 'dart:io';
 
-// StreamProvider for auth state changes
 final authStateChangesProvider = StreamProvider<User?>((ref) {
   final firebaseAuth = ref.watch(firebaseAuthProvider);
   return firebaseAuth.authStateChanges();
 });
 
-// Provider for current user
 final currentUserProvider = Provider<User?>((ref) {
   final firebaseAuth = ref.watch(firebaseAuthProvider);
   return firebaseAuth.currentUser;
 });
 
-
-// For managing AuthScreen's specific UI state during auth operations
 enum AuthStatus { initial, loading, success, error }
 
 class AuthScreenState {
   final AuthStatus status;
   final String? errorMessage;
-  // Potentially user data if needed directly after auth, though authStateChangesProvider handles navigation
-  // final User? user;
 
-  AuthScreenState({
-    this.status = AuthStatus.initial,
-    this.errorMessage,
-    // this.user,
-  });
+  AuthScreenState({this.status = AuthStatus.initial, this.errorMessage});
 
-  AuthScreenState copyWith({
-    AuthStatus? status,
-    String? errorMessage,
-    // User? user,
-  }) {
+  AuthScreenState copyWith({AuthStatus? status, String? errorMessage}) {
     return AuthScreenState(
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
-      // user: user ?? this.user,
     );
   }
 }
 
-
-// AsyncNotifierProvider for authentication logic (sign-in, sign-up)
-final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, AuthScreenState>(() {
-  return AuthNotifier();
-});
+final authNotifierProvider =
+    AsyncNotifierProvider<AuthNotifier, AuthScreenState>(() {
+      return AuthNotifier();
+    });
 
 class AuthNotifier extends AsyncNotifier<AuthScreenState> {
   @override
   Future<AuthScreenState> build() async {
-    // The initial state of the notifier.
-    // It's an AsyncNotifier, so it needs to return a Future.
     return AuthScreenState();
   }
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {
-    state = const AsyncLoading(); // Indicate loading state
+    state = const AsyncLoading();
     final firebaseAuth = ref.read(firebaseAuthProvider);
     try {
       await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      // On success, authStateChangesProvider will trigger navigation.
-      // We update our local state to reflect success, which can be used for UI feedback if needed.
       state = AsyncData(AuthScreenState(status: AuthStatus.success));
     } on FirebaseAuthException catch (e) {
-      state = AsyncData(AuthScreenState(status: AuthStatus.error, errorMessage: e.message));
+      state = AsyncData(
+        AuthScreenState(status: AuthStatus.error, errorMessage: e.message),
+      );
     } catch (e) {
-      state = AsyncData(AuthScreenState(status: AuthStatus.error, errorMessage: 'An unknown error occurred.'));
+      state = AsyncData(
+        AuthScreenState(
+          status: AuthStatus.error,
+          errorMessage: 'An unknown error occurred.',
+        ),
+      );
     }
   }
 
-  Future<void> signUpWithEmailAndPassword(String email, String password, File? imageFile) async {
-    state = const AsyncLoading(); // Indicate loading state
+  Future<void> signUpWithEmailAndPassword(
+    String email,
+    String password,
+    File? imageFile,
+  ) async {
+    state = const AsyncLoading();
     final firebaseAuth = ref.read(firebaseAuthProvider);
     final firebaseStorage = ref.read(firebaseStorageProvider);
     final firebaseFirestore = ref.read(firebaseFirestoreProvider);
 
     if (imageFile == null) {
-      state = AsyncData(AuthScreenState(status: AuthStatus.error, errorMessage: 'Please pick an image.'));
+      state = AsyncData(
+        AuthScreenState(
+          status: AuthStatus.error,
+          errorMessage: 'Please pick an image.',
+        ),
+      );
       return;
     }
 
@@ -102,20 +97,28 @@ class AuthNotifier extends AsyncNotifier<AuthScreenState> {
       await storageRef.putFile(imageFile);
       final imageUrl = await storageRef.getDownloadURL();
 
-      // Store user data in Firestore
-      await firebaseFirestore.collection('users').doc(userCredentials.user!.uid).set({
-        'username': email.split('@')[0], // Use email prefix as username
-        'email': email,
-        'image_url': imageUrl,
-        'created_at': DateTime.now(),
-      });
+      await firebaseFirestore
+          .collection('users')
+          .doc(userCredentials.user!.uid)
+          .set({
+            'username': email.split('@')[0],
+            'email': email,
+            'image_url': imageUrl,
+            'created_at': DateTime.now(),
+          });
 
-      // On success, authStateChangesProvider will trigger navigation.
       state = AsyncData(AuthScreenState(status: AuthStatus.success));
     } on FirebaseAuthException catch (e) {
-      state = AsyncData(AuthScreenState(status: AuthStatus.error, errorMessage: e.message));
+      state = AsyncData(
+        AuthScreenState(status: AuthStatus.error, errorMessage: e.message),
+      );
     } catch (e) {
-      state = AsyncData(AuthScreenState(status: AuthStatus.error, errorMessage: 'An unknown error occurred.'));
+      state = AsyncData(
+        AuthScreenState(
+          status: AuthStatus.error,
+          errorMessage: 'An unknown error occurred.',
+        ),
+      );
     }
   }
 }

@@ -85,7 +85,7 @@ class _NewMessageState extends ConsumerState<NewMessage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
@@ -119,7 +119,7 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                 ),
               ),
             ),
-            
+
             // Text input field
             Expanded(
               child: Container(
@@ -156,28 +156,32 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                       horizontal: 20,
                       vertical: 12,
                     ),
-                    suffixIcon: _isTyping ? Container(
-                      margin: const EdgeInsets.all(8),
-                      child: IconButton(
-                        onPressed: () {
-                          _messageController.clear();
-                          HapticFeedback.lightImpact();
-                        },
-                        icon: const Icon(Icons.close, size: 20),
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.1),
-                          foregroundColor: theme.colorScheme.onSurface,
-                          minimumSize: const Size(32, 32),
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ) : null,
+                    suffixIcon:
+                        _isTyping
+                            ? Container(
+                              margin: const EdgeInsets.all(8),
+                              child: IconButton(
+                                onPressed: () {
+                                  _messageController.clear();
+                                  HapticFeedback.lightImpact();
+                                },
+                                icon: const Icon(Icons.close, size: 20),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.outline
+                                      .withValues(alpha: 0.1),
+                                  foregroundColor: theme.colorScheme.onSurface,
+                                  minimumSize: const Size(32, 32),
+                                  padding: EdgeInsets.zero,
+                                ),
+                              ),
+                            )
+                            : null,
                   ),
                   onSubmitted: (_) => _sendMessage(),
                 ),
               ),
             ),
-            
+
             // Send button
             Container(
               margin: const EdgeInsets.only(left: 8, bottom: 4),
@@ -185,24 +189,26 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                 duration: const Duration(milliseconds: 200),
                 child: IconButton(
                   onPressed: (_isLoading || !_isTyping) ? null : _sendMessage,
-                  icon: _isLoading
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
+                  icon:
+                      _isLoading
+                          ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                          : Icon(
+                            Icons.send_rounded,
                             color: Colors.white,
+                            size: 20,
                           ),
-                        )
-                      : Icon(
-                          Icons.send_rounded,
-                          color: Colors.white,
-                          size: 20,
-                        ),
                   style: IconButton.styleFrom(
-                    backgroundColor: (_isTyping && !_isLoading) 
-                        ? theme.colorScheme.primary 
-                        : theme.colorScheme.outline.withValues(alpha: 0.3),
+                    backgroundColor:
+                        (_isTyping && !_isLoading)
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.outline.withValues(alpha: 0.3),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(12),
                     minimumSize: const Size(44, 44),

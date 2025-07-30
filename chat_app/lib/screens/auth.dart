@@ -1,20 +1,19 @@
 import 'dart:io';
 
-import 'package:chat_app/auth_providers.dart'; // Updated import
+import 'package:chat_app/auth_providers.dart';
 import 'package:chat_app/widgets/user_image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Added Riverpod import
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// final _firebase = FirebaseAuth.instance; // Removed, logic moved to provider
-
-class AuthScreen extends ConsumerStatefulWidget { // Changed to ConsumerStatefulWidget
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  ConsumerState<AuthScreen> createState() => _AuthScreenState(); // Changed
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends ConsumerState<AuthScreen> { // Changed to ConsumerState
+class _AuthScreenState extends ConsumerState<AuthScreen> {
+  // Changed to ConsumerState
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _enteredEmail = '';
@@ -41,12 +40,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> { // Changed to Consume
 
     // Call the notifier methods
     if (_isLogin) {
-      ref.read(authNotifierProvider.notifier).signInWithEmailAndPassword(
-            _enteredEmail,
-            _enteredPassword,
-          );
+      ref
+          .read(authNotifierProvider.notifier)
+          .signInWithEmailAndPassword(_enteredEmail, _enteredPassword);
     } else {
-      ref.read(authNotifierProvider.notifier).signUpWithEmailAndPassword(
+      ref
+          .read(authNotifierProvider.notifier)
+          .signUpWithEmailAndPassword(
             _enteredEmail,
             _enteredPassword,
             _selectedImage, // Pass the image here
@@ -62,19 +62,24 @@ class _AuthScreenState extends ConsumerState<AuthScreen> { // Changed to Consume
     // Listen to the provider for side-effects like showing SnackBars
     ref.listen<AsyncValue<AuthScreenState>>(authNotifierProvider, (_, state) {
       state.whenOrNull(
-        data: (authState) { // This is when AsyncData is emitted by the notifier
-          if (authState.status == AuthStatus.error && authState.errorMessage != null) {
+        data: (authState) {
+          // This is when AsyncData is emitted by the notifier
+          if (authState.status == AuthStatus.error &&
+              authState.errorMessage != null) {
             ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(authState.errorMessage!)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(authState.errorMessage!)));
           }
           // Successful authentication will trigger navigation via authStateChangesProvider
         },
-        error: (error, stackTrace) { // This handles errors from the AsyncNotifier itself (e.g., during build)
+        error: (error, stackTrace) {
+          // This handles errors from the AsyncNotifier itself (e.g., during build)
           ScaffoldMessenger.of(context).clearSnackBars();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.toString())), // Or a more user-friendly message
+            SnackBar(
+              content: Text(error.toString()),
+            ), // Or a more user-friendly message
           );
         },
       );
@@ -148,14 +153,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> { // Changed to Consume
                             },
                           ),
                           const SizedBox(height: 12),
-                          if (isLoading)
-                            const CircularProgressIndicator(),
+                          if (isLoading) const CircularProgressIndicator(),
                           if (!isLoading)
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.primaryContainer,
+                                backgroundColor:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
                               ),
                               onPressed: _submit,
                               child: Text(_isLogin ? "Login" : "Signup"),

@@ -1,29 +1,24 @@
-import 'package:chat_app/auth_providers.dart'; // Import the new provider
+import 'package:chat_app/auth_providers.dart';
 import 'package:chat_app/screens/auth.dart';
 import 'package:chat_app/screens/splash.dart';
 import 'package:chat_app/screens/profile_verification.dart';
-// import 'package:firebase_auth/firebase_auth.dart'; // No longer directly needed here
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(
-    const ProviderScope( // Wrap with ProviderScope
-      child: App(),
-    ),
-  );
+  runApp(const ProviderScope(child: App()));
 }
 
-class App extends ConsumerWidget { // Change to ConsumerWidget
+class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) { // Add WidgetRef
-    final authState = ref.watch(authStateChangesProvider); // Watch the provider
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateChangesProvider);
 
     return MaterialApp(
       title: 'FlutterChat',
@@ -35,10 +30,7 @@ class App extends ConsumerWidget { // Change to ConsumerWidget
         useMaterial3: true,
       ).copyWith(
         scaffoldBackgroundColor: const Color(0xFFF8F9FA),
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          scrolledUnderElevation: 0,
-        ),
+        appBarTheme: const AppBarTheme(elevation: 0, scrolledUnderElevation: 0),
         cardTheme: CardThemeData(
           elevation: 2,
           shadowColor: Colors.black.withValues(alpha: 0.1),
@@ -65,9 +57,7 @@ class App extends ConsumerWidget { // Change to ConsumerWidget
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.grey.withValues(alpha: 0.2),
-            ),
+            borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -81,14 +71,13 @@ class App extends ConsumerWidget { // Change to ConsumerWidget
       home: authState.when(
         data: (user) {
           if (user != null) {
-            return const ProfileVerificationScreen(); // Show profile verification first
+            return const ProfileVerificationScreen();
           }
-          return const AuthScreen(); // User is not logged in
+          return const AuthScreen();
         },
-        loading: () => const SplashScreen(), // Show splash screen while loading
+        loading: () => const SplashScreen(),
         error: (error, stackTrace) {
-          // Optionally handle error state, e.g., show an error screen
-          return const AuthScreen(); // Fallback to AuthScreen on error
+          return const AuthScreen();
         },
       ),
     );

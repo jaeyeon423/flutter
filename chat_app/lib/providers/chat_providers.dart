@@ -9,14 +9,15 @@ final firebaseFirestoreProvider = Provider<FirebaseFirestore>((ref) {
 
 final messagesStreamProvider = StreamProvider<List<ChatMessage>>((ref) {
   final firestore = ref.watch(firebaseFirestoreProvider);
-  
+
   return firestore
       .collection('chat')
       .orderBy('createdAt', descending: true)
       .snapshots()
-      .map((snapshot) => snapshot.docs
-          .map((doc) => ChatMessage.fromFirestore(doc))
-          .toList());
+      .map(
+        (snapshot) =>
+            snapshot.docs.map((doc) => ChatMessage.fromFirestore(doc)).toList(),
+      );
 });
 
 final chatServiceProvider = Provider<ChatService>((ref) {
@@ -26,7 +27,7 @@ final chatServiceProvider = Provider<ChatService>((ref) {
 
 class ChatService {
   const ChatService(this._firestore);
-  
+
   final FirebaseFirestore _firestore;
 
   Future<void> sendMessage({
@@ -49,28 +50,31 @@ class ChatService {
   }
 }
 
-final sendMessageProvider = Provider<Future<void> Function({
-  required String text,
-})>((ref) {
-  final chatService = ref.watch(chatServiceProvider);
-  final currentUser = FirebaseAuth.instance.currentUser;
-  
-  return ({required String text}) async {
-    if (currentUser == null) return;
-    
-    final userData = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser.uid)
-        .get();
-    
-    final userDataMap = userData.data() ?? {};
-    
-    await chatService.sendMessage(
-      text: text,
-      userId: currentUser.uid,
-      userEmail: currentUser.email ?? '',
-      userName: userDataMap['username'] ?? currentUser.email?.split('@')[0] ?? 'Unknown',
-      userImage: userDataMap['image_url'] ?? '',
-    );
-  };
-});
+final sendMessageProvider =
+    Provider<Future<void> Function({required String text})>((ref) {
+      final chatService = ref.watch(chatServiceProvider);
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      return ({required String text}) async {
+        if (currentUser == null) return;
+
+        final userData =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(currentUser.uid)
+                .get();
+
+        final userDataMap = userData.data() ?? {};
+
+        await chatService.sendMessage(
+          text: text,
+          userId: currentUser.uid,
+          userEmail: currentUser.email ?? '',
+          userName:
+              userDataMap['username'] ??
+              currentUser.email?.split('@')[0] ??
+              'Unknown',
+          userImage: userDataMap['image_url'] ?? '',
+        );
+      };
+    });

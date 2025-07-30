@@ -6,15 +6,16 @@ import 'package:chat_app/firebase_providers.dart';
 import 'package:chat_app/auth_providers.dart';
 
 // Provider for user profile data
-final userProfileProvider = FutureProvider.family<Map<String, dynamic>?, String>((ref, uid) async {
-  try {
-    final firestore = ref.read(firebaseFirestoreProvider);
-    final doc = await firestore.collection('users').doc(uid).get();
-    return doc.data();
-  } catch (e) {
-    return null;
-  }
-});
+final userProfileProvider =
+    FutureProvider.family<Map<String, dynamic>?, String>((ref, uid) async {
+      try {
+        final firestore = ref.read(firebaseFirestoreProvider);
+        final doc = await firestore.collection('users').doc(uid).get();
+        return doc.data();
+      } catch (e) {
+        return null;
+      }
+    });
 
 class ProfileVerificationScreen extends ConsumerWidget {
   const ProfileVerificationScreen({super.key});
@@ -24,11 +25,13 @@ class ProfileVerificationScreen extends ConsumerWidget {
     // Double-check authentication state using both providers
     final authStateAsync = ref.watch(authStateChangesProvider);
     final currentUser = ref.watch(currentUserProvider);
-    
+
     return authStateAsync.when(
       data: (streamUser) {
         // Verify both stream user and current user are consistent
-        if (streamUser == null || currentUser == null || streamUser.uid != currentUser.uid) {
+        if (streamUser == null ||
+            currentUser == null ||
+            streamUser.uid != currentUser.uid) {
           // Authentication inconsistency detected, redirect to auth
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).pushReplacementNamed('/auth');
@@ -37,25 +40,27 @@ class ProfileVerificationScreen extends ConsumerWidget {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        
+
         return _buildVerificationScreen(context, ref, streamUser);
       },
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading:
+          () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) {
         // Auth error, redirect to auth screen
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.of(context).pushReplacementNamed('/auth');
         });
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );
   }
 
-  Widget _buildVerificationScreen(BuildContext context, WidgetRef ref, User user) {
+  Widget _buildVerificationScreen(
+    BuildContext context,
+    WidgetRef ref,
+    User user,
+  ) {
     final firebaseAuth = ref.read(firebaseAuthProvider);
     final userProfileAsync = ref.watch(userProfileProvider(user.uid));
 
@@ -81,7 +86,7 @@ class ProfileVerificationScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // User info card
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 32),
@@ -99,15 +104,14 @@ class ProfileVerificationScreen extends ConsumerWidget {
                 ),
                 child: userProfileAsync.when(
                   data: (profile) => _buildUserInfo(context, user, profile),
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  loading:
+                      () => const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => _buildUserInfo(context, user, null),
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Continue button
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 32),
@@ -130,16 +134,13 @@ class ProfileVerificationScreen extends ConsumerWidget {
                   ),
                   child: const Text(
                     '채팅 시작하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Logout button
               TextButton(
                 onPressed: () async {
@@ -148,7 +149,9 @@ class ProfileVerificationScreen extends ConsumerWidget {
                 child: Text(
                   '다른 계정으로 로그인',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onPrimary.withValues(alpha: 0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -160,54 +163,66 @@ class ProfileVerificationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserInfo(BuildContext context, User user, Map<String, dynamic>? profile) {
+  Widget _buildUserInfo(
+    BuildContext context,
+    User user,
+    Map<String, dynamic>? profile,
+  ) {
     return Column(
       children: [
         // Profile image
         CircleAvatar(
           radius: 40,
-          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-          backgroundImage: profile?['image_url'] != null 
-              ? NetworkImage(profile!['image_url']) 
-              : null,
-          child: profile?['image_url'] == null 
-              ? Icon(
-                  Icons.person,
-                  size: 40,
-                  color: Theme.of(context).colorScheme.primary,
-                )
-              : null,
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.primary.withValues(alpha: 0.1),
+          backgroundImage:
+              profile?['image_url'] != null
+                  ? NetworkImage(profile!['image_url'])
+                  : null,
+          child:
+              profile?['image_url'] == null
+                  ? Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Theme.of(context).colorScheme.primary,
+                  )
+                  : null,
         ),
         const SizedBox(height: 16),
-        
+
         // User name
         Text(
           profile?['username'] ?? user.email?.split('@')[0] ?? '사용자',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        
+
         // Email
         Text(
           user.email ?? '이메일 없음',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(height: 8),
-        
+
         // User ID (for debugging/verification)
         Text(
           'ID: ${user.uid.substring(0, 8)}...',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
             fontFamily: 'monospace',
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Login status
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -219,11 +234,7 @@ class ProfileVerificationScreen extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.check_circle,
-                size: 16,
-                color: Colors.green[700],
-              ),
+              Icon(Icons.check_circle, size: 16, color: Colors.green[700]),
               const SizedBox(width: 4),
               Text(
                 '로그인 성공',
