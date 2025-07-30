@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(flutter build:*)",
+      "Bash(flutter:*)"
+    ],
+    "deny": []
+  }
+}

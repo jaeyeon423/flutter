@@ -10,6 +10,12 @@ final authStateChangesProvider = StreamProvider<User?>((ref) {
   return firebaseAuth.authStateChanges();
 });
 
+// Provider for current user
+final currentUserProvider = Provider<User?>((ref) {
+  final firebaseAuth = ref.watch(firebaseAuthProvider);
+  return firebaseAuth.currentUser;
+});
+
 
 // For managing AuthScreen's specific UI state during auth operations
 enum AuthStatus { initial, loading, success, error }
@@ -75,6 +81,7 @@ class AuthNotifier extends AsyncNotifier<AuthScreenState> {
     state = const AsyncLoading(); // Indicate loading state
     final firebaseAuth = ref.read(firebaseAuthProvider);
     final firebaseStorage = ref.read(firebaseStorageProvider);
+    final firebaseFirestore = ref.read(firebaseFirestoreProvider);
 
     if (imageFile == null) {
       state = AsyncData(AuthScreenState(status: AuthStatus.error, errorMessage: 'Please pick an image.'));
@@ -93,8 +100,15 @@ class AuthNotifier extends AsyncNotifier<AuthScreenState> {
           .child('${userCredentials.user!.uid}.jpg');
 
       await storageRef.putFile(imageFile);
-      // final imageUrl = await storageRef.getDownloadURL();
-      // print('User image URL: $imageUrl'); // You might store this URL in Firestore later
+      final imageUrl = await storageRef.getDownloadURL();
+
+      // Store user data in Firestore
+      await firebaseFirestore.collection('users').doc(userCredentials.user!.uid).set({
+        'username': email.split('@')[0], // Use email prefix as username
+        'email': email,
+        'image_url': imageUrl,
+        'created_at': DateTime.now(),
+      });
 
       // On success, authStateChangesProvider will trigger navigation.
       state = AsyncData(AuthScreenState(status: AuthStatus.success));
