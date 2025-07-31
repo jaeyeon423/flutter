@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 사용자 문서 - 인증된 사용자만 자신의 데이터 수정 가능
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // 채팅방 정보 - 인증된 사용자는 읽기만 가능
+    match /chatRooms/{roomId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && validateChatRoomUpdate();
+    }
+    
+    // 메시지 - 인증된 사용자만 읽기/생성 가능
+    match /messages/{messageId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && validateMessage();
+      allow update, delete: if false; // 메시지 수정/삭제 불가
+    }
+    
+    // 채팅방 업데이트 검증 함수
+    function validateChatRoomUpdate() {
+      let allowedFields = ['lastMessage', 'updatedAt', 'memberCount'];
+      let data = request.resource.data;
+      
+      return data.keys().hasAll(resource.data.keys()) &&
+             data.keys().hasOnly(resource.data.keys().concat(allowedFields)) &&
+             (
+               // lastMessage 업데이트
+               ('lastMessage' in data && 
+                data.lastMessage.keys().hasAll(['text', 'senderId', 'senderName', 'timestamp']) &&
+                data.lastMessage.senderId == request.auth.uid) ||
+               // memberCount 업데이트
+               ('memberCount' in data && 
+                data.memberCount is int &&
+                data.memberCount >= 0)
+             );
+    }
+    
+    // 메시지 검증 함수
+    function validateMessage() {
+      let data = request.resource.data;
+      
+      return data.keys().hasAll(['roomId', 'text', 'senderId', 'senderName', 'timestamp', 'type']) &&
+             data.senderId == request.auth.uid &&
+             data.text is string &&
+             data.text.size() > 0 &&
+             data.text.size() <= 1000 &&
+             data.senderName is string &&
+             data.senderName.size() > 0 &&
+             data.type in ['text', 'image', 'file'] &&
+             data.roomId is string;
+    }
+  }
+}
