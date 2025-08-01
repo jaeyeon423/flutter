@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'subway_service.dart';
 
 class LocationService {
   static final LocationService _instance = LocationService._internal();
@@ -12,10 +11,27 @@ class LocationService {
   Position? _currentPosition;
   bool _isServiceRunning = false;
   Function(Position)? _onLocationUpdate;
+  
+  // 지하철 관련 필드
+  final SubwayService _subwayService = SubwayService();
+  List<TrainPosition> _nearbyTrains = [];
+  Function(List<TrainPosition>)? _onNearbyTrainsUpdate;
+  
+  // 채팅방 모니터링 관련
+  String? _currentChatRoomTrainId;
+  String? _currentChatRoomSubwayLine;
+  int _distanceWarningCount = 0;
+  Function(String message, bool isWarning)? _onDistanceAlert;
 
   /// 위치 서비스 초기화 및 시작
-  Future<bool> initialize(Function(Position) onLocationUpdate) async {
+  Future<bool> initialize(
+    Function(Position) onLocationUpdate, {
+    Function(List<TrainPosition>)? onNearbyTrainsUpdate,
+    Function(String message, bool isWarning)? onDistanceAlert,
+  }) async {
     _onLocationUpdate = onLocationUpdate;
+    _onNearbyTrainsUpdate = onNearbyTrainsUpdate;
+    _onDistanceAlert = onDistanceAlert;
     
     try {
       // 권한 확인 및 요청
@@ -31,7 +47,7 @@ class LocationService {
       // 초기 위치 획득
       await _getCurrentLocation();
       
-      // 주기적 위치 체크 시작 (1분마다)
+      // 주기적 위치 체크 시작 (15분마다)
       _startLocationTimer();
       
       _isServiceRunning = true;
@@ -52,6 +68,7 @@ class LocationService {
   /// 현재 위치 상태 확인
   bool get isRunning => _isServiceRunning;
   Position? get currentPosition => _currentPosition;
+  List<TrainPosition> get nearbyTrains => _nearbyTrains;
 
   /// 권한 확인 및 요청
   Future<bool> _checkAndRequestPermissions() async {
@@ -97,15 +114,79 @@ class LocationService {
       _currentPosition = position;
       _onLocationUpdate?.call(position);
       
+      // 근처 지하철 검색
+      await _checkNearbyTrains(position);
+      
+      // 현재 채팅방 열차와의 거리 체크
+      await _checkCurrentChatRoomDistance(position);
+      
       print('위치 업데이트: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       print('위치 획득 실패: $e');
     }
   }
 
-  /// 주기적 위치 체크 타이머 시작
+  /// 근처 지하철 검색
+  Future<void> _checkNearbyTrains(Position position) async {
+    try {
+      final nearbyTrains = await _subwayService.getNearbyTrains(position);
+      _nearbyTrains = nearbyTrains;
+      _onNearbyTrainsUpdate?.call(nearbyTrains);
+      
+      if (nearbyTrains.isNotEmpty) {
+        print('근처 지하철 ${nearbyTrains.length}개 발견:');
+        for (final train in nearbyTrains) {
+          print('  - ${train.displayName}: ${train.distanceFromUser?.toStringAsFixed(1)}m');
+        }
+      }
+    } catch (e) {
+      print('근처 지하철 검색 실패: $e');
+    }
+  }
+
+  /// 현재 채팅방 열차와의 거리 체크
+  Future<void> _checkCurrentChatRoomDistance(Position position) async {
+    if (_currentChatRoomTrainId == null || _currentChatRoomSubwayLine == null) {
+      return;
+    }
+    
+    try {
+      final isNear = await _subwayService.isUserNearTrain(
+        position,
+        _currentChatRoomTrainId!,
+        _currentChatRoomSubwayLine!,
+        radiusInMeters: 100.0,
+      );
+      
+      if (!isNear) {
+        _distanceWarningCount++;
+        
+        if (_distanceWarningCount == 1) {
+          // 첫 번째 경고
+          _onDistanceAlert?.call(
+            '열차와 100m 이상 떨어졌습니다. 계속 떨어지면 채팅방에서 나가게 됩니다.',
+            true,
+          );
+        } else if (_distanceWarningCount >= 2) {
+          // 두 번째 경고 후 채팅방 나가기
+          _onDistanceAlert?.call(
+            '열차와 너무 멀어져 채팅방에서 나갑니다.',
+            false,
+          );
+          _exitCurrentChatRoom();
+        }
+      } else {
+        // 다시 가까워지면 경고 카운트 리셋
+        _distanceWarningCount = 0;
+      }
+    } catch (e) {
+      print('채팅방 열차 거리 체크 실패: $e');
+    }
+  }
+
+  /// 주기적 위치 체크 타이머 시작 (15분마다)
   void _startLocationTimer() {
-    _locationTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
+    _locationTimer = Timer.periodic(const Duration(minutes: 15), (timer) async {
       await _getCurrentLocation();
     });
   }
@@ -135,5 +216,83 @@ class LocationService {
   /// 앱 설정 페이지 열기
   Future<void> openAppSettings() async {
     await Geolocator.openAppSettings();
+  }
+
+  /// 채팅방 입장 시 호출 - 열차 정보 설정
+  void enterChatRoom(String trainId, String subwayLine) {
+    _currentChatRoomTrainId = trainId;
+    _currentChatRoomSubwayLine = subwayLine;
+    _distanceWarningCount = 0;
+    print('채팅방 입장: $subwayLine $trainId호');
+  }
+
+  /// 채팅방 나가기
+  void _exitCurrentChatRoom() {
+    _currentChatRoomTrainId = null;
+    _currentChatRoomSubwayLine = null;
+    _distanceWarningCount = 0;
+  }
+
+  /// 수동으로 채팅방 나가기 (사용자가 직접 나갈 때)
+  void exitChatRoom() {
+    _exitCurrentChatRoom();
+  }
+
+  /// 현재 채팅방 정보 가져오기
+  Map<String, String>? get currentChatRoomInfo {
+    if (_currentChatRoomTrainId == null || _currentChatRoomSubwayLine == null) {
+      return null;
+    }
+    return {
+      'trainId': _currentChatRoomTrainId!,
+      'subwayLine': _currentChatRoomSubwayLine!,
+    };
+  }
+
+  /// 수동으로 근처 지하철 새로고침
+  Future<void> refreshNearbyTrains() async {
+    if (_currentPosition != null) {
+      await _checkNearbyTrains(_currentPosition!);
+    }
+  }
+
+  /// 강제 새로고침 (캐시 무시)
+  Future<void> forceRefreshNearbyTrains() async {
+    if (_currentPosition != null) {
+      // 캐시를 무시하고 강제로 새로운 데이터 가져오기
+      try {
+        final nearbyTrains = await _subwayService.forceRefreshAllTrains();
+        final filteredTrains = <TrainPosition>[];
+        
+        for (final train in nearbyTrains) {
+          if (train.latitude != null && train.longitude != null) {
+            final distance = Geolocator.distanceBetween(
+              _currentPosition!.latitude,
+              _currentPosition!.longitude,
+              train.latitude!,
+              train.longitude!,
+            );
+            
+            if (distance <= 100.0) {
+              train.distanceFromUser = distance;
+              filteredTrains.add(train);
+            }
+          }
+        }
+        
+        filteredTrains.sort((a, b) => a.distanceFromUser!.compareTo(b.distanceFromUser!));
+        _nearbyTrains = filteredTrains;
+        _onNearbyTrainsUpdate?.call(filteredTrains);
+        
+        print('강제 새로고침: 근처 지하철 ${filteredTrains.length}개 발견');
+      } catch (e) {
+        print('강제 새로고침 실패: $e');
+      }
+    }
+  }
+
+  /// 캐시 상태 확인
+  Map<String, dynamic> getCacheStatus() {
+    return _subwayService.getCacheStatus();
   }
 }

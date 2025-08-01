@@ -8,17 +8,20 @@ class AuthService {
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
 
-  Future<UserCredential?> signInWithEmailPassword(String email, String password) async {
+  Future<UserCredential?> signInWithEmailPassword(
+    String email,
+    String password,
+  ) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
+
       if (result.user != null) {
         await _updateUserOnlineStatus(result.user!.uid, true);
       }
-      
+
       return result;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
@@ -26,9 +29,9 @@ class AuthService {
   }
 
   Future<UserCredential?> createUserWithEmailPassword(
-    String email, 
-    String password, 
-    String displayName
+    String email,
+    String password,
+    String displayName,
   ) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -77,7 +80,27 @@ class AuthService {
         'lastSeen': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('온라인 상태 업데이트 실패: $e');
+      // 문서가 존재하지 않는 경우 기본 사용자 문서 생성
+      if (e.toString().contains('not-found')) {
+        try {
+          final user = _auth.currentUser;
+          if (user != null) {
+            await _firestore.collection('users').doc(userId).set({
+              'displayName': user.displayName ?? '사용자',
+              'email': user.email,
+              'photoURL': user.photoURL,
+              'createdAt': FieldValue.serverTimestamp(),
+              'lastSeen': FieldValue.serverTimestamp(),
+              'isOnline': isOnline,
+            });
+            print('사용자 문서가 없어서 새로 생성했습니다: $userId');
+          }
+        } catch (createError) {
+          print('사용자 문서 생성 실패: $createError');
+        }
+      } else {
+        print('온라인 상태 업데이트 실패: $e');
+      }
     }
   }
 

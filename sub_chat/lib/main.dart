@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:geolocator/geolocator.dart';
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
 import 'screens/chat_room_list_screen.dart';
 import 'services/auth_service.dart';
-import 'services/location_service.dart';
-import 'widgets/location_notification_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -37,7 +32,7 @@ class MyApp extends StatelessWidget {
   ThemeData _buildLightTheme() {
     const primaryColor = Color(0xFF2196F3);
     const surfaceColor = Color(0xFFF8F9FA);
-    
+
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
@@ -60,9 +55,7 @@ class MyApp extends StatelessWidget {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: Colors.white,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -85,7 +78,10 @@ class MyApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
     );
   }
@@ -93,7 +89,7 @@ class MyApp extends StatelessWidget {
   ThemeData _buildDarkTheme() {
     const primaryColor = Color(0xFF64B5F6);
     const surfaceColor = Color(0xFF121212);
-    
+
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
@@ -116,9 +112,7 @@ class MyApp extends StatelessWidget {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: const Color(0xFF1E1E1E),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -141,7 +135,10 @@ class MyApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
     );
   }
@@ -155,88 +152,15 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  final LocationService _locationService = LocationService();
-  bool _locationInitialized = false;
+  final AuthService _authService = AuthService();
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeLocationService();
-  }
-
-  @override
-  void dispose() {
-    _locationService.stop();
-    super.dispose();
-  }
-
-  Future<void> _initializeLocationService() async {
-    try {
-      final success = await _locationService.initialize((position) {
-        if (mounted) {
-          // 위치 업데이트 시 알림창 표시
-          LocationUpdateNotification.show(context, position);
-        }
-      });
-      
-      if (success) {
-        setState(() {
-          _locationInitialized = true;
-        });
-        print('위치 서비스가 성공적으로 초기화되었습니다.');
-      } else {
-        print('위치 서비스 초기화에 실패했습니다.');
-        _showLocationPermissionDialog();
-      }
-    } catch (e) {
-      print('위치 서비스 초기화 중 오류 발생: $e');
-    }
-  }
-
-  void _showLocationPermissionDialog() {
-    if (!mounted) return;
-    
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Row(
-            children: [
-              Icon(Icons.location_off, color: Colors.orange),
-              SizedBox(width: 8),
-              Text('위치 권한 필요'),
-            ],
-          ),
-          content: const Text(
-            '이 앱은 위치 서비스를 사용합니다.\n'
-            '설정에서 위치 권한을 허용해주세요.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('나중에'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _locationService.openAppSettings();
-              },
-              child: const Text('설정 열기'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: AuthService().authStateChanges,
+      stream: _authService.authStateChanges,
       builder: (context, snapshot) {
+        
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
@@ -251,8 +175,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
             ),
           );
         }
-        
-        if (snapshot.hasData) {
+
+        if (snapshot.hasData && snapshot.data != null) {
+          // 사용자가 인증되었으므로 채팅방 리스트로 이동
           return const ChatRoomListScreen();
         } else {
           return const LoginScreen();
@@ -261,4 +186,3 @@ class _AuthWrapperState extends State<AuthWrapper> {
     );
   }
 }
-

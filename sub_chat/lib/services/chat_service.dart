@@ -34,6 +34,7 @@ class ChatService {
     try {
       final batch = _firestore.batch();
 
+      // 메시지 추가
       final messageRef = _firestore
           .collection('chatRooms')
           .doc(roomId)
@@ -41,16 +42,41 @@ class ChatService {
           .doc();
       batch.set(messageRef, message.toFirestore());
 
+      // 채팅방 문서 확인 및 생성/업데이트
       final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
-      batch.update(chatRoomRef, {
-        'lastMessage': {
-          'text': message.text,
-          'senderId': message.senderId,
-          'senderName': message.senderName,
-          'timestamp': FieldValue.serverTimestamp(),
-        },
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      final chatRoomDoc = await chatRoomRef.get();
+      
+      if (chatRoomDoc.exists) {
+        // 기존 채팅방 업데이트
+        batch.update(chatRoomRef, {
+          'lastMessage': {
+            'text': message.text,
+            'senderId': message.senderId,
+            'senderName': message.senderName,
+            'timestamp': FieldValue.serverTimestamp(),
+          },
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      } else {
+        // 새 채팅방 생성 (지하철 열차 채팅방)
+        final roomName = _generateRoomName(roomId);
+        batch.set(chatRoomRef, {
+          'name': roomName,
+          'description': _generateRoomDescription(roomId),
+          'type': 'train', // 열차 채팅방 타입
+          'trainId': _extractTrainId(roomId),
+          'subwayLine': _extractSubwayLine(roomId),
+          'createdAt': FieldValue.serverTimestamp(),
+          'memberCount': 1,
+          'lastMessage': {
+            'text': message.text,
+            'senderId': message.senderId,
+            'senderName': message.senderName,
+            'timestamp': FieldValue.serverTimestamp(),
+          },
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
 
       await batch.commit();
     } catch (e) {
@@ -81,9 +107,29 @@ class ChatService {
 
   Future<void> incrementMemberCount(String roomId) async {
     try {
-      await _firestore.collection('chatRooms').doc(roomId).update({
-        'memberCount': FieldValue.increment(1),
-      });
+      final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
+      final chatRoomDoc = await chatRoomRef.get();
+      
+      if (chatRoomDoc.exists) {
+        // 기존 채팅방 멤버 수 증가
+        await chatRoomRef.update({
+          'memberCount': FieldValue.increment(1),
+        });
+      } else {
+        // 새 채팅방 생성 (지하철 열차 채팅방)
+        final roomName = _generateRoomName(roomId);
+        await chatRoomRef.set({
+          'name': roomName,
+          'description': _generateRoomDescription(roomId),
+          'type': 'train', // 열차 채팅방 타입
+          'trainId': _extractTrainId(roomId),
+          'subwayLine': _extractSubwayLine(roomId),
+          'createdAt': FieldValue.serverTimestamp(),
+          'memberCount': 1, // 초기 멤버 수
+          'lastMessage': null,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
     } catch (e) {
       print('멤버 수 증가 실패: $e');
     }
@@ -91,9 +137,20 @@ class ChatService {
 
   Future<void> decrementMemberCount(String roomId) async {
     try {
-      await _firestore.collection('chatRooms').doc(roomId).update({
-        'memberCount': FieldValue.increment(-1),
-      });
+      final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
+      final chatRoomDoc = await chatRoomRef.get();
+      
+      if (chatRoomDoc.exists) {
+        final currentData = chatRoomDoc.data() as Map<String, dynamic>?;
+        final currentMemberCount = currentData?['memberCount'] as int? ?? 0;
+        
+        if (currentMemberCount > 0) {
+          await chatRoomRef.update({
+            'memberCount': FieldValue.increment(-1),
+          });
+        }
+      }
+      // 문서가 존재하지 않으면 아무 작업하지 않음
     } catch (e) {
       print('멤버 수 감소 실패: $e');
     }
@@ -106,5 +163,31 @@ class ChatService {
   ChatRoom? parseChatRoom(DocumentSnapshot doc) {
     if (!doc.exists) return null;
     return ChatRoom.fromFirestore(doc);
+  }
+
+  /// roomId에서 열차 ID 추출 (예: "0460_1호선" -> "0460")
+  String _extractTrainId(String roomId) {
+    final parts = roomId.split('_');
+    return parts.isNotEmpty ? parts[0] : roomId;
+  }
+
+  /// roomId에서 지하철 노선 추출 (예: "0460_1호선" -> "1호선")
+  String _extractSubwayLine(String roomId) {
+    final parts = roomId.split('_');
+    return parts.length > 1 ? parts[1] : '알 수 없는 노선';
+  }
+
+  /// 채팅방 이름 생성
+  String _generateRoomName(String roomId) {
+    final trainId = _extractTrainId(roomId);
+    final subwayLine = _extractSubwayLine(roomId);
+    return '$subwayLine $trainId호 열차';
+  }
+
+  /// 채팅방 설명 생성
+  String _generateRoomDescription(String roomId) {
+    final trainId = _extractTrainId(roomId);
+    final subwayLine = _extractSubwayLine(roomId);
+    return '$subwayLine $trainId호 열차에 탑승한 승객들의 채팅방입니다.';
   }
 }
