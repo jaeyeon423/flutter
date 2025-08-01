@@ -4,7 +4,8 @@ import '../services/auth_service.dart';
 import '../services/chat_service.dart';
 import '../models/message_model.dart';
 import '../widgets/message_bubble.dart';
-import '../widgets/message_input.dart';
+import '../widgets/enhanced_message_input.dart';
+import '../widgets/loading_overlay.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final String roomId;
@@ -105,7 +106,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_getRoomTitle()),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           StreamBuilder<DocumentSnapshot>(
             stream: _chatService.getChatRoom(widget.roomId),
@@ -152,55 +152,59 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               stream: _chatService.getMessages(widget.roomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.error, size: 64, color: Colors.red),
-                        const SizedBox(height: 16),
-                        Text('오류가 발생했습니다: ${snapshot.error}'),
-                      ],
-                    ),
+                  return ErrorStateWidget(
+                    message: '메시지를 불러오는 중 오류가 발생했습니다.\n${snapshot.error}',
+                    onRetry: () {
+                      setState(() {});
+                    },
+                    icon: Icons.chat_bubble_outline,
                   );
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text(
+                          '메시지를 불러오는 중...',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
                   );
                 }
 
                 final messages = _chatService.parseMessages(snapshot.data!);
 
                 if (messages.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          size: 80,
-                          color: Colors.grey[300],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          '첫 메시지를 보내보세요!',
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
+                  return const EmptyStateWidget(
+                    message: '첫 메시지를 보내보세요!\n새로운 대화를 시작해보세요.',
+                    icon: Icons.chat_bubble_outline,
                   );
                 }
 
                 return ListView.builder(
                   controller: _scrollController,
                   reverse: true,
+                  padding: const EdgeInsets.only(bottom: 8),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    return MessageBubble(message: messages[index]);
+                    final message = messages[index];
+                    final nextMessage = index < messages.length - 1 
+                        ? messages[index + 1] 
+                        : null;
+                    
+                    final isConsecutive = nextMessage != null &&
+                        nextMessage.senderId == message.senderId &&
+                        message.timestamp.difference(nextMessage.timestamp).inMinutes < 5;
+                    
+                    return MessageBubble(
+                      message: message,
+                      isConsecutive: isConsecutive,
+                    );
                   },
                 );
               },
@@ -208,9 +212,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
           
           // 메시지 입력부
-          MessageInput(
+          EnhancedMessageInput(
             onSendMessage: _sendMessage,
             isLoading: _isSending,
+            hintText: '메시지를 입력하세요...',
           ),
         ],
       ),

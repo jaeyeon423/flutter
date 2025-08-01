@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/auth_service.dart';
 import '../services/chat_service.dart';
+import '../widgets/user_status_indicator.dart';
 import 'chat_room_screen.dart';
 
 class ChatRoomListScreen extends StatefulWidget {
@@ -69,20 +70,32 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('채팅'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           PopupMenuButton<void>(
-            icon: CircleAvatar(
-              backgroundColor: Theme.of(context).primaryColor,
-              child: Text(
-                (user?.displayName?.isNotEmpty == true) 
-                    ? user!.displayName!.substring(0, 1).toUpperCase() 
-                    : 'U',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            icon: Stack(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Text(
+                    (user?.displayName?.isNotEmpty == true) 
+                        ? user!.displayName!.substring(0, 1).toUpperCase() 
+                        : 'U',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+                if (user != null)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: UserStatusIndicator(
+                      userId: user.uid,
+                      size: 12,
+                    ),
+                  ),
+              ],
             ),
             itemBuilder: (context) => [
               PopupMenuItem(
