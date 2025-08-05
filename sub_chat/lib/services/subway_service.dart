@@ -169,7 +169,7 @@ class SubwayService {
   /// 사용자 위치 기준 근처 열차 찾기 (100m 이내)
   Future<List<TrainPosition>> getNearbyTrains(
     Position userPosition, {
-    double radiusInMeters = 5500.0,
+    double radiusInMeters = 100.0,
   }) async {
     final allTrains = await getAllTrainPositions();
     final nearbyTrains = <TrainPosition>[];
