@@ -50,6 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
           _passwordController.text,
         );
       }
+      
+      // 로그인/회원가입 성공 시 채팅방 리스트로 이동
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/chat-rooms');
+      }
     } catch (e) {
       if (mounted) {
         setState(() {

@@ -172,7 +172,7 @@ class SubwayService {
   /// 사용자 위치 기준 근처 열차 찾기 (100m 이내)
   Future<List<TrainPosition>> getNearbyTrains(
     Position userPosition, {
-    double radiusInMeters = 10000.0,
+    double radiusInMeters = 100.0,
   }) async {
     final allTrains = await getAllTrainPositions();
     final nearbyTrains = <TrainPosition>[];
@@ -376,10 +376,29 @@ class TrainPosition {
   String get chatRoomId => '${trainNo}_$subwayNm';
 
   /// 열차 표시명 생성
-  String get displayName => '$subwayNm $trainNo호 ($updnLine)';
+  String get displayName =>
+      '$subwayNm $trainNo호 (${_getDirectionText(updnLine)})';
 
   /// 현재 위치 설명
   String get currentLocationDescription => '$statnNm 방향 ($statnTnm 행)';
+
+  /// 운행 방향 텍스트 변환
+  String _getDirectionText(String? direction) {
+    if (direction == null) return '정보없음';
+
+    switch (direction) {
+      case '0':
+        return '상행선';
+      case '1':
+        return '하행선';
+      case '상행':
+        return '상행선';
+      case '하행':
+        return '하행선';
+      default:
+        return direction;
+    }
+  }
 
   Map<String, dynamic> toJson() {
     return {
