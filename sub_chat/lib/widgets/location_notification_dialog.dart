@@ -106,7 +106,7 @@ class LocationNotificationDialog extends StatelessWidget {
   void _openMapsApp(Position position) {
     // 구글 맵스나 기본 지도 앱에서 위치 열기
     final url = 'geo:${position.latitude},${position.longitude}';
-    print('지도 앱으로 이동: $url');
+    // 지도 앱으로 이동: $url
     // 실제 구현에서는 url_launcher 패키지를 사용하여 지도 앱을 열 수 있습니다.
   }
 }

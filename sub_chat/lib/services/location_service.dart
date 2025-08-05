@@ -53,7 +53,7 @@ class LocationService {
       _isServiceRunning = true;
       return true;
     } catch (e) {
-      print('위치 서비스 초기화 실패: $e');
+      // 위치 서비스 초기화 실패
       return false;
     }
   }
@@ -78,13 +78,13 @@ class LocationService {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print('위치 권한이 거부되었습니다.');
+        // 위치 권한이 거부됨
         return false;
       }
     }
     
     if (permission == LocationPermission.deniedForever) {
-      print('위치 권한이 영구적으로 거부되었습니다. 설정에서 권한을 허용해주세요.');
+      // 위치 권한이 영구적으로 거부됨
       return false;
     }
     
@@ -95,7 +95,7 @@ class LocationService {
   Future<bool> _checkLocationService() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      print('위치 서비스가 비활성화되어 있습니다. 설정에서 위치 서비스를 활성화해주세요.');
+      // 위치 서비스가 비활성화됨
       return false;
     }
     return true;
@@ -120,9 +120,9 @@ class LocationService {
       // 현재 채팅방 열차와의 거리 체크
       await _checkCurrentChatRoomDistance(position);
       
-      print('위치 업데이트: ${position.latitude}, ${position.longitude}');
+      // 위치 업데이트 완료
     } catch (e) {
-      print('위치 획득 실패: $e');
+      // 위치 획득 실패
     }
   }
 
@@ -134,13 +134,10 @@ class LocationService {
       _onNearbyTrainsUpdate?.call(nearbyTrains);
       
       if (nearbyTrains.isNotEmpty) {
-        print('근처 지하철 ${nearbyTrains.length}개 발견:');
-        for (final train in nearbyTrains) {
-          print('  - ${train.displayName}: ${train.distanceFromUser?.toStringAsFixed(1)}m');
-        }
+        // 근처 지하철 ${nearbyTrains.length}개 발견
       }
     } catch (e) {
-      print('근처 지하철 검색 실패: $e');
+      // 근처 지하철 검색 실패
     }
   }
 
@@ -180,7 +177,7 @@ class LocationService {
         _distanceWarningCount = 0;
       }
     } catch (e) {
-      print('채팅방 열차 거리 체크 실패: $e');
+      // 채팅방 열차 거리 체크 실패
     }
   }
 
@@ -223,7 +220,7 @@ class LocationService {
     _currentChatRoomTrainId = trainId;
     _currentChatRoomSubwayLine = subwayLine;
     _distanceWarningCount = 0;
-    print('채팅방 입장: $subwayLine $trainId호');
+    // 채팅방 입장: $subwayLine $trainId호
   }
 
   /// 채팅방 나가기
@@ -284,9 +281,9 @@ class LocationService {
         _nearbyTrains = filteredTrains;
         _onNearbyTrainsUpdate?.call(filteredTrains);
         
-        print('강제 새로고침: 근처 지하철 ${filteredTrains.length}개 발견');
+        // 강제 새로고침: 근처 지하철 ${filteredTrains.length}개 발견
       } catch (e) {
-        print('강제 새로고침 실패: $e');
+        // 강제 새로고침 실패
       }
     }
   }

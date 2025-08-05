@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/location_service.dart';
@@ -54,15 +53,15 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
       );
       
       if (success) {
-        print('위치 서비스가 성공적으로 초기화되었습니다.');
+        // 위치 서비스 초기화 성공
         _initializeNearbyTrainsListener();
         _loadNearbyTrains();
       } else {
-        print('위치 서비스 초기화에 실패했습니다.');
+        // 위치 서비스 초기화 실패
         _showLocationPermissionDialog();
       }
     } catch (e) {
-      print('위치 서비스 초기화 중 오류 발생: $e');
+      // 위치 서비스 초기화 오류
     }
   }
 
@@ -91,7 +90,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
         _nearbyTrains = _locationService.nearbyTrains;
       });
     } catch (e) {
-      print('근처 지하철 로드 실패: $e');
+      // 근처 지하철 로드 실패
     } finally {
       setState(() {
         _isLoadingTrains = false;

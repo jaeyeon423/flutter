@@ -93,13 +93,13 @@ class AuthService {
               'lastSeen': FieldValue.serverTimestamp(),
               'isOnline': isOnline,
             });
-            print('사용자 문서가 없어서 새로 생성했습니다: $userId');
+            // 사용자 문서 새로 생성: $userId
           }
         } catch (createError) {
-          print('사용자 문서 생성 실패: $createError');
+          // 사용자 문서 생성 실패
         }
       } else {
-        print('온라인 상태 업데이트 실패: $e');
+        // 온라인 상태 업데이트 실패
       }
     }
   }

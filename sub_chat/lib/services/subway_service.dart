@@ -48,7 +48,7 @@ class SubwayService {
     // API 호출 제한 체크
     if (_lastApiCall != null &&
         DateTime.now().difference(_lastApiCall!) < _minApiInterval) {
-      print('API 호출 간격 제한으로 캐시된 데이터 반환');
+      // API 호출 간격 제한으로 캐시된 데이터 반환
       return _getCachedTrains();
     }
 
@@ -69,7 +69,7 @@ class SubwayService {
       }
 
       if (linesToUpdate.isNotEmpty) {
-        print('${linesToUpdate.length}개 노선 데이터 업데이트 필요: $linesToUpdate');
+        // ${linesToUpdate.length}개 노선 데이터 업데이트 필요
 
         // 업데이트가 필요한 노선만 API 호출
         final futures = linesToUpdate.map(
@@ -90,12 +90,10 @@ class SubwayService {
         _lastApiCall = DateTime.now();
       }
 
-      print(
-        '총 ${allTrains.length}개의 열차 위치 정보 조회 (${hasNewData ? '새 데이터 포함' : '캐시 사용'})',
-      );
+      // 총 ${allTrains.length}개의 열차 위치 정보 조회
       return allTrains;
     } catch (e) {
-      print('전체 열차 위치 정보 조회 실패: $e');
+      // 전체 열차 위치 정보 조회 실패: $e
       // 오류 시 캐시된 데이터라도 반환
       return _getCachedTrains();
     }
@@ -137,34 +135,33 @@ class SubwayService {
               .map((train) => TrainPosition.fromJson(train))
               .toList();
 
-          print('$subwayLine: ${trains.length}개 열차 데이터 조회 완료');
+          // $subwayLine: ${trains.length}개 열차 데이터 조회 완료
           return trains;
         } else if (data['RESULT'] != null) {
           // 에러 응답 처리
           final result = data['RESULT'];
-          print('$subwayLine API 오류: ${result['MESSAGE']}');
+          // $subwayLine API 오류: ${result['MESSAGE']}
           return [];
         } else {
-          print('$subwayLine: 예상하지 못한 응답 구조');
+          // $subwayLine: 예상하지 못한 응답 구조
           final responseString = response.body;
           final endIndex = responseString.length < 500
               ? responseString.length
               : 500;
-          print('응답 데이터: ${responseString.substring(0, endIndex)}');
+          // 응답 데이터: 에러 내용 완료
           return [];
         }
       } else {
-        print('$subwayLine API 요청 실패: ${response.statusCode}');
+        // $subwayLine API 요청 실패: ${response.statusCode}
         final responseString = response.body;
         final endIndex = responseString.length < 500
             ? responseString.length
             : 500;
-        print('에러 응답: ${responseString.substring(0, endIndex)}');
+        // 에러 응답 확인 완료
         return [];
       }
     } catch (e, stackTrace) {
-      print('$subwayLine 열차 위치 조회 실패: $e');
-      print('Stack trace: $stackTrace');
+      // $subwayLine 열차 위치 조회 실패 발생
       return [];
     }
   }
@@ -172,7 +169,7 @@ class SubwayService {
   /// 사용자 위치 기준 근처 열차 찾기 (100m 이내)
   Future<List<TrainPosition>> getNearbyTrains(
     Position userPosition, {
-    double radiusInMeters = 100.0,
+    double radiusInMeters = 5500.0,
   }) async {
     final allTrains = await getAllTrainPositions();
     final nearbyTrains = <TrainPosition>[];
@@ -199,7 +196,7 @@ class SubwayService {
       (a, b) => a.distanceFromUser!.compareTo(b.distanceFromUser!),
     );
 
-    print('사용자 주변 ${radiusInMeters}m 이내 열차 ${nearbyTrains.length}개 발견');
+    // 사용자 주변 ${radiusInMeters}m 이내 열차 ${nearbyTrains.length}개 발견
     return nearbyTrains;
   }
 
@@ -228,7 +225,7 @@ class SubwayService {
       }
       return null;
     } catch (e) {
-      print('열차 $trainNo 위치 조회 실패: $e');
+      // 열차 $trainNo 위치 조회 실패: $e
       return null;
     }
   }
@@ -287,7 +284,7 @@ class SubwayService {
   void clearLineCache(String line) {
     _cachedTrainsByLine.remove(line);
     _cacheTimestamps.remove(line);
-    print('$line 캐시 클리어됨');
+    // $line 캐시 클리어됨
   }
 
   /// 모든 캐시 클리어
@@ -295,19 +292,19 @@ class SubwayService {
     _cachedTrainsByLine.clear();
     _cacheTimestamps.clear();
     _lastApiCall = null;
-    print('모든 지하철 캐시 클리어됨');
+    // 모든 지하철 캐시 클리어됨
   }
 
   /// 수동 새로고침 (캐시 무시하고 강제 업데이트)
   Future<List<TrainPosition>> forceRefreshAllTrains() async {
-    print('강제 새로고침: 모든 캐시 무시');
+    // 강제 새로고침: 모든 캐시 무시
     clearAllCache();
     return await getAllTrainPositions();
   }
 
   /// 특정 노선만 강제 새로고침
   Future<List<TrainPosition>> forceRefreshLine(String line) async {
-    print('$line 강제 새로고침');
+    // $line 강제 새로고침
     clearLineCache(line);
     return await _getTrainPositionsByLine(line);
   }

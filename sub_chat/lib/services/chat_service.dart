@@ -131,7 +131,7 @@ class ChatService {
         });
       }
     } catch (e) {
-      print('멤버 수 증가 실패: $e');
+      // 멤버 수 증가 실패
     }
   }
 
@@ -152,7 +152,7 @@ class ChatService {
       }
       // 문서가 존재하지 않으면 아무 작업하지 않음
     } catch (e) {
-      print('멤버 수 감소 실패: $e');
+      // 멤버 수 감소 실패
     }
   }
 

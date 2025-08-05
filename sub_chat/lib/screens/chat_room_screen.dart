@@ -55,7 +55,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       await _chatService.initializeChatRoom();
       await _chatService.incrementMemberCount(widget.roomId);
     } catch (e) {
-      print('채팅방 초기화 실패: $e');
+      // 채팅방 초기화 실패
     }
   }
 
