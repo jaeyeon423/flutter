@@ -51,7 +51,7 @@ class UserStatusIndicator extends StatelessWidget {
             border: Border.all(color: Colors.white, width: 2),
             boxShadow: [
               BoxShadow(
-                color: Colors.green.withOpacity(0.3),
+                color: Colors.green.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),

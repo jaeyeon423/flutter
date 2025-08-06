@@ -107,7 +107,7 @@ class _EnhancedMessageInputState extends State<EnhancedMessageInput>
         color: theme.scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -130,7 +130,7 @@ class _EnhancedMessageInputState extends State<EnhancedMessageInput>
                   borderRadius: BorderRadius.circular(24),
                   border: _isExpanded
                       ? Border.all(
-                          color: theme.primaryColor.withOpacity(0.5),
+                          color: theme.primaryColor.withValues(alpha: 0.5),
                           width: 2,
                         )
                       : null,
@@ -157,7 +157,7 @@ class _EnhancedMessageInputState extends State<EnhancedMessageInput>
                     prefixIcon: _isExpanded
                         ? Icon(
                             Icons.chat_bubble_outline,
-                            color: theme.primaryColor.withOpacity(0.6),
+                            color: theme.primaryColor.withValues(alpha: 0.6),
                             size: 20,
                           )
                         : null,
@@ -186,7 +186,7 @@ class _EnhancedMessageInputState extends State<EnhancedMessageInput>
                           ? LinearGradient(
                               colors: [
                                 theme.primaryColor,
-                                theme.primaryColor.withOpacity(0.8),
+                                theme.primaryColor.withValues(alpha: 0.8),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -199,7 +199,7 @@ class _EnhancedMessageInputState extends State<EnhancedMessageInput>
                       boxShadow: _canSend && !widget.isLoading
                           ? [
                               BoxShadow(
-                                color: theme.primaryColor.withOpacity(0.3),
+                                color: theme.primaryColor.withValues(alpha: 0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),

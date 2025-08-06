@@ -31,11 +31,14 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
   }
 
   Future<void> _initializeLocationService() async {
+    debugPrint('[CHAT_LIST] 📍 위치 서비스 초기화 시작');
     try {
       final success = await _locationService.initialize(
         (position) {
           if (mounted) {
-            // 위치 업데이트 시 특별한 처리 없음
+            debugPrint(
+              '[CHAT_LIST] 📍 위치 업데이트: ${position.latitude}, ${position.longitude}',
+            );
           }
         },
         onNearbyTrainsUpdate: (trains) {
@@ -43,25 +46,27 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
             setState(() {
               _nearbyTrains = trains;
             });
+            debugPrint('[CHAT_LIST] 🚇 근처 열차 업데이트: ${trains.length}개');
           }
         },
         onDistanceAlert: (message, isWarning) {
           if (mounted) {
+            debugPrint('[CHAT_LIST] ⚠️ 거리 알림: $message (경고: $isWarning)');
             _showDistanceAlert(message, isWarning);
           }
         },
       );
-      
+
       if (success) {
-        // 위치 서비스 초기화 성공
+        debugPrint('[CHAT_LIST] ✅ 위치 서비스 초기화 성공');
         _initializeNearbyTrainsListener();
         _loadNearbyTrains();
       } else {
-        // 위치 서비스 초기화 실패
+        debugPrint('[CHAT_LIST] ❌ 위치 서비스 초기화 실패 - 권한 대화상자 표시');
         _showLocationPermissionDialog();
       }
     } catch (e) {
-      // 위치 서비스 초기화 오류
+      debugPrint('[CHAT_LIST] ☠️ 위치 서비스 초기화 오류: $e');
     }
   }
 
@@ -71,26 +76,40 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
   }
 
   Future<void> _loadNearbyTrains({bool forceRefresh = false}) async {
-    if (_isLoadingTrains) return;
+    if (_isLoadingTrains) {
+      debugPrint('[CHAT_LIST] ⏰ 이미 열차 로딩 중이므로 건너뜀');
+      return;
+    }
 
+    debugPrint('[CHAT_LIST] 🔄 근처 열차 로딩 시작 (강제새로고침: $forceRefresh)');
     setState(() {
       _isLoadingTrains = true;
     });
 
+    final stopwatch = Stopwatch()..start();
     try {
       if (forceRefresh) {
         // 강제 새로고침 (캐시 무시)
         await _locationService.forceRefreshNearbyTrains();
+        debugPrint('[CHAT_LIST] 🔄 강제 새로고침 완료');
       } else {
         // 일반 새로고침 (캐시 활용)
         await _locationService.refreshNearbyTrains();
+        debugPrint('[CHAT_LIST] 🔄 일반 새로고침 완료');
       }
-      
+
       setState(() {
         _nearbyTrains = _locationService.nearbyTrains;
       });
+      stopwatch.stop();
+      debugPrint(
+        '[CHAT_LIST] ✅ 근처 열차 로딩 성공: ${_nearbyTrains.length}개 (${stopwatch.elapsedMilliseconds}ms)',
+      );
     } catch (e) {
-      // 근처 지하철 로드 실패
+      stopwatch.stop();
+      debugPrint(
+        '[CHAT_LIST] ❌ 근처 지하철 로드 실패 (${stopwatch.elapsedMilliseconds}ms): $e',
+      );
     } finally {
       setState(() {
         _isLoadingTrains = false;
@@ -98,11 +117,13 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
     }
   }
 
-
   Future<void> _handleLogout() async {
+    debugPrint('[CHAT_LIST] 🚪 로그아웃 시작');
     try {
       await _authService.signOut();
+      debugPrint('[CHAT_LIST] ✅ 로그아웃 성공');
     } catch (e) {
+      debugPrint('[CHAT_LIST] ❌ 로그아웃 실패: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -115,8 +136,12 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
   }
 
   void _navigateToChatRoom(String roomId, {TrainPosition? train}) {
+    debugPrint('[CHAT_LIST] 🚇 채팅방 이동: $roomId');
     // 지하철 채팅방의 경우 위치 서비스에 열차 정보 등록
     if (train != null) {
+      debugPrint(
+        '[CHAT_LIST] 📍 위치 서비스에 열차 등록: ${train.subwayNm} ${train.trainNo}호',
+      );
       _locationService.enterChatRoom(train.trainNo!, train.subwayNm!);
     }
 
@@ -125,6 +150,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
       context,
       MaterialPageRoute(builder: (context) => ChatRoomScreen(roomId: roomId)),
     );
+    debugPrint('[CHAT_LIST] ✅ 채팅방 화면으로 네비게이션 완료');
   }
 
   Future<void> _showLogoutDialog() async {
@@ -266,11 +292,11 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
 
             // 임시 채팅방 (위치 상관없이 입장 가능)
             _buildTemporaryChatRoom(),
-            
+
             const SizedBox(height: 16),
-            
+
             // 근처 지하철 채팅방 리스트
-            if (_nearbyTrains.isNotEmpty) 
+            if (_nearbyTrains.isNotEmpty)
               ..._buildNearbyTrainChatRooms()
             else if (_isLoadingTrains)
               const Padding(
@@ -282,10 +308,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                       SizedBox(height: 16),
                       Text(
                         '근처 지하철을 찾고 있습니다...',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                     ],
                   ),
@@ -339,7 +362,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -382,10 +407,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: lineColor.withOpacity(0.3),
-              width: 1,
-            ),
+            side: BorderSide(color: lineColor.withValues(alpha: 0.3), width: 1),
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
@@ -406,7 +428,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: lineColor.withOpacity(0.3),
+                              color: lineColor.withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -424,7 +446,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      
+
                       // 열차 정보
                       Expanded(
                         child: Column(
@@ -451,7 +473,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                           ],
                         ),
                       ),
-                      
+
                       // LIVE 배지
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -487,9 +509,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // 하단: 거리 정보와 입장 버튼
                   Row(
                     children: [
@@ -527,9 +549,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                           ],
                         ),
                       ),
-                      
+
                       const Spacer(),
-                      
+
                       // 입장 버튼
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -634,7 +656,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: Colors.orange.withOpacity(0.3),
+            color: Colors.orange.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -657,7 +679,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.orange.withOpacity(0.3),
+                            color: Colors.orange.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -675,7 +697,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // 임시방 정보
                     Expanded(
                       child: Column(
@@ -702,7 +724,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                         ],
                       ),
                     ),
-                    
+
                     // TEST 배지
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -738,9 +760,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // 하단: 접근 정보와 입장 버튼
                 Row(
                   children: [
@@ -778,9 +800,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                         ],
                       ),
                     ),
-                    
+
                     const Spacer(),
-                    
+
                     // 입장 버튼
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -823,7 +845,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
 
   void _showLocationPermissionDialog() {
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -862,7 +884,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
 
   void _showDistanceAlert(String message, bool isWarning) {
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       barrierDismissible: !isWarning, // 경고가 아닐 때만 바깥 터치로 닫기 가능
@@ -885,10 +907,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                 Navigator.of(context).pop();
                 if (!isWarning) {
                   // 자동 퇴장의 경우 로그인 화면으로 이동
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login',
-                    (route) => false,
-                  );
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/login', (route) => false);
                 }
               },
               child: const Text('확인'),

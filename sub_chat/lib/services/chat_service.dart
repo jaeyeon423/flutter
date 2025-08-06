@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/message_model.dart';
 
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<QuerySnapshot> getMessages(String roomId) {
+    debugPrint('[FIRESTORE] 💬 메시지 스트림 구독 시작: $roomId');
     return _firestore
         .collection('chatRooms')
         .doc(roomId)
@@ -20,8 +22,12 @@ class ChatService {
     required String senderId,
     required String senderName,
   }) async {
-    if (text.trim().isEmpty) return;
+    if (text.trim().isEmpty) {
+      debugPrint('[FIRESTORE] ⚠️ 빈 메시지 전송 시도 차단');
+      return;
+    }
 
+    debugPrint('[FIRESTORE] 📤 메시지 전송 시작: $roomId, 길이: ${text.trim().length}');
     final message = Message(
       id: '',
       roomId: roomId,
@@ -31,6 +37,7 @@ class ChatService {
       timestamp: DateTime.now(),
     );
 
+    final stopwatch = Stopwatch()..start();
     try {
       final batch = _firestore.batch();
 
@@ -45,7 +52,7 @@ class ChatService {
       // 채팅방 문서 확인 및 생성/업데이트
       final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
       final chatRoomDoc = await chatRoomRef.get();
-      
+
       if (chatRoomDoc.exists) {
         // 기존 채팅방 업데이트
         batch.update(chatRoomRef, {
@@ -79,42 +86,63 @@ class ChatService {
       }
 
       await batch.commit();
+      stopwatch.stop();
+      debugPrint(
+        '[FIRESTORE] ✅ 메시지 전송 성공: $roomId (${stopwatch.elapsedMilliseconds}ms)',
+      );
     } catch (e) {
+      stopwatch.stop();
+      debugPrint(
+        '[FIRESTORE] ❌ 메시지 전송 실패: $roomId (${stopwatch.elapsedMilliseconds}ms) - $e',
+      );
       throw Exception('메시지 전송 실패: ${e.toString()}');
     }
   }
 
   Stream<DocumentSnapshot> getChatRoom(String roomId) {
+    debugPrint('[FIRESTORE] 🏠 채팅방 정보 스트림 구독: $roomId');
     return _firestore.collection('chatRooms').doc(roomId).snapshots();
   }
 
   Future<void> initializeChatRoom() async {
+    debugPrint('[FIRESTORE] 🏗️ 채팅방 초기화 시작');
     const roomId = 'general';
     final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
-    
-    final doc = await chatRoomRef.get();
-    if (!doc.exists) {
-      await chatRoomRef.set({
-        'name': '일반 채팅',
-        'description': '모든 사용자가 참여하는 채팅방',
-        'createdAt': FieldValue.serverTimestamp(),
-        'memberCount': 0,
-        'lastMessage': null,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+
+    try {
+      final doc = await chatRoomRef.get();
+      if (!doc.exists) {
+        await chatRoomRef.set({
+          'name': '일반 채팅',
+          'description': '모든 사용자가 참여하는 채팅방',
+          'createdAt': FieldValue.serverTimestamp(),
+          'memberCount': 0,
+          'lastMessage': null,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        debugPrint('[FIRESTORE] ✅ 일반 채팅방 생성 완료');
+      } else {
+        debugPrint('[FIRESTORE] ℹ️ 일반 채팅방 이미 존재함');
+      }
+    } catch (e) {
+      debugPrint('[FIRESTORE] ❌ 채팅방 초기화 실패: $e');
     }
   }
 
   Future<void> incrementMemberCount(String roomId) async {
+    debugPrint('[FIRESTORE] 👥 멤버 수 증가 시작: $roomId');
     try {
       final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
       final chatRoomDoc = await chatRoomRef.get();
-      
+
       if (chatRoomDoc.exists) {
         // 기존 채팅방 멤버 수 증가
-        await chatRoomRef.update({
-          'memberCount': FieldValue.increment(1),
-        });
+        final currentData = chatRoomDoc.data();
+        final currentCount = currentData?['memberCount'] as int? ?? 0;
+        await chatRoomRef.update({'memberCount': FieldValue.increment(1)});
+        debugPrint(
+          '[FIRESTORE] ✅ 멤버 수 증가: $roomId ($currentCount → ${currentCount + 1})',
+        );
       } else {
         // 새 채팅방 생성 (지하철 열차 채팅방)
         final roomName = _generateRoomName(roomId);
@@ -129,34 +157,42 @@ class ChatService {
           'lastMessage': null,
           'updatedAt': FieldValue.serverTimestamp(),
         });
+        debugPrint('[FIRESTORE] 🆕 새 채팅방 생성: $roomName (멤버 1명)');
       }
     } catch (e) {
-      // 멤버 수 증가 실패
+      debugPrint('[FIRESTORE] ❌ 멤버 수 증가 실패: $roomId - $e');
     }
   }
 
   Future<void> decrementMemberCount(String roomId) async {
+    debugPrint('[FIRESTORE] 👥 멤버 수 감소 시작: $roomId');
     try {
       final chatRoomRef = _firestore.collection('chatRooms').doc(roomId);
       final chatRoomDoc = await chatRoomRef.get();
-      
+
       if (chatRoomDoc.exists) {
-        final currentData = chatRoomDoc.data() as Map<String, dynamic>?;
+        final currentData = chatRoomDoc.data();
         final currentMemberCount = currentData?['memberCount'] as int? ?? 0;
-        
+
         if (currentMemberCount > 0) {
-          await chatRoomRef.update({
-            'memberCount': FieldValue.increment(-1),
-          });
+          await chatRoomRef.update({'memberCount': FieldValue.increment(-1)});
+          debugPrint(
+            '[FIRESTORE] ✅ 멤버 수 감소: $roomId ($currentMemberCount → ${currentMemberCount - 1})',
+          );
+        } else {
+          debugPrint('[FIRESTORE] ⚠️ 멤버 수가 이미 0임: $roomId');
         }
+      } else {
+        debugPrint('[FIRESTORE] ⚠️ 채팅방이 존재하지 않음: $roomId');
       }
-      // 문서가 존재하지 않으면 아무 작업하지 않음
     } catch (e) {
-      // 멤버 수 감소 실패
+      debugPrint('[FIRESTORE] ❌ 멤버 수 감소 실패: $roomId - $e');
     }
   }
 
   List<Message> parseMessages(QuerySnapshot snapshot) {
+    final messageCount = snapshot.docs.length;
+    debugPrint('[FIRESTORE] 📄 메시지 파싱: $messageCount개 메시지');
     return snapshot.docs.map((doc) => Message.fromFirestore(doc)).toList();
   }
 

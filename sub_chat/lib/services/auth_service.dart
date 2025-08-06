@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,6 +13,7 @@ class AuthService {
     String email,
     String password,
   ) async {
+    debugPrint('[FIREBASE_AUTH] 🔑 로그인 시도: $email');
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -19,11 +21,13 @@ class AuthService {
       );
 
       if (result.user != null) {
+        debugPrint('[FIREBASE_AUTH] ✅ 로그인 성공: ${result.user!.uid}');
         await _updateUserOnlineStatus(result.user!.uid, true);
       }
 
       return result;
     } on FirebaseAuthException catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 로그인 실패: ${e.code} - ${e.message}');
       throw _handleAuthException(e);
     }
   }
@@ -33,6 +37,7 @@ class AuthService {
     String password,
     String displayName,
   ) async {
+    debugPrint('[FIREBASE_AUTH] 🔐 회원가입 시도: $email');
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -40,6 +45,7 @@ class AuthService {
       );
 
       if (result.user != null) {
+        debugPrint('[FIREBASE_AUTH] ✅ 회원가입 성공: ${result.user!.uid}');
         await result.user!.updateDisplayName(displayName);
         await _createUserDocument(result.user!, displayName);
         await _updateUserOnlineStatus(result.user!.uid, true);
@@ -47,17 +53,22 @@ class AuthService {
 
       return result;
     } on FirebaseAuthException catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 회원가입 실패: ${e.code} - ${e.message}');
       throw _handleAuthException(e);
     }
   }
 
   Future<void> signOut() async {
+    debugPrint('[FIREBASE_AUTH] 🚪 로그아웃 시도');
     try {
       if (_auth.currentUser != null) {
+        debugPrint('[FIREBASE_AUTH] 🔴 사용자 오프라인 상태로 변경: ${_auth.currentUser!.uid}');
         await _updateUserOnlineStatus(_auth.currentUser!.uid, false);
       }
       await _auth.signOut();
+      debugPrint('[FIREBASE_AUTH] ✅ 로그아웃 성공');
     } catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 로그아웃 실패: $e');
       throw Exception('로그아웃 중 오류가 발생했습니다: ${e.toString()}');
     }
   }
@@ -93,13 +104,13 @@ class AuthService {
               'lastSeen': FieldValue.serverTimestamp(),
               'isOnline': isOnline,
             });
-            // 사용자 문서 새로 생성: $userId
+            debugPrint('[FIRESTORE] ✅ 사용자 문서 새로 생성: $userId');
           }
         } catch (createError) {
-          // 사용자 문서 생성 실패
+          debugPrint('[FIRESTORE] ❌ 사용자 문서 생성 실패: $createError');
         }
       } else {
-        // 온라인 상태 업데이트 실패
+        debugPrint('[FIRESTORE] ❌ 온라인 상태 업데이트 실패: $e');
       }
     }
   }

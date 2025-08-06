@@ -6,9 +6,21 @@ import 'screens/chat_room_list_screen.dart';
 import 'services/auth_service.dart';
 
 void main() async {
+  debugPrint('[SYSTEM] 🚀 앱 시작 - Sub Chat');
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  debugPrint('[SYSTEM] 📱 Flutter 바인딩 초기화 완료');
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint('[SYSTEM] 🔥 Firebase 초기화 성공');
+  } catch (e) {
+    debugPrint('[SYSTEM] ❌ Firebase 초기화 실패: $e');
+  }
+
   runApp(const MyApp());
+  debugPrint('[SYSTEM] ✅ MyApp 실행 시작');
 }
 
 class MyApp extends StatelessWidget {
@@ -154,14 +166,16 @@ class AuthWrapper extends StatefulWidget {
 class _AuthWrapperState extends State<AuthWrapper> {
   final AuthService _authService = AuthService();
 
-
   @override
   Widget build(BuildContext context) {
+    debugPrint('[AUTH_WRAPPER] 🔄 인증 상태 확인 시작');
     return StreamBuilder(
       stream: _authService.authStateChanges,
       builder: (context, snapshot) {
-        
+        debugPrint('[AUTH_WRAPPER] 📊 인증 스트림 상태: ${snapshot.connectionState}');
+
         if (snapshot.connectionState == ConnectionState.waiting) {
+          debugPrint('[AUTH_WRAPPER] ⏳ 인증 상태 로딩 중...');
           return const Scaffold(
             body: Center(
               child: Column(
@@ -178,8 +192,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
         if (snapshot.hasData && snapshot.data != null) {
           // 사용자가 인증되었으므로 채팅방 리스트로 이동
+          final user = snapshot.data!;
+          debugPrint('[AUTH_WRAPPER] ✅ 인증된 사용자: ${user.uid} (${user.email})');
           return const ChatRoomListScreen();
         } else {
+          debugPrint('[AUTH_WRAPPER] 🔐 미인증 상태 - 로그인 화면으로 이동');
           return const LoginScreen();
         }
       },

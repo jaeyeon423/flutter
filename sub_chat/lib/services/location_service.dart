@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 import 'subway_service.dart';
 
 class LocationService {
@@ -29,6 +30,7 @@ class LocationService {
     Function(List<TrainPosition>)? onNearbyTrainsUpdate,
     Function(String message, bool isWarning)? onDistanceAlert,
   }) async {
+    debugPrint('[LOCATION] 📍 위치 서비스 초기화 시작');
     _onLocationUpdate = onLocationUpdate;
     _onNearbyTrainsUpdate = onNearbyTrainsUpdate;
     _onDistanceAlert = onDistanceAlert;
@@ -51,9 +53,10 @@ class LocationService {
       _startLocationTimer();
       
       _isServiceRunning = true;
+      debugPrint('[LOCATION] ✅ 위치 서비스 초기화 성공');
       return true;
     } catch (e) {
-      // 위치 서비스 초기화 실패
+      debugPrint('[LOCATION] ❌ 위치 서비스 초기화 실패: $e');
       return false;
     }
   }
@@ -78,13 +81,13 @@ class LocationService {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // 위치 권한이 거부됨
+        debugPrint('[LOCATION] ⚠️ 위치 권한 거부됨');
         return false;
       }
     }
     
     if (permission == LocationPermission.deniedForever) {
-      // 위치 권한이 영구적으로 거부됨
+      debugPrint('[LOCATION] ❌ 위치 권한 영구 거부 - 설정에서 허용 필요');
       return false;
     }
     
@@ -95,7 +98,7 @@ class LocationService {
   Future<bool> _checkLocationService() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // 위치 서비스가 비활성화됨
+      debugPrint('[LOCATION] ⚠️ 위치 서비스 비활성화 - 설정에서 활성화 필요');
       return false;
     }
     return true;
@@ -120,9 +123,9 @@ class LocationService {
       // 현재 채팅방 열차와의 거리 체크
       await _checkCurrentChatRoomDistance(position);
       
-      // 위치 업데이트 완료
+      debugPrint('[LOCATION] 📍 위치 업데이트: ${position.latitude}, ${position.longitude}');
     } catch (e) {
-      // 위치 획득 실패
+      debugPrint('[LOCATION] ❌ 위치 획득 실패: $e');
     }
   }
 
@@ -134,10 +137,13 @@ class LocationService {
       _onNearbyTrainsUpdate?.call(nearbyTrains);
       
       if (nearbyTrains.isNotEmpty) {
-        // 근처 지하철 ${nearbyTrains.length}개 발견
+        debugPrint('[LOCATION] 🚇 근처 지하철 ${nearbyTrains.length}개 발견');
+        for (final train in nearbyTrains.take(3)) {
+          debugPrint('[LOCATION] - ${train.displayName}: ${train.distanceFromUser?.toStringAsFixed(1)}m');
+        }
       }
     } catch (e) {
-      // 근처 지하철 검색 실패
+      debugPrint('[LOCATION] ❌ 근처 지하철 검색 실패: $e');
     }
   }
 
@@ -177,7 +183,7 @@ class LocationService {
         _distanceWarningCount = 0;
       }
     } catch (e) {
-      // 채팅방 열차 거리 체크 실패
+      debugPrint('[LOCATION] ❌ 채팅방 열차 거리 체크 실패: $e');
     }
   }
 
@@ -220,7 +226,7 @@ class LocationService {
     _currentChatRoomTrainId = trainId;
     _currentChatRoomSubwayLine = subwayLine;
     _distanceWarningCount = 0;
-    // 채팅방 입장: $subwayLine $trainId호
+    debugPrint('[LOCATION] 🚇 채팅방 입장: $subwayLine $trainId호');
   }
 
   /// 채팅방 나가기
@@ -281,9 +287,9 @@ class LocationService {
         _nearbyTrains = filteredTrains;
         _onNearbyTrainsUpdate?.call(filteredTrains);
         
-        // 강제 새로고침: 근처 지하철 ${filteredTrains.length}개 발견
+        debugPrint('[LOCATION] 🔄 강제 새로고침: 근처 지하철 ${filteredTrains.length}개 발견');
       } catch (e) {
-        // 강제 새로고침 실패
+        debugPrint('[LOCATION] ❌ 강제 새로고침 실패: $e');
       }
     }
   }

@@ -4,7 +4,7 @@ class LoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final Widget child;
   final String? message;
-  
+
   const LoadingOverlay({
     super.key,
     required this.isLoading,
@@ -19,7 +19,7 @@ class LoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             child: Center(
               child: Card(
                 child: Padding(
@@ -51,7 +51,7 @@ class ErrorStateWidget extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
   final IconData icon;
-  
+
   const ErrorStateWidget({
     super.key,
     required this.message,
@@ -67,17 +67,13 @@ class ErrorStateWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 64,
-              color: Colors.red.shade300,
-            ),
+            Icon(icon, size: 64, color: Colors.red.shade300),
             const SizedBox(height: 16),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
@@ -106,7 +102,7 @@ class EmptyStateWidget extends StatelessWidget {
   final String? actionText;
   final VoidCallback? onAction;
   final IconData icon;
-  
+
   const EmptyStateWidget({
     super.key,
     required this.message,
@@ -123,30 +119,26 @@ class EmptyStateWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 80,
-              color: Colors.grey[300],
-            ),
+            Icon(icon, size: 80, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[500],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
             if (actionText != null && onAction != null) ...[
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: onAction,
-                child: Text(actionText!),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
                   ),
                 ),
+                child: Text(actionText!),
               ),
             ],
           ],

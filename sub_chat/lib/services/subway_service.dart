@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 
 class SubwayService {
   static final SubwayService _instance = SubwayService._internal();
@@ -48,7 +49,9 @@ class SubwayService {
     // API 호출 제한 체크
     if (_lastApiCall != null &&
         DateTime.now().difference(_lastApiCall!) < _minApiInterval) {
-      // API 호출 간격 제한으로 캐시된 데이터 반환
+      debugPrint(
+        '[SUBWAY_API] ⏰ API 호출 간격 제한 (${_minApiInterval.inSeconds}초), 캐시된 데이터 반환',
+      );
       return _getCachedTrains();
     }
 
@@ -69,7 +72,9 @@ class SubwayService {
       }
 
       if (linesToUpdate.isNotEmpty) {
-        // ${linesToUpdate.length}개 노선 데이터 업데이트 필요
+        debugPrint(
+          '[SUBWAY_API] 🔄 업데이트 필요 노선: ${linesToUpdate.length}개 - $linesToUpdate',
+        );
 
         // 업데이트가 필요한 노선만 API 호출
         final futures = linesToUpdate.map(
@@ -90,10 +95,12 @@ class SubwayService {
         _lastApiCall = DateTime.now();
       }
 
-      // 총 ${allTrains.length}개의 열차 위치 정보 조회
+      debugPrint(
+        '[SUBWAY_API] ✅ 성공: 총 ${allTrains.length}개 열차 정보 조회 ${hasNewData ? '(새 데이터 포함)' : '(캐시 사용)'}',
+      );
       return allTrains;
     } catch (e) {
-      // 전체 열차 위치 정보 조회 실패: $e
+      debugPrint('[SUBWAY_API] ❌ 전체 열차 조회 실패: $e');
       // 오류 시 캐시된 데이터라도 반환
       return _getCachedTrains();
     }
@@ -121,9 +128,16 @@ class SubwayService {
   Future<List<TrainPosition>> _getTrainPositionsByLine(
     String subwayLine,
   ) async {
+    final url = '$_baseUrl/$_apiKey/json/$_service/1/100/$subwayLine';
+    debugPrint('[SUBWAY_API] 🚇 $subwayLine API 호출 시작: $url');
+
+    final stopwatch = Stopwatch()..start();
     try {
-      final url = '$_baseUrl/$_apiKey/json/$_service/1/100/$subwayLine';
       final response = await http.get(Uri.parse(url));
+      stopwatch.stop();
+      debugPrint(
+        '[SUBWAY_API] 📡 $subwayLine API 응답: ${response.statusCode} (${stopwatch.elapsedMilliseconds}ms)',
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -135,33 +149,46 @@ class SubwayService {
               .map((train) => TrainPosition.fromJson(train))
               .toList();
 
-          // $subwayLine: ${trains.length}개 열차 데이터 조회 완료
+          debugPrint(
+            '[SUBWAY_API] ✅ $subwayLine: ${trains.length}개 열차 데이터 조회 성공',
+          );
           return trains;
         } else if (data['RESULT'] != null) {
           // 에러 응답 처리
           final result = data['RESULT'];
-          // $subwayLine API 오류: ${result['MESSAGE']}
+          debugPrint(
+            '[SUBWAY_API] ⚠️ $subwayLine API 오류: ${result['MESSAGE']}',
+          );
           return [];
         } else {
-          // $subwayLine: 예상하지 못한 응답 구조
+          debugPrint('[SUBWAY_API] ❓ $subwayLine: 예상하지 못한 응답 구조');
           final responseString = response.body;
           final endIndex = responseString.length < 500
               ? responseString.length
               : 500;
-          // 응답 데이터: 에러 내용 완료
+          debugPrint(
+            '[SUBWAY_API] 📄 응답 데이터 ($endIndex자): ${responseString.substring(0, endIndex)}',
+          );
           return [];
         }
       } else {
-        // $subwayLine API 요청 실패: ${response.statusCode}
+        debugPrint(
+          '[SUBWAY_API] ❌ $subwayLine API 요청 실패: HTTP ${response.statusCode}',
+        );
         final responseString = response.body;
         final endIndex = responseString.length < 500
             ? responseString.length
             : 500;
-        // 에러 응답 확인 완료
+        debugPrint(
+          '[SUBWAY_API] 📄 에러 응답 내용: ${responseString.substring(0, endIndex)}',
+        );
         return [];
       }
-    } catch (e, stackTrace) {
-      // $subwayLine 열차 위치 조회 실패 발생
+    } catch (e) {
+      stopwatch.stop();
+      debugPrint(
+        '[SUBWAY_API] ☠️ $subwayLine 예외 발생 (${stopwatch.elapsedMilliseconds}ms): $e',
+      );
       return [];
     }
   }
@@ -169,7 +196,7 @@ class SubwayService {
   /// 사용자 위치 기준 근처 열차 찾기 (100m 이내)
   Future<List<TrainPosition>> getNearbyTrains(
     Position userPosition, {
-    double radiusInMeters = 100.0,
+    double radiusInMeters = 1500.0,
   }) async {
     final allTrains = await getAllTrainPositions();
     final nearbyTrains = <TrainPosition>[];
@@ -196,7 +223,9 @@ class SubwayService {
       (a, b) => a.distanceFromUser!.compareTo(b.distanceFromUser!),
     );
 
-    // 사용자 주변 ${radiusInMeters}m 이내 열차 ${nearbyTrains.length}개 발견
+    debugPrint(
+      '[SUBWAY_API] 📍 사용자 주변 ${radiusInMeters}m 이내 열차 ${nearbyTrains.length}개 발견',
+    );
     return nearbyTrains;
   }
 
@@ -225,7 +254,7 @@ class SubwayService {
       }
       return null;
     } catch (e) {
-      // 열차 $trainNo 위치 조회 실패: $e
+      debugPrint('[SUBWAY_API] ❌ 열차 $trainNo ($subwayLine) 위치 조회 실패: $e');
       return null;
     }
   }
