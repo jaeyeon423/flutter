@@ -6,6 +6,7 @@ import '../services/location_service.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/enhanced_message_input.dart';
 import '../widgets/loading_overlay.dart';
+import '../widgets/user_status_indicator.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final String roomId;
@@ -112,46 +113,192 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return '지하철 채팅';
   }
 
-  Widget _buildTrainChatAppBarTitle() {
+
+  Widget _buildSimpleTitle() {
     final parts = widget.roomId.split('_');
     if (parts.length >= 2) {
       final trainNo = parts[0];
       final subwayLine = parts[1];
-
-      return Column(
+      return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '$subwayLine $trainNo호',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Text(
-                'LIVE',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.green,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          Text('$subwayLine $trainNo호'),
+          const SizedBox(width: 8),
+          Container(
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
           ),
         ],
       );
     }
+    return const Text('채팅');
+  }
 
-    return Text(_getRoomTitle());
+  Widget _buildAppBarMenu() {
+    final user = _authService.currentUser;
+    
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _chatService.getChatRoom(widget.roomId),
+      builder: (context, snapshot) {
+        final memberCount = snapshot.hasData && snapshot.data!.data() != null
+            ? ((snapshot.data!.data() as Map<String, dynamic>)['memberCount'] as int?) ?? 0
+            : 0;
+
+        return PopupMenuButton<String>(
+          icon: Stack(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: Theme.of(context).primaryColor,
+                child: Text(
+                  (user?.displayName?.isNotEmpty == true)
+                      ? user!.displayName!.substring(0, 1).toUpperCase()
+                      : 'U',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              if (user != null)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: UserStatusIndicator(userId: user.uid, size: 10),
+                ),
+            ],
+          ),
+          itemBuilder: (context) => [
+            // 프로필 정보 (비활성)
+            PopupMenuItem<String>(
+              enabled: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.person, size: 20),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            user?.displayName ?? '사용자',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            user?.email ?? '',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '현재 접속자: $memberCount명',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(),
+            // 채팅방 정보
+            const PopupMenuItem<String>(
+              value: 'info',
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline),
+                  SizedBox(width: 8),
+                  Text('채팅방 정보'),
+                ],
+              ),
+            ),
+            // 환승 (나가기)
+            const PopupMenuItem<String>(
+              value: 'leave',
+              child: Row(
+                children: [
+                  Icon(Icons.transfer_within_a_station, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Text('환승', style: TextStyle(color: Colors.orange)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            switch (value) {
+              case 'info':
+                _showChatRoomInfo(memberCount);
+                break;
+              case 'leave':
+                _showLeaveChatRoomDialog();
+                break;
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _showChatRoomInfo(int memberCount) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_getRoomTitle()),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '같은 지하철에 탑승한 사용자들과의 채팅방입니다.\n열차와 100m 이상 떨어지면 자동으로 나가게 됩니다.',
+            ),
+            const SizedBox(height: 8),
+            Text('현재 접속자: $memberCount명'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Text(
+                  '실시간 위치 기반 채팅 (15분마다 체크)',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.green,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -166,97 +313,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: _buildTrainChatAppBarTitle(),
+          title: _buildSimpleTitle(),
           leading: IconButton(
-            icon: const Icon(Icons.close, color: Colors.red),
-            onPressed: _handleBackPress,
-            tooltip: '앱 종료',
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+            tooltip: '뒤로가기',
           ),
           actions: [
-            // 환승 (채팅방 나가기) 버튼
-            ElevatedButton.icon(
-              onPressed: _showLeaveChatRoomDialog,
-              icon: const Icon(Icons.transfer_within_a_station, size: 18),
-              label: const Text('환승'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                elevation: 0,
-              ),
-            ),
-            const SizedBox(width: 8),
-            // 정보 버튼
-            StreamBuilder<DocumentSnapshot>(
-              stream: _chatService.getChatRoom(widget.roomId),
-              builder: (context, snapshot) {
-                final memberCount =
-                    snapshot.hasData && snapshot.data!.data() != null
-                    ? ((snapshot.data!.data()
-                                  as Map<String, dynamic>)['memberCount']
-                              as int?) ??
-                          0
-                    : 0;
-
-                return IconButton(
-                  icon: const Icon(Icons.info_outline),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(_getRoomTitle()),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '같은 지하철에 탑승한 사용자들과의 채팅방입니다.\n열차와 100m 이상 떨어지면 자동으로 나가게 됩니다.',
-                            ),
-                            const SizedBox(height: 8),
-                            Text('현재 접속자: $memberCount명'),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.green,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '실시간 위치 기반 채팅 (15분마다 체크)',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('확인'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            const SizedBox(width: 8),
+            _buildAppBarMenu(),
           ],
         ),
         body: Column(

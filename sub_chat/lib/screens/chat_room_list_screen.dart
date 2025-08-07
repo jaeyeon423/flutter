@@ -145,8 +145,8 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
       _locationService.enterChatRoom(train.trainNo!, train.subwayNm!);
     }
 
-    // pushReplacement를 사용하여 뒤로 가기로 채팅방 리스트로 돌아갈 수 없게 함
-    Navigator.pushReplacement(
+    // 채팅방으로 네비게이션
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ChatRoomScreen(roomId: roomId)),
     );

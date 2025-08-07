@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
-import 'screens/chat_room_list_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'services/auth_service.dart';
 
 void main() async {
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       home: const AuthWrapper(),
       routes: {
         '/login': (context) => const LoginScreen(),
-        '/chat-rooms': (context) => const ChatRoomListScreen(),
+        '/main': (context) => const MainNavigationScreen(),
       },
     );
   }
@@ -191,10 +191,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          // 사용자가 인증되었으므로 채팅방 리스트로 이동
+          // 사용자가 인증되었으므로 메인 네비게이션으로 이동
           final user = snapshot.data!;
           debugPrint('[AUTH_WRAPPER] ✅ 인증된 사용자: ${user.uid} (${user.email})');
-          return const ChatRoomListScreen();
+          return const MainNavigationScreen();
         } else {
           debugPrint('[AUTH_WRAPPER] 🔐 미인증 상태 - 로그인 화면으로 이동');
           return const LoginScreen();

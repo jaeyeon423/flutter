@@ -51,9 +51,9 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
       
-      // 로그인/회원가입 성공 시 채팅방 리스트로 이동
+      // 로그인/회원가입 성공 시 메인 화면으로 이동
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/chat-rooms');
+        Navigator.of(context).pushReplacementNamed('/main');
       }
     } catch (e) {
       if (mounted) {
