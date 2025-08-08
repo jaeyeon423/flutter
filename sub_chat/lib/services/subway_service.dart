@@ -3,11 +3,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart';
+import 'subway_cache_service.dart';
 
 class SubwayService {
   static final SubwayService _instance = SubwayService._internal();
   factory SubwayService() => _instance;
   SubwayService._internal();
+
+  // Firestore 캐싱 서비스
+  final SubwayCacheService _cacheService = SubwayCacheService();
 
   static const String _apiKey = '705646567a6a61653732666d436b6a';
   static const String _baseUrl = 'http://swopenAPI.seoul.go.kr/api/subway';
@@ -44,17 +48,59 @@ class SubwayService {
     '우이신설선',
   ];
 
-  /// 모든 노선의 실시간 열차 위치 정보 조회 (캐싱 적용)
+  /// 모든 노선의 실시간 열차 위치 정보 조회 (Firestore 캐시 우선)
   Future<List<TrainPosition>> getAllTrainPositions() async {
-    // API 호출 제한 체크
-    if (_lastApiCall != null &&
-        DateTime.now().difference(_lastApiCall!) < _minApiInterval) {
-      debugPrint(
-        '[SUBWAY_API] ⏰ API 호출 간격 제한 (${_minApiInterval.inSeconds}초), 캐시된 데이터 반환',
-      );
+    try {
+      debugPrint('[SUBWAY_API] 🔍 Firestore 캐시 확인 시작');
+
+      // 1. 먼저 Firestore에서 캐시된 데이터 확인
+      final cachedTrains = await _cacheService.getLatestCachedData();
+      if (cachedTrains != null && cachedTrains.isNotEmpty) {
+        debugPrint(
+          '[SUBWAY_API] ✅ Firestore 캐시 히트: ${cachedTrains.length}개 열차 데이터 반환',
+        );
+        return cachedTrains;
+      }
+
+      // 2. 캐시가 없으면 API 호출 제한 체크
+      if (_lastApiCall != null &&
+          DateTime.now().difference(_lastApiCall!) < _minApiInterval) {
+        debugPrint(
+          '[SUBWAY_API] ⏰ API 호출 간격 제한 (${_minApiInterval.inSeconds}초), 메모리 캐시 반환',
+        );
+        final memoryCache = _getCachedTrains();
+        if (memoryCache.isNotEmpty) {
+          return memoryCache;
+        }
+      }
+
+      // 3. API에서 새로운 데이터 가져오기
+      debugPrint('[SUBWAY_API] 🌐 API 호출로 새로운 데이터 조회 시작');
+      final allTrains = await _fetchAllTrainsFromAPI();
+
+      // 4. Firestore에 새로운 데이터 캐싱
+      if (allTrains.isNotEmpty) {
+        await _cacheService.cacheTrainData(allTrains);
+        debugPrint('[SUBWAY_API] 💾 새 데이터 Firestore 캐시 저장 완료');
+      }
+
+      return allTrains;
+    } catch (e) {
+      debugPrint('[SUBWAY_API] ❌ 전체 열차 조회 실패: $e');
+
+      // 오류 시 Firestore 캐시 또는 메모리 캐시 반환
+      final cachedTrains = await _cacheService.getLatestCachedData();
+      if (cachedTrains != null && cachedTrains.isNotEmpty) {
+        debugPrint('[SUBWAY_API] 🔄 오류 시 Firestore 캐시 반환');
+        return cachedTrains;
+      }
+
       return _getCachedTrains();
     }
+  }
 
+  /// API에서 모든 노선 데이터 조회 (기존 로직)
+  Future<List<TrainPosition>> _fetchAllTrainsFromAPI() async {
     List<TrainPosition> allTrains = [];
     bool hasNewData = false;
 
@@ -65,7 +111,7 @@ class SubwayService {
         if (_shouldUpdateLine(line)) {
           linesToUpdate.add(line);
         } else {
-          // 캐시된 데이터 사용
+          // 메모리 캐시된 데이터 사용
           final cachedTrains = _cachedTrainsByLine[line] ?? [];
           allTrains.addAll(cachedTrains);
         }
@@ -82,7 +128,7 @@ class SubwayService {
         );
         final results = await Future.wait(futures);
 
-        // 새로운 데이터를 캐시에 저장
+        // 새로운 데이터를 메모리 캐시에 저장
         for (int i = 0; i < linesToUpdate.length; i++) {
           final line = linesToUpdate[i];
           final trains = results[i];
@@ -96,12 +142,11 @@ class SubwayService {
       }
 
       debugPrint(
-        '[SUBWAY_API] ✅ 성공: 총 ${allTrains.length}개 열차 정보 조회 ${hasNewData ? '(새 데이터 포함)' : '(캐시 사용)'}',
+        '[SUBWAY_API] ✅ API 조회 성공: 총 ${allTrains.length}개 열차 정보 ${hasNewData ? '(새 데이터 포함)' : '(메모리 캐시 사용)'}',
       );
       return allTrains;
     } catch (e) {
-      debugPrint('[SUBWAY_API] ❌ 전체 열차 조회 실패: $e');
-      // 오류 시 캐시된 데이터라도 반환
+      debugPrint('[SUBWAY_API] ❌ API 조회 실패: $e');
       return _getCachedTrains();
     }
   }
@@ -264,7 +309,7 @@ class SubwayService {
     Position userPosition,
     String trainNo,
     String subwayLine, {
-    double radiusInMeters = 100.0,
+    double radiusInMeters = 1500.0,
   }) async {
     final train = await getTrainById(trainNo, subwayLine);
 
@@ -324,11 +369,27 @@ class SubwayService {
     // 모든 지하철 캐시 클리어됨
   }
 
-  /// 수동 새로고침 (캐시 무시하고 강제 업데이트)
+  /// 수동 새로고침 (모든 캐시 무시하고 강제 업데이트)
   Future<List<TrainPosition>> forceRefreshAllTrains() async {
-    // 강제 새로고침: 모든 캐시 무시
-    clearAllCache();
-    return await getAllTrainPositions();
+    try {
+      // 메모리 캐시 클리어
+      clearAllCache();
+
+      // API에서 강제로 새로운 데이터 조회
+      debugPrint('[SUBWAY_API] 🔄 강제 새로고침 시작');
+      final allTrains = await _fetchAllTrainsFromAPI();
+
+      // Firestore에 새로운 데이터 캐싱
+      if (allTrains.isNotEmpty) {
+        await _cacheService.cacheTrainData(allTrains);
+        debugPrint('[SUBWAY_API] 💾 강제 새로고침 데이터 Firestore 캐시 저장');
+      }
+
+      return allTrains;
+    } catch (e) {
+      debugPrint('[SUBWAY_API] ❌ 강제 새로고침 실패: $e');
+      return [];
+    }
   }
 
   /// 특정 노선만 강제 새로고침
@@ -336,6 +397,50 @@ class SubwayService {
     // $line 강제 새로고침
     clearLineCache(line);
     return await _getTrainPositionsByLine(line);
+  }
+
+  /// Firestore 캐시 정리 (오래된 데이터 삭제)
+  Future<void> cleanupFirestoreCache() async {
+    try {
+      await _cacheService.cleanupOldCache();
+      debugPrint('[SUBWAY_API] 🧹 Firestore 캐시 정리 완료');
+    } catch (e) {
+      debugPrint('[SUBWAY_API] ❌ Firestore 캐시 정리 실패: $e');
+    }
+  }
+
+  /// 모든 캐시 클리어 (메모리 + Firestore)
+  Future<void> clearAllCaches() async {
+    try {
+      // 메모리 캐시 클리어
+      clearAllCache();
+
+      // Firestore 캐시 클리어
+      await _cacheService.clearAllCache();
+      debugPrint('[SUBWAY_API] 🗑️ 모든 캐시(메모리+Firestore) 클리어 완료');
+    } catch (e) {
+      debugPrint('[SUBWAY_API] ❌ 전체 캐시 클리어 실패: $e');
+    }
+  }
+
+  /// 통합 캐시 상태 정보 반환
+  Future<Map<String, dynamic>> getFullCacheStatus() async {
+    try {
+      final memoryCacheStatus = getCacheStatus();
+      final firestoreCacheStats = await _cacheService.getCacheStats();
+
+      return {
+        'memory': memoryCacheStatus,
+        'firestore': firestoreCacheStats,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+    } catch (e) {
+      debugPrint('[SUBWAY_API] ❌ 캐시 상태 조회 실패: $e');
+      return {
+        'error': e.toString(),
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+    }
   }
 }
 
@@ -408,7 +513,7 @@ class TrainPosition {
   /// 현재 위치 설명
   String get currentLocationDescription => '$statnNm 방향 ($statnTnm 행)';
 
-  /// 운행 방향 텍스트 변환
+  /// 운행 방향 텍스트 변환 (상세 정보 포함)
   String _getDirectionText(String? direction) {
     if (direction == null) return '정보없음';
 
@@ -423,6 +528,34 @@ class TrainPosition {
         return '하행선';
       default:
         return direction;
+    }
+  }
+
+  /// 운행 방향 상세 설명
+  String get directionDescription {
+    switch (updnLine) {
+      case '0':
+      case '상행':
+        return '내선순환 또는 서울역/종로 방향';
+      case '1':
+      case '하행':
+        return '외선순환 또는 강남/잠실 방향';
+      default:
+        return '방향 정보가 없습니다';
+    }
+  }
+
+  /// 운행 방향 컬러 코드
+  String get directionColorHex {
+    switch (updnLine) {
+      case '0':
+      case '상행':
+        return '#2196F3'; // 파랑 (상행)
+      case '1':
+      case '하행':
+        return '#FF5722'; // 주황 (하행)
+      default:
+        return '#9E9E9E'; // 회색
     }
   }
 

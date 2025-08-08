@@ -251,7 +251,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => _loadNearbyTrains(forceRefresh: true),
+        onRefresh: () => _loadNearbyTrains(forceRefresh: false),
         child: ListView(
           children: [
             // 지하철 채팅방 섹션
@@ -281,10 +281,17 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   else
-                    IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: () => _loadNearbyTrains(forceRefresh: true),
-                      iconSize: 20,
+                    GestureDetector(
+                      onTap: () => _loadNearbyTrains(forceRefresh: false),
+                      onLongPress: () => _showForceRefreshDialog(),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.refresh,
+                          size: 20,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -400,6 +407,9 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
     return _nearbyTrains.map((train) {
       final distance = train.distanceFromUser?.toStringAsFixed(0) ?? '0';
       final lineColor = _getSubwayLineColor(train.subwayNm);
+      final directionInfo = _getDirectionInfo(train.updnLine);
+      final directionColor = _getDirectionColor(train.updnLine);
+      final directionIcon = _getDirectionIcon(train.updnLine);
 
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -416,7 +426,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // 상단: 노선 정보와 LIVE 배지
+                  // 상단: 노선 정보와 방향 배지
                   Row(
                     children: [
                       // 노선 아이콘
@@ -447,62 +457,90 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                       ),
                       const SizedBox(width: 16),
 
-                      // 열차 정보
+                      // 열차 정보 및 방향 표시
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              train.displayName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.black87,
-                              ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${train.subwayNm} ${train.trainNo}호',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                                // 방향 표시 배지
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: directionColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: directionColor.withValues(alpha: 0.3),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        directionIcon,
+                                        size: 14,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        directionInfo['text']!,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              train.currentLocationDescription,
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 14,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // LIVE 배지
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              'LIVE',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            const SizedBox(height: 6),
+                            // 현재 위치와 종착지 정보를 분리하여 표시
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                      children: [
+                                        TextSpan(text: '${train.statnNm} → '),
+                                        TextSpan(
+                                          text: '${train.statnTnm} 행',
+                                          style: TextStyle(
+                                            color: lineColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -647,6 +685,50 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
     }
   }
 
+  /// 방향 정보 반환
+  Map<String, String> _getDirectionInfo(String? updnLine) {
+    if (updnLine == null) return {'text': '정보없음', 'description': '방향 정보가 없습니다'};
+
+    switch (updnLine) {
+      case '0':
+      case '상행':
+        return {'text': '상행선', 'description': '내선순환 또는 서울역/종로 방향'};
+      case '1':
+      case '하행':
+        return {'text': '하행선', 'description': '외선순환 또는 강남/잠실 방향'};
+      default:
+        return {'text': updnLine, 'description': '기타 방향'};
+    }
+  }
+
+  /// 방향별 색상 반환
+  Color _getDirectionColor(String? updnLine) {
+    switch (updnLine) {
+      case '0':
+      case '상행':
+        return const Color(0xFF2196F3); // 파랑 (상행)
+      case '1':
+      case '하행':
+        return const Color(0xFFFF5722); // 주황 (하행)
+      default:
+        return Colors.grey[600]!;
+    }
+  }
+
+  /// 방향별 아이콘 반환
+  IconData _getDirectionIcon(String? updnLine) {
+    switch (updnLine) {
+      case '0':
+      case '상행':
+        return Icons.keyboard_arrow_up;
+      case '1':
+      case '하행':
+        return Icons.keyboard_arrow_down;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
   Widget _buildTemporaryChatRoom() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -667,7 +749,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // 상단: 임시방 정보와 TEST 배지
+                // 상단: 임시방 정보
                 Row(
                   children: [
                     // 임시방 아이콘
@@ -720,40 +802,6 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // TEST 배지
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orange[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'TEST',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
                         ],
                       ),
@@ -875,6 +923,46 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                 await _locationService.openAppSettings();
               },
               child: const Text('설정 열기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showForceRefreshDialog() {
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.refresh, color: Colors.orange),
+              SizedBox(width: 8),
+              Text('강제 새로고침'),
+            ],
+          ),
+          content: const Text(
+            '모든 캐시를 무시하고 서버에서 최신 데이터를 가져옵니다.\n'
+            '데이터 사용량이 늘어날 수 있습니다.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _loadNearbyTrains(forceRefresh: true);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('강제 새로고침'),
             ),
           ],
         );

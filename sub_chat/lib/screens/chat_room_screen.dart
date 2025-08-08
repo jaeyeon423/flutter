@@ -307,8 +307,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       canPop: false, // 기본 뒤로 가기 동작 방지
       onPopInvokedWithResult: (bool didPop, Object? result) async {
         if (!didPop) {
-          // 뒤로 가기 시 채팅방 리스트로 돌아가지 않고 직접 로그아웃 처리
-          await _handleBackPress();
+          // 뒤로 가기 시 채팅방에서 나가고 채팅방 리스트로 돌아가기
+          await _handleBackToList();
         }
       },
       child: Scaffold(
@@ -316,7 +316,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           title: _buildSimpleTitle(),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
+            onPressed: _handleBackToList,
             tooltip: '뒤로가기',
           ),
           actions: [
@@ -504,9 +504,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       await _chatService.decrementMemberCount(widget.roomId);
       debugPrint('[CHAT_ROOM] 👥 멤버 수 감소 완료');
 
-      // 채팅방 리스트로 돌아가기
+      // 채팅방 리스트로 돌아가기 (메인 네비게이션으로)
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/chat-rooms');
+        Navigator.of(context).pop();
         debugPrint('[CHAT_ROOM] 🔄 채팅방 리스트로 이동 완료');
       }
 
@@ -539,107 +539,31 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
   }
 
-  Future<void> _handleBackPress() async {
-    // 앱 종료 확인 대화상자 표시
-    final shouldExit = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Row(
-            children: [
-              Icon(Icons.close, color: Colors.red),
-              SizedBox(width: 8),
-              Text('앱 종료'),
-            ],
+  Future<void> _handleBackToList() async {
+    try {
+      // 채팅방에서 나가기 (위치 서비스에서 해제)
+      if (_isTrainChatRoom) {
+        _locationService.exitChatRoom();
+      }
+      
+      // 채팅방 멤버 수 감소
+      await _chatService.decrementMemberCount(widget.roomId);
+      
+      // 채팅방 리스트로 돌아가기
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      debugPrint('[CHAT_ROOM] ❌ 채팅방 나가기 실패: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('채팅방 나가기 중 오류가 발생했습니다: ${e.toString()}'),
+            backgroundColor: Colors.red,
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('앱을 종료할까요?'),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.info_outline, size: 16, color: Colors.blue),
-                        SizedBox(width: 4),
-                        Text(
-                          '안내',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '• 앱을 종료하면 자동으로 로그아웃됩니다.\n• 채팅방에서 나가고 싶으시면 “환승” 버튼을 눌러주세요.',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('취소'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).pop(true),
-              icon: const Icon(Icons.close, size: 18),
-              label: const Text('종료'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ],
         );
-      },
-    );
-
-    if (shouldExit == true) {
-      try {
-        // 채팅방에서 나가기
-        if (_isTrainChatRoom) {
-          _locationService.exitChatRoom();
-        }
-        await _chatService.decrementMemberCount(widget.roomId);
-
-        // 로그아웃 처리
-        await _authService.signOut();
-
-        // 로그인 화면으로 이동 (모든 화면 제거)
-        if (mounted) {
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/login', (route) => false);
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('앱 종료 중 오류가 발생했습니다: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
       }
     }
   }
+
 }
