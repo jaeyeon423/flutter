@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/auth_service.dart';
 import '../services/chat_service.dart';
 import '../services/location_service.dart';
+import '../services/current_room_service.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/enhanced_message_input.dart';
 import '../widgets/loading_overlay.dart';
@@ -21,10 +22,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final AuthService _authService = AuthService();
   final ChatService _chatService = ChatService();
   final LocationService _locationService = LocationService();
+  final CurrentRoomService _currentRoomService = CurrentRoomService.instance;
   final ScrollController _scrollController = ScrollController();
 
   bool _isSending = false;
   bool _isTrainChatRoom = false;
+  bool _isLeavingRoom = false; // 방 나가기 상태 추적
 
   @override
   void initState() {
@@ -39,6 +42,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     if (_isTrainChatRoom) {
       _locationService.exitChatRoom();
     }
+    // 예상치 못한 종료인 경우 멤버 수 감소
+    if (!_isLeavingRoom) {
+      debugPrint('[CHAT_ROOM] ⚠️ 예상치 못한 dispose 발생, 멤버 수 정리');
+      _chatService.decrementMemberCount(widget.roomId).catchError((e) {
+        debugPrint('[CHAT_ROOM] ❌ dispose 시 멤버 수 감소 실패: $e');
+      });
+      // 환승이 아니라 뒤로가기인 경우 채팅방 정보 유지
+      debugPrint('[CHAT_ROOM] 🔙 뒤로가기로 간주, 채팅방 정보 유지');
+    } else {
+      debugPrint('[CHAT_ROOM] ✅ 정상적인 방 나가기로 dispose');
+    }
     _scrollController.dispose();
     super.dispose();
   }
@@ -52,6 +66,24 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     try {
       await _chatService.initializeChatRoom();
       await _chatService.incrementMemberCount(widget.roomId);
+      
+      // 현재 채팅방 정보 저장
+      final parts = widget.roomId.split('_');
+      if (parts.length >= 2) {
+        final trainNo = parts[0];
+        final subwayLine = parts[1];
+        await _currentRoomService.setCurrentRoom(
+          roomId: widget.roomId,
+          roomName: '$subwayLine $trainNo호',
+          trainId: trainNo,
+          subwayLine: subwayLine,
+        );
+      } else {
+        await _currentRoomService.setCurrentRoom(
+          roomId: widget.roomId,
+          roomName: '채팅방',
+        );
+      }
     } catch (e) {
       // 채팅방 초기화 실패
     }
@@ -493,6 +525,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     try {
       // 버그 및 디버깅용 로깅
       debugPrint('[CHAT_ROOM] 🚇 채팅방 나가기 시작: ${widget.roomId}');
+      _isLeavingRoom = true; // 환승 상태 표시
 
       // 지하철 채팅방인 경우 위치 서비스에서 해제
       if (_isTrainChatRoom) {
@@ -503,6 +536,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // 채팅방 멤버 수 감소
       await _chatService.decrementMemberCount(widget.roomId);
       debugPrint('[CHAT_ROOM] 👥 멤버 수 감소 완료');
+
+      // 현재 채팅방 정보 삭제 (환승이므로)
+      await _currentRoomService.exitCurrentRoom();
+      debugPrint('[CHAT_ROOM] 🏠 현재 채팅방 정보 삭제 완료');
 
       // 채팅방 리스트로 돌아가기 (메인 네비게이션으로)
       if (mounted) {
@@ -541,20 +578,29 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   Future<void> _handleBackToList() async {
     try {
-      // 채팅방에서 나가기 (위치 서비스에서 해제)
+      debugPrint('[CHAT_ROOM] 🔙 뒤로가기 버튼 눌러짐: ${widget.roomId}');
+      
+      // 지하철 채팅방에서 나가기 (위치 서비스에서 해제)
       if (_isTrainChatRoom) {
         _locationService.exitChatRoom();
       }
       
       // 채팅방 멤버 수 감소
       await _chatService.decrementMemberCount(widget.roomId);
+      debugPrint('[CHAT_ROOM] 👥 멤버 수 감소 완료 (뒤로가기)');
+      
+      // 뒤로가기이므로 채팅방 정보 유지 (삭제하지 않음)
+      debugPrint('[CHAT_ROOM] 🏠 뒤로가기이므로 채팅방 정보 유지');
+      
+      // 예상치 못한 dispose 방지
+      _isLeavingRoom = true;
       
       // 채팅방 리스트로 돌아가기
       if (mounted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true); // 뒤로가기로 돌아갔음을 알림
       }
     } catch (e) {
-      debugPrint('[CHAT_ROOM] ❌ 채팅방 나가기 실패: $e');
+      debugPrint('[CHAT_ROOM] ❌ 뒤로가기 실패: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

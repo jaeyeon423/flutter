@@ -70,6 +70,34 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await _authService.signInWithGoogle();
+      
+      // Google 로그인 성공 시 메인 화면으로 이동
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/main');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   void _toggleAuthMode() {
     setState(() {
       _isSignUpMode = !_isSignUpMode;
@@ -206,6 +234,58 @@ class _LoginScreenState extends State<LoginScreen> {
                             _isSignUpMode ? '회원가입' : '로그인',
                             style: const TextStyle(fontSize: 16),
                           ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 구분선
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          '또는',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Google 로그인 버튼
+                  OutlinedButton.icon(
+                    onPressed: _isLoading ? null : _handleGoogleSignIn,
+                    icon: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            'https://developers.google.com/identity/images/g-logo.png'
+                          ),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    label: Text(
+                      'Google로 ${_isSignUpMode ? '회원가입' : '로그인'}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: BorderSide(color: Colors.grey[300]!),
+                      backgroundColor: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 16),
 
