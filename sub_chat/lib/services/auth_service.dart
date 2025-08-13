@@ -2,14 +2,74 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  
+  // 로그인 상태 저장 키
+  static const String _isLoggedInKey = 'is_logged_in';
+  static const String _userEmailKey = 'user_email';
+  static const String _loginMethodKey = 'login_method';
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
+  
+  /// 앱 시작 시 저장된 로그인 상태 확인
+  Future<bool> checkSavedLoginState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+      final savedEmail = prefs.getString(_userEmailKey);
+      
+      if (isLoggedIn && savedEmail != null) {
+        // Firebase Auth가 자동으로 세션을 복원했는지 확인
+        if (_auth.currentUser != null) {
+          debugPrint('[PERSISTENT_AUTH] ✅ 저장된 로그인 상태 복원 성공: $savedEmail');
+          await _updateUserOnlineStatus(_auth.currentUser!.uid, true);
+          return true;
+        } else {
+          // Firebase 세션이 만료된 경우 저장된 상태 제거
+          debugPrint('[PERSISTENT_AUTH] ⚠️ Firebase 세션 만료, 저장된 상태 제거');
+          await _clearSavedLoginState();
+          return false;
+        }
+      }
+      
+      return false;
+    } catch (e) {
+      debugPrint('[PERSISTENT_AUTH] ❌ 저장된 로그인 상태 확인 실패: $e');
+      return false;
+    }
+  }
+  
+  /// 로그인 상태를 로컬에 저장
+  Future<void> _saveLoginState(String email, String method) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_isLoggedInKey, true);
+      await prefs.setString(_userEmailKey, email);
+      await prefs.setString(_loginMethodKey, method);
+      debugPrint('[PERSISTENT_AUTH] ✅ 로그인 상태 저장: $email ($method)');
+    } catch (e) {
+      debugPrint('[PERSISTENT_AUTH] ❌ 로그인 상태 저장 실패: $e');
+    }
+  }
+  
+  /// 저장된 로그인 상태 제거
+  Future<void> _clearSavedLoginState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_isLoggedInKey);
+      await prefs.remove(_userEmailKey);
+      await prefs.remove(_loginMethodKey);
+      debugPrint('[PERSISTENT_AUTH] ✅ 저장된 로그인 상태 제거');
+    } catch (e) {
+      debugPrint('[PERSISTENT_AUTH] ❌ 로그인 상태 제거 실패: $e');
+    }
+  }
 
   Future<UserCredential?> signInWithEmailPassword(
     String email,
@@ -25,6 +85,7 @@ class AuthService {
       if (result.user != null) {
         debugPrint('[FIREBASE_AUTH] ✅ 로그인 성공: ${result.user!.uid}');
         await _updateUserOnlineStatus(result.user!.uid, true);
+        await _saveLoginState(email, 'email_password');
       }
 
       return result;
@@ -51,6 +112,7 @@ class AuthService {
         await result.user!.updateDisplayName(displayName);
         await _createUserDocument(result.user!, displayName);
         await _updateUserOnlineStatus(result.user!.uid, true);
+        await _saveLoginState(email, 'email_password');
       }
 
       return result;
@@ -90,6 +152,7 @@ class AuthService {
         // 사용자 문서 생성/업데이트
         await _createOrUpdateUserDocument(result.user!);
         await _updateUserOnlineStatus(result.user!.uid, true);
+        await _saveLoginState(result.user!.email ?? '', 'google');
       }
 
       return result;
@@ -118,6 +181,7 @@ class AuthService {
       }
       
       await _auth.signOut();
+      await _clearSavedLoginState();
       debugPrint('[FIREBASE_AUTH] ✅ 로그아웃 성공');
     } catch (e) {
       debugPrint('[FIREBASE_AUTH] ❌ 로그아웃 실패: $e');

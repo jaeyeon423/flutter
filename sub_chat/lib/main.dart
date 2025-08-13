@@ -165,10 +165,49 @@ class AuthWrapper extends StatefulWidget {
 
 class _AuthWrapperState extends State<AuthWrapper> {
   final AuthService _authService = AuthService();
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSavedLoginState();
+  }
+
+  Future<void> _checkSavedLoginState() async {
+    debugPrint('[AUTH_WRAPPER] 🔍 저장된 로그인 상태 확인 시작');
+    try {
+      await _authService.checkSavedLoginState();
+    } catch (e) {
+      debugPrint('[AUTH_WRAPPER] ❌ 저장된 로그인 상태 확인 실패: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     debugPrint('[AUTH_WRAPPER] 🔄 인증 상태 확인 시작');
+    
+    if (!_isInitialized) {
+      debugPrint('[AUTH_WRAPPER] ⏳ 앱 초기화 중...');
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('앱을 시작하는 중...'),
+            ],
+          ),
+        ),
+      );
+    }
+    
     return StreamBuilder(
       stream: _authService.authStateChanges,
       builder: (context, snapshot) {
@@ -183,7 +222,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
-                  Text('앱을 시작하는 중...'),
+                  Text('인증 상태 확인 중...'),
                 ],
               ),
             ),
