@@ -125,6 +125,75 @@ class AuthService {
     }
   }
 
+  /// 닉네임 변경
+  Future<void> updateDisplayName(String newDisplayName) async {
+    debugPrint('[FIREBASE_AUTH] 👤 닉네임 변경 시도: $newDisplayName');
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('로그인이 필요합니다');
+      }
+
+      // Firebase Auth 프로필 업데이트
+      await user.updateDisplayName(newDisplayName);
+      await user.reload(); // 사용자 정보 새로고침
+      
+      // Firestore 사용자 문서 업데이트
+      await _firestore.collection('users').doc(user.uid).update({
+        'displayName': newDisplayName,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      
+      debugPrint('[FIREBASE_AUTH] ✅ 닉네임 변경 성공: $newDisplayName');
+    } on FirebaseAuthException catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 닉네임 변경 실패: ${e.code} - ${e.message}');
+      throw _handleAuthException(e);
+    } catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 닉네임 변경 실패: $e');
+      throw Exception('닉네임 변경 중 오류가 발생했습니다: ${e.toString()}');
+    }
+  }
+
+  /// 비밀번호 변경
+  Future<void> updatePassword(String currentPassword, String newPassword) async {
+    debugPrint('[FIREBASE_AUTH] 🔒 비밀번호 변경 시도');
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('로그인이 필요합니다');
+      }
+
+      if (user.email == null) {
+        throw Exception('이메일 계정이 아닙니다');
+      }
+
+      // 현재 비밀번호로 재인증
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      
+      await user.reauthenticateWithCredential(credential);
+      debugPrint('[FIREBASE_AUTH] ✅ 재인증 성공');
+      
+      // 새 비밀번호로 변경
+      await user.updatePassword(newPassword);
+      debugPrint('[FIREBASE_AUTH] ✅ 비밀번호 변경 성공');
+      
+      // Firestore 업데이트 시간 기록
+      await _firestore.collection('users').doc(user.uid).update({
+        'passwordUpdatedAt': FieldValue.serverTimestamp(),
+      });
+      
+    } on FirebaseAuthException catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 비밀번호 변경 실패: ${e.code} - ${e.message}');
+      throw _handleAuthException(e);
+    } catch (e) {
+      debugPrint('[FIREBASE_AUTH] ❌ 비밀번호 변경 실패: $e');
+      throw Exception('비밀번호 변경 중 오류가 발생했습니다: ${e.toString()}');
+    }
+  }
+
   Future<void> _createUserDocument(User user, String displayName) async {
     await _firestore.collection('users').doc(user.uid).set({
       'displayName': displayName,
@@ -204,11 +273,13 @@ class AuthService {
       case 'email-already-in-use':
         return '이미 사용 중인 이메일입니다.';
       case 'weak-password':
-        return '비밀번호가 너무 약합니다.';
+        return '비밀번호가 너무 약합니다. (최소 6자리 이상)';
       case 'invalid-email':
         return '유효하지 않은 이메일 형식입니다.';
       case 'too-many-requests':
         return '너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요.';
+      case 'requires-recent-login':
+        return '보안을 위해 최근에 로그인이 필요합니다.';
       default:
         return '인증 중 오류가 발생했습니다: ${e.message}';
     }

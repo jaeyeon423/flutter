@@ -139,7 +139,10 @@ class ChatService {
         // 기존 채팅방 멤버 수 증가
         final currentData = chatRoomDoc.data();
         final currentCount = currentData?['memberCount'] as int? ?? 0;
-        await chatRoomRef.update({'memberCount': FieldValue.increment(1)});
+        await chatRoomRef.update({
+          'memberCount': FieldValue.increment(1),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
         debugPrint(
           '[FIRESTORE] ✅ 멤버 수 증가: $roomId ($currentCount → ${currentCount + 1})',
         );
@@ -161,6 +164,7 @@ class ChatService {
       }
     } catch (e) {
       debugPrint('[FIRESTORE] ❌ 멤버 수 증가 실패: $roomId - $e');
+      throw Exception('멤버 수 증가 실패: ${e.toString()}');
     }
   }
 
@@ -175,7 +179,10 @@ class ChatService {
         final currentMemberCount = currentData?['memberCount'] as int? ?? 0;
 
         if (currentMemberCount > 0) {
-          await chatRoomRef.update({'memberCount': FieldValue.increment(-1)});
+          await chatRoomRef.update({
+            'memberCount': FieldValue.increment(-1),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
           debugPrint(
             '[FIRESTORE] ✅ 멤버 수 감소: $roomId ($currentMemberCount → ${currentMemberCount - 1})',
           );
@@ -187,6 +194,7 @@ class ChatService {
       }
     } catch (e) {
       debugPrint('[FIRESTORE] ❌ 멤버 수 감소 실패: $roomId - $e');
+      // 멤버 수 감소는 중요하지 않으므로 예외를 던지지 않음
     }
   }
 

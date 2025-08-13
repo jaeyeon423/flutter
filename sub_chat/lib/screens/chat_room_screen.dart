@@ -64,8 +64,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   Future<void> _initializeChatRoom() async {
     try {
+      debugPrint('[CHAT_ROOM] 🏗️ 채팅방 초기화 시작: ${widget.roomId}');
       await _chatService.initializeChatRoom();
       await _chatService.incrementMemberCount(widget.roomId);
+      debugPrint('[CHAT_ROOM] 👥 멤버 수 증가 완료');
       
       // 현재 채팅방 정보 저장
       final parts = widget.roomId.split('_');
@@ -78,14 +80,24 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           trainId: trainNo,
           subwayLine: subwayLine,
         );
+        debugPrint('[CHAT_ROOM] 🏠 현재 채팅방 정보 저장 완료: $subwayLine $trainNo호');
       } else {
         await _currentRoomService.setCurrentRoom(
           roomId: widget.roomId,
           roomName: '채팅방',
         );
+        debugPrint('[CHAT_ROOM] 🏠 현재 채팅방 정보 저장 완료: 채팅방');
       }
     } catch (e) {
-      // 채팅방 초기화 실패
+      debugPrint('[CHAT_ROOM] ❌ 채팅방 초기화 실패: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('채팅방 초기화 중 오류가 발생했습니다: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -151,20 +163,43 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     if (parts.length >= 2) {
       final trainNo = parts[0];
       final subwayLine = parts[1];
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('$subwayLine $trainNo호'),
-          const SizedBox(width: 8),
-          Container(
-            width: 8,
-            height: 8,
-            decoration: const BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ],
+      
+      return StreamBuilder<DocumentSnapshot>(
+        stream: _chatService.getChatRoom(widget.roomId),
+        builder: (context, snapshot) {
+          final memberCount = snapshot.hasData && snapshot.data!.data() != null
+              ? ((snapshot.data!.data() as Map<String, dynamic>)['memberCount'] as int?) ?? 0
+              : 0;
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('$subwayLine $trainNo호'),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '접속자 $memberCount명',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       );
     }
     return const Text('채팅');

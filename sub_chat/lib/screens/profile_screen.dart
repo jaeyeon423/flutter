@@ -11,6 +11,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
+  final TextEditingController _displayNameController = TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  bool _isLoading = false;
 
   Future<void> _handleLogout() async {
     debugPrint('[PROFILE] 🚪 로그아웃 시작');
@@ -53,6 +58,268 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       },
     );
+  }
+
+  /// 닉네임 변경 다이얼로그
+  Future<void> _showChangeDisplayNameDialog() async {
+    final user = _authService.currentUser;
+    if (user == null) return;
+
+    _displayNameController.text = user.displayName ?? '';
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('닉네임 변경'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _displayNameController,
+                    decoration: const InputDecoration(
+                      labelText: '새 닉네임',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    maxLength: 20,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                  child: const Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : () => _handleChangeDisplayName(setState),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('변경'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// 닉네임 변경 처리
+  Future<void> _handleChangeDisplayName(StateSetter dialogSetState) async {
+    final newDisplayName = _displayNameController.text.trim();
+    
+    if (newDisplayName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('닉네임을 입력해주세요')),
+      );
+      return;
+    }
+
+    if (newDisplayName.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('닉네임은 2자 이상이어야 합니다')),
+      );
+      return;
+    }
+
+    dialogSetState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.updateDisplayName(newDisplayName);
+      
+      if (mounted) {
+        Navigator.of(context).pop();
+        setState(() {}); // 화면 새로고침
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('닉네임이 "$newDisplayName"로 변경되었습니다'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('닉네임 변경 실패: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      dialogSetState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// 비밀번호 변경 다이얼로그
+  Future<void> _showChangePasswordDialog() async {
+    final user = _authService.currentUser;
+    if (user == null) return;
+
+    // Google 로그인 사용자는 비밀번호 변경 불가
+    if (user.providerData.any((provider) => provider.providerId == 'google.com')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Google 계정은 비밀번호를 변경할 수 없습니다'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    _currentPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('비밀번호 변경'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _currentPasswordController,
+                    decoration: const InputDecoration(
+                      labelText: '현재 비밀번호',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock_outline),
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _newPasswordController,
+                    decoration: const InputDecoration(
+                      labelText: '새 비밀번호',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                      helperText: '최소 6자리 이상',
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _confirmPasswordController,
+                    decoration: const InputDecoration(
+                      labelText: '새 비밀번호 확인',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock_reset),
+                    ),
+                    obscureText: true,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                  child: const Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : () => _handleChangePassword(setState),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('변경'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// 비밀번호 변경 처리
+  Future<void> _handleChangePassword(StateSetter dialogSetState) async {
+    final currentPassword = _currentPasswordController.text.trim();
+    final newPassword = _newPasswordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+    
+    if (currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('모든 필드를 입력해주세요')),
+      );
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('새 비밀번호는 6자리 이상이어야 합니다')),
+      );
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('새 비밀번호가 일치하지 않습니다')),
+      );
+      return;
+    }
+
+    if (currentPassword == newPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('현재 비밀번호와 새 비밀번호가 같습니다')),
+      );
+      return;
+    }
+
+    dialogSetState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.updatePassword(currentPassword, newPassword);
+      
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('비밀번호가 성공적으로 변경되었습니다'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('비밀번호 변경 실패: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      dialogSetState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _displayNameController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -177,7 +444,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             
             const SizedBox(height: 24),
             
-            // 설정 섹션
+            // 계정 설정 섹션
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -186,15 +453,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.notifications_outlined),
-                    title: const Text('알림 설정'),
+                    leading: const Icon(Icons.edit_outlined),
+                    title: const Text('닉네임 변경'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      // TODO: 알림 설정 화면으로 이동
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('알림 설정 기능은 준비 중입니다.')),
-                      );
-                    },
+                    onTap: _showChangeDisplayNameDialog,
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.lock_outline),
+                    title: const Text('비밀번호 변경'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: _showChangePasswordDialog,
                   ),
                   const Divider(height: 1),
                   ListTile(
@@ -205,18 +474,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // TODO: 개인정보 처리방침 화면으로 이동
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('개인정보 처리방침 화면은 준비 중입니다.')),
-                      );
-                    },
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.help_outline),
-                    title: const Text('고객지원'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      // TODO: 고객지원 화면으로 이동
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('고객지원 화면은 준비 중입니다.')),
                       );
                     },
                   ),
