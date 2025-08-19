@@ -55,6 +55,9 @@ dependencies:
   # Local storage
   shared_preferences: ^2.2.3
 
+  # WebView
+  webview_flutter: ^4.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

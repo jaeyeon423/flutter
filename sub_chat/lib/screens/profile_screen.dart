@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../widgets/user_status_indicator.dart';
+import 'webview_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -471,9 +472,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: const Text('개인정보 처리방침'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
-                      // TODO: 개인정보 처리방침 화면으로 이동
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('개인정보 처리방침 화면은 준비 중입니다.')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WebViewScreen(
+                            url: 'https://jaeyeon423.github.io/',
+                            title: '개인정보 처리방침',
+                          ),
+                        ),
                       );
                     },
                   ),

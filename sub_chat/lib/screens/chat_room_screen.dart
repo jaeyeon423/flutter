@@ -74,7 +74,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       if (parts.length >= 2) {
         final trainNo = parts[0];
         final subwayLine = parts[1];
-        await _currentRoomService.setCurrentRoom(
+        _currentRoomService.setCurrentRoom(
           roomId: widget.roomId,
           roomName: '$subwayLine $trainNo호',
           trainId: trainNo,
@@ -82,7 +82,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         );
         debugPrint('[CHAT_ROOM] 🏠 현재 채팅방 정보 저장 완료: $subwayLine $trainNo호');
       } else {
-        await _currentRoomService.setCurrentRoom(
+        _currentRoomService.setCurrentRoom(
           roomId: widget.roomId,
           roomName: '채팅방',
         );
@@ -573,7 +573,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       debugPrint('[CHAT_ROOM] 👥 멤버 수 감소 완료');
 
       // 현재 채팅방 정보 삭제 (환승이므로)
-      await _currentRoomService.exitCurrentRoom();
+      _currentRoomService.exitCurrentRoom();
       debugPrint('[CHAT_ROOM] 🏠 현재 채팅방 정보 삭제 완료');
 
       // 채팅방 리스트로 돌아가기 (메인 네비게이션으로)
