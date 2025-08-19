@@ -23,6 +23,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
   List<TrainPosition> _nearbyTrains = [];
   bool _isLoadingTrains = false;
   bool _isInitializing = true;
+  DateTime? _lastBackPressTime;
 
   @override
   void initState() {
@@ -239,7 +240,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) {
         if (didPop) return;
-        _showExitConfirmationDialog();
+        _handleBackPress();
       },
       child: LoadingOverlay(
         isLoading: _isInitializing,
@@ -470,28 +471,30 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
     );
   }
 
-  Future<void> _showExitConfirmationDialog() async {
-    final bool shouldPop = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('앱 종료'),
-            content: const Text('앱을 종료하시겠습니까?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('아니요'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('예'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-
-    if (shouldPop) {
+  Future<void> _handleBackPress() async {
+    final now = DateTime.now();
+    
+    // 마지막 뒤로가기 버튼을 누른 시간이 2초 이내인지 확인
+    if (_lastBackPressTime != null && 
+        now.difference(_lastBackPressTime!) < const Duration(seconds: 2)) {
+      // 2초 이내에 다시 뒤로가기를 눌렀으면 앱 종료
       SystemNavigator.pop();
+      return;
+    }
+    
+    // 첫 번째 뒤로가기 또는 2초가 지나서 눌렀을 때
+    _lastBackPressTime = now;
+    
+    // 토스트 메시지 표시
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('한 번 더 누르면 앱이 종료됩니다'),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16),
+        ),
+      );
     }
   }
 
