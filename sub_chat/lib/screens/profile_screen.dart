@@ -74,35 +74,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('닉네임 변경'),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                '닉네임 변경',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: _displayNameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: '새 닉네임',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.person),
+                      filled: true,
+                      fillColor: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[50]
+                          : Colors.grey[800],
                     ),
                     maxLength: 20,
                   ),
                 ],
               ),
               actions: [
-                TextButton(
-                  onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                  child: const Text('취소'),
-                ),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : () => _handleChangeDisplayName(setState),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('변경'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.secondary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('취소'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : () => _handleChangeDisplayName(setState),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : const Text('변경'),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -189,56 +217,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('비밀번호 변경'),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                '비밀번호 변경',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: _currentPasswordController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: '현재 비밀번호',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock_outline),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      filled: true,
+                      fillColor: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[50]
+                          : Colors.grey[800],
                     ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _newPasswordController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: '새 비밀번호',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.lock),
                       helperText: '최소 6자리 이상',
+                      filled: true,
+                      fillColor: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[50]
+                          : Colors.grey[800],
                     ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _confirmPasswordController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: '새 비밀번호 확인',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock_reset),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.lock_reset),
+                      filled: true,
+                      fillColor: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[50]
+                          : Colors.grey[800],
                     ),
                     obscureText: true,
                   ),
                 ],
               ),
               actions: [
-                TextButton(
-                  onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                  child: const Text('취소'),
-                ),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : () => _handleChangePassword(setState),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('변경'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.secondary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('취소'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : () => _handleChangePassword(setState),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : const Text('변경'),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -433,8 +497,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _buildInfoRow('닉네임', user?.displayName ?? '사용자'),
                           const SizedBox(height: 8),
                           _buildInfoRow('가입일', _formatJoinDate(user?.metadata.creationTime)),
-                          const SizedBox(height: 8),
-                          _buildInfoRow('마지막 로그인', _formatLastSignIn(user?.metadata.lastSignInTime)),
                         ],
                       ),
                     ),
@@ -451,39 +513,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.edit_outlined),
-                    title: const Text('닉네임 변경'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: _showChangeDisplayNameDialog,
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.lock_outline),
-                    title: const Text('비밀번호 변경'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: _showChangePasswordDialog,
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.privacy_tip_outlined),
-                    title: const Text('개인정보 처리방침'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WebViewScreen(
-                            url: 'https://jaeyeon423.github.io/',
-                            title: '개인정보 처리방침',
-                          ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _showChangeDisplayNameDialog,
+                      icon: const Icon(Icons.edit_outlined),
+                      label: const Text('닉네임 변경'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: _showChangePasswordDialog,
+                      icon: const Icon(Icons.lock_outline),
+                      label: const Text('비밀번호 변경'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ListTile(
+                      leading: const Icon(Icons.privacy_tip_outlined),
+                      title: const Text('개인정보 처리방침'),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WebViewScreen(
+                              url: 'https://jaeyeon423.github.io/',
+                              title: '개인정보 처리방침',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             
@@ -559,19 +634,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '${date.year}년 ${date.month}월 ${date.day}일';
   }
 
-  String _formatLastSignIn(DateTime? date) {
-    if (date == null) return '알 수 없음';
-    final now = DateTime.now();
-    final difference = now.difference(date);
 
-    if (difference.inDays > 0) {
-      return '${difference.inDays}일 전';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}시간 전';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}분 전';
-    } else {
-      return '방금 전';
-    }
-  }
 }
