@@ -216,18 +216,33 @@ class _ReportDialogState extends State<ReportDialog> {
               ),
             ),
             const SizedBox(height: 8),
-            ...ReportType.values.map((reportType) => RadioListTile<ReportType>(
-                  title: Text(reportType.displayName),
-                  value: reportType,
-                  groupValue: _selectedReportType,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedReportType = value;
-                    });
-                  },
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                )),
+            ...ReportType.values.map((reportType) {
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedReportType = reportType;
+                  });
+                },
+                child: Row(
+                  children: [
+                    // The following line is ignored because the suggested fix (using a RadioGroup) does not exist in Flutter.
+                    // ignore: deprecated_member_use
+                    Radio<ReportType>(
+                      value: reportType,
+                      // ignore: deprecated_member_use
+                      groupValue: _selectedReportType,
+                      // ignore: deprecated_member_use
+                      onChanged: (ReportType? value) {
+                        setState(() {
+                          _selectedReportType = value;
+                        });
+                      },
+                    ),
+                    Text(reportType.displayName),
+                  ],
+                ),
+              );
+            }),
 
             const SizedBox(height: 16),
 

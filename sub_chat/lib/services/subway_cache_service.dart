@@ -13,15 +13,15 @@ class SubwayCacheService {
   static const String _collectionName = 'subway_cache';
   static const int _cacheValidMinutes = 5; // 5분간 유효
 
-  /// 현재 시간을 기반으로 캐시 키 생성 (시:분 단위)
+  /// 현재 시간을 기반으로 캐시 키 생성 (년-월-일_시:분 단위)
   String _getCacheKey() {
     final now = DateTime.now();
-    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
   }
 
-  /// 특정 시간의 캐시 키 생성
+  /// 특정 시간의 캐시 키 생성 (년-월-일_시:분 단위)
   String _getCacheKeyForTime(DateTime dateTime) {
-    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}_${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   /// Firestore에서 캐시된 데이터 조회
@@ -79,6 +79,9 @@ class SubwayCacheService {
         'timestamp': Timestamp.fromDate(now),
         'trains': trainsData,
         'count': trains.length,
+        'year': now.year,
+        'month': now.month,
+        'day': now.day,
         'hour': now.hour,
         'minute': now.minute,
       };
