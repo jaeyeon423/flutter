@@ -241,7 +241,7 @@ class SubwayService {
   /// 사용자 위치 기준 근처 열차 찾기 (100m 이내)
   Future<List<TrainPosition>> getNearbyTrains(
     Position userPosition, {
-    double radiusInMeters = 1500.0,
+    double radiusInMeters = 100.0,
   }) async {
     final allTrains = await getAllTrainPositions();
     final nearbyTrains = <TrainPosition>[];
@@ -620,6 +620,20 @@ Map<String, Map<String, double>> _getStationCoordinates() {
     '신림': {'lat': 37.4842, 'lng': 126.9297},
     '구로': {'lat': 37.5033, 'lng': 126.8811},
     '영등포': {'lat': 37.5185, 'lng': 126.9066},
-    // 더 많은 역 정보는 실제 운영시 추가 필요
+    '종로3가': {'lat': 37.5718, 'lng': 126.9919},
+    '을지로입구': {'lat': 37.5662, 'lng': 126.9824},
+    '시청': {'lat': 37.5663, 'lng': 126.9780},
+    '삼성': {'lat': 37.5088, 'lng': 127.0631},
+    '선릉': {'lat': 37.5046, 'lng': 127.0489},
+    '역삼': {'lat': 37.5006, 'lng': 127.0364},
+    '합정': {'lat': 37.5496, 'lng': 126.9137},
+    '용산': {'lat': 37.5299, 'lng': 126.9644},
+    '노량진': {'lat': 37.5136, 'lng': 126.9423},
+    '신도림': {'lat': 37.5088, 'lng': 126.8913},
+    '대림': {'lat': 37.4927, 'lng': 126.8954},
+    '이수': {'lat': 37.4864, 'lng': 126.9822},
+    '동작': {'lat': 37.5026, 'lng': 126.9796},
+    // This is an expanded sample list. For a production app,
+    // a complete station coordinate database should be used.
   };
 }

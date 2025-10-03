@@ -201,16 +201,6 @@ class LocationService {
            '정확도: ${position.accuracy.toStringAsFixed(1)}m';
   }
 
-  /// 두 위치 간의 거리 계산 (미터)
-  double getDistanceBetween(Position pos1, Position pos2) {
-    return Geolocator.distanceBetween(
-      pos1.latitude,
-      pos1.longitude,
-      pos2.latitude,
-      pos2.longitude,
-    );
-  }
-
   /// 권한 설정 페이지 열기
   Future<void> openLocationSettings() async {
     await Geolocator.openLocationSettings();
