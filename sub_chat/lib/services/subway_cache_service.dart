@@ -13,15 +13,15 @@ class SubwayCacheService {
   static const String _collectionName = 'subway_cache';
   static const int _cacheValidMinutes = 5; // 5분간 유효
 
-  /// 현재 시간을 기반으로 캐시 키 생성 (년-월-일_시:분 단위)
+  /// 현재 UTC 시간을 기반으로 캐시 키를 생성합니다.
   String _getCacheKey() {
-    final now = DateTime.now();
-    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    return _getCacheKeyForTime(DateTime.now());
   }
 
-  /// 특정 시간의 캐시 키 생성 (년-월-일_시:분 단위)
+  /// 주어진 [dateTime]을 UTC로 변환하여 캐시 키를 생성합니다.
   String _getCacheKeyForTime(DateTime dateTime) {
-    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}_${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    final utcTime = dateTime.toUtc();
+    return '${utcTime.year}-${utcTime.month.toString().padLeft(2, '0')}-${utcTime.day.toString().padLeft(2, '0')}_${utcTime.hour.toString().padLeft(2, '0')}:${utcTime.minute.toString().padLeft(2, '0')}';
   }
 
   /// Firestore에서 캐시된 데이터 조회
@@ -69,8 +69,9 @@ class SubwayCacheService {
   /// Firestore에 지하철 데이터 캐싱
   Future<void> cacheTrainData(List<TrainPosition> trains) async {
     try {
-      final cacheKey = _getCacheKey();
       final now = DateTime.now();
+      final utcNow = now.toUtc();
+      final cacheKey = _getCacheKeyForTime(now);
 
       // TrainPosition 객체를 JSON으로 변환
       final trainsData = trains.map((train) => train.toJson()).toList();
@@ -79,11 +80,11 @@ class SubwayCacheService {
         'timestamp': Timestamp.fromDate(now),
         'trains': trainsData,
         'count': trains.length,
-        'year': now.year,
-        'month': now.month,
-        'day': now.day,
-        'hour': now.hour,
-        'minute': now.minute,
+        'year': utcNow.year,
+        'month': utcNow.month,
+        'day': utcNow.day,
+        'hour': utcNow.hour,
+        'minute': utcNow.minute,
       };
 
       await _firestore
@@ -157,7 +158,7 @@ class SubwayCacheService {
                 .map((trainData) => TrainPosition.fromJson(trainData as Map<String, dynamic>))
                 .toList();
             
-            debugPrint('[SUBWAY_CACHE] ✅ 최신 캐시 발견: $cacheKey (${trains.length}개 열차)');
+            debugPrint('[SUBWAY_CACHE] ✅ 최신 캐시 발견: $cacheKey (UTC), 로컬 시간: $timestamp (${trains.length}개 열차)');
             return trains;
           }
         }

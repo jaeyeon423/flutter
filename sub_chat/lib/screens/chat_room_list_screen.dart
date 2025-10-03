@@ -521,8 +521,7 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () async =>
-                  await _navigateToChatRoom(train.chatRoomId, train: train),
+        onTap: () => _navigateToChatRoom(train.chatRoomId, train: train),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -726,58 +725,53 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
   }
 
   /// 현재 입장 중인 채팅방을 최상단에 표시하는 위젯
-  Widget _buildCurrentRoomWidget() {
-    final currentRoom = _currentRoomService.getCurrentRoom();
-
-    if (currentRoom == null) {
-      return const SizedBox.shrink(); // 현재 채팅방이 없으면 아무것도 표시하지 않음
-    }
-
-    final roomId = currentRoom['roomId'] as String;
-    final roomName = currentRoom['roomName'] as String;
-    final trainId = currentRoom['trainId'] as String?;
-    final subwayLine = currentRoom['subwayLine'] as String?;
-
-    // 지하철 채팅방인지 확인
-    final isTrainChatRoom = trainId != null && subwayLine != null;
-    final lineColor = isTrainChatRoom
-        ? _getSubwayLineColor(subwayLine)
-        : Colors.green;
-
-    // 현재 입장중인 열차의 역 정보 찾기
-    String displayName = roomName;
-    if (isTrainChatRoom) {
-      // 현재 열차와 매칭되는 근처 열차 찾기
-      try {
-        final matchingTrain = _nearbyTrains.firstWhere(
-          (train) => train.trainNo == trainId && train.subwayNm == subwayLine,
-        );
-        displayName = '$subwayLine ${matchingTrain.statnNm}';
-      } catch (e) {
-        // 매칭되는 열차를 찾지 못한 경우 기본 표시
-        displayName = '$subwayLine 채팅방';
+    Widget _buildCurrentRoomWidget() {
+      final currentRoom = _currentRoomService.getCurrentRoom();
+  
+      if (currentRoom == null) {
+        return const SizedBox.shrink();
       }
-    }
-
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Card(
-        elevation: 0,
-        color: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(width: 2, color: Colors.green),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                // 상단: 현재 채팅방 표시
-                Row(
+  
+      final roomId = currentRoom['roomId'] as String;
+      final roomName = currentRoom['roomName'] as String;
+      final trainId = currentRoom['trainId'] as String?;
+      final subwayLine = currentRoom['subwayLine'] as String?;
+  
+      final isTrainChatRoom = trainId != null && subwayLine != null;
+      final lineColor = isTrainChatRoom
+          ? _getSubwayLineColor(subwayLine)
+          : Colors.green;
+  
+      String displayName = roomName;
+      if (isTrainChatRoom) {
+        try {
+          final matchingTrain = _nearbyTrains.firstWhere(
+            (train) => train.trainNo == trainId && train.subwayNm == subwayLine,
+          );
+          displayName = '$subwayLine ${matchingTrain.statnNm}';
+        } catch (e) {
+          displayName = '$subwayLine 채팅방';
+        }
+      }
+  
+      return Container(
+        margin: const EdgeInsets.all(16),
+        child: InkWell(
+          onTap: () => _reconnectToCurrentRoom(roomId),
+          borderRadius: BorderRadius.circular(24),
+          child: Card(
+            elevation: 0,
+            color: Colors.transparent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(width: 2, color: Colors.green),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Row(
                   children: [
-                    // 상태 아이콘
                     Container(
                       width: 50,
                       height: 50,
@@ -799,8 +793,6 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                       ),
                     ),
                     const SizedBox(width: 16),
-
-                    // 채팅방 정보
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -840,92 +832,12 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 16),
-
-                // 구분선
-                Divider(height: 1, thickness: 1, color: Colors.grey[300]),
-
-                const SizedBox(height: 16),
-
-                // 하단: 재입장 버튼
-                Row(
-                  children: [
-                    // 상태 정보
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(width: 1, color: Colors.green),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.check_circle,
-                              size: 16,
-                              color: Colors.green,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '연결된 채팅방',
-                              style: TextStyle(
-                                color: Colors.green[700],
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    // 재입장 버튼
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(width: 2, color: Colors.green),
-                      ),
-                      child: InkWell(
-                        onTap: () => _reconnectToCurrentRoom(roomId),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.login, size: 18, color: Colors.green),
-                            const SizedBox(width: 6),
-                            Text(
-                              '재입장',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
+      );
+    }
   /// 현재 채팅방으로 재입장
   Future<void> _reconnectToCurrentRoom(String roomId) async {
     debugPrint('[CHAT_LIST] 🔄 현재 채팅방 재입장: $roomId');
@@ -1224,82 +1136,6 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // 구분선
-                  Divider(height: 1, thickness: 1, color: Colors.grey[300]),
-
-                  const SizedBox(height: 16),
-
-                  // 하단: 접근 정보와 입장 버튼
-                  Row(
-                    children: [
-                      // 접근 정보
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(width: 1, color: Colors.orange),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.public,
-                              size: 16,
-                              color: Colors.orange[700],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '전체 접근',
-                              style: TextStyle(
-                                color: Colors.orange[700],
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      // 입장 버튼
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(width: 2, color: Colors.orange),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '채팅 입장',
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 16,
-                              color: Colors.orange,
                             ),
                           ],
                         ),
