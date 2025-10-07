@@ -115,6 +115,8 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
       _isLoadingTrains = true;
     });
 
+    await _locationService.updatePosition();
+
     final stopwatch = Stopwatch()..start();
     try {
       if (forceRefresh) {
@@ -646,73 +648,38 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
 
                     const SizedBox(height: 16),
 
-                    // 하단: 거리 정보와 입장 버튼
-                    Row(
-                      children: [
-                        // 거리 정보
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(width: 1, color: Colors.green),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                size: 16,
-                                color: Colors.green[700],
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${distance}m',
-                                style: TextStyle(
-                                  color: Colors.green[700],
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
+                    // 하단: 입장 버튼
+                    SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-
-                        const Spacer(),
-
-                        // 입장 버튼
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(width: 2, color: lineColor),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '채팅 입장',
-                                style: TextStyle(
-                                  color: lineColor,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                Icons.arrow_forward,
-                                size: 16,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(width: 2, color: lineColor),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '채팅 입장',
+                              style: TextStyle(
                                 color: lineColor,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 16,
+                              color: lineColor,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),

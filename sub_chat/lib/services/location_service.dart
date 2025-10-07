@@ -288,4 +288,19 @@ class LocationService {
   Map<String, dynamic> getCacheStatus() {
     return _subwayService.getCacheStatus();
   }
+
+  /// 수동으로 현재 위치를 업데이트
+  Future<void> updatePosition() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      _onLocationUpdate?.call(_currentPosition!);
+      debugPrint('[LOCATION] 📍 위치 수동 업데이트: ${_currentPosition!.latitude}, ${_currentPosition!.longitude}');
+    } catch (e) {
+      debugPrint('[LOCATION] ❌ 위치 수동 업데이트 실패: $e');
+    }
+  }
 }
