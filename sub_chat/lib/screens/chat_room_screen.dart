@@ -1,12 +1,12 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/message_model.dart';
 import '../services/auth_service.dart';
 import '../services/chat_service.dart';
 import '../services/location_service.dart';
 import '../services/current_room_service.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/enhanced_message_input.dart';
-import '../widgets/loading_overlay.dart';
 import '../widgets/user_status_indicator.dart';
 
 class ChatRoomScreen extends StatefulWidget {
@@ -27,7 +27,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   bool _isSending = false;
   bool _isTrainChatRoom = false;
-  bool _isLeavingRoom = false; // 방 나가기 상태 추적
+  bool _isLeavingRoom = false;
 
   @override
   void initState() {
@@ -38,17 +38,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   void dispose() {
-    // 지하철 채팅방을 나갈 때 위치 서비스에서 해제
     if (_isTrainChatRoom) {
       _locationService.exitChatRoom();
     }
-    // 예상치 못한 종료인 경우 멤버 수 감소
     if (!_isLeavingRoom) {
       debugPrint('[CHAT_ROOM] ⚠️ 예상치 못한 dispose 발생, 멤버 수 정리');
       _chatService.decrementMemberCount(widget.roomId).catchError((e) {
         debugPrint('[CHAT_ROOM] ❌ dispose 시 멤버 수 감소 실패: $e');
       });
-      // 환승이 아니라 뒤로가기인 경우 채팅방 정보 유지
       debugPrint('[CHAT_ROOM] 🔙 뒤로가기로 간주, 채팅방 정보 유지');
     } else {
       debugPrint('[CHAT_ROOM] ✅ 정상적인 방 나가기로 dispose');
@@ -58,7 +55,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   void _checkIfTrainChatRoom() {
-    // 모든 채팅방이 지하철 채팅방임 (trainNo_subwayLine 형식)
     _isTrainChatRoom = widget.roomId.contains('_');
   }
 
@@ -69,7 +65,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       await _chatService.incrementMemberCount(widget.roomId);
       debugPrint('[CHAT_ROOM] 👥 멤버 수 증가 완료');
       
-      // 현재 채팅방 정보 저장
       final parts = widget.roomId.split('_');
       if (parts.length >= 2) {
         final trainNo = parts[0];
@@ -127,7 +122,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
         );
       }
-    } finally {
+    }
+    finally {
       if (mounted) {
         setState(() {
           _isSending = false;
@@ -147,7 +143,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   String _getRoomTitle() {
-    // 모든 채팅방이 지하철 채팅방이므로 roomId를 파싱해서 표시
     final parts = widget.roomId.split('_');
     if (parts.length >= 2) {
       final trainNo = parts[0];
@@ -157,19 +152,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return '지하철 채팅';
   }
 
-
   Widget _buildSimpleTitle() {
     final parts = widget.roomId.split('_');
     if (parts.length >= 2) {
       final trainNo = parts[0];
       final subwayLine = parts[1];
       
-      return StreamBuilder<DocumentSnapshot>(
+      return StreamBuilder<DataSnapshot>(
         stream: _chatService.getChatRoom(widget.roomId),
         builder: (context, snapshot) {
-          final memberCount = snapshot.hasData && snapshot.data!.data() != null
-              ? ((snapshot.data!.data() as Map<String, dynamic>)['memberCount'] as int?) ?? 0
-              : 0;
+          final data = snapshot.data?.value as Map<dynamic, dynamic>?;
+          final memberCount = data?['memberCount'] ?? 0;
 
           return Column(
             mainAxisSize: MainAxisSize.min,
@@ -208,12 +201,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Widget _buildAppBarMenu() {
     final user = _authService.currentUser;
     
-    return StreamBuilder<DocumentSnapshot>(
+    return StreamBuilder<DataSnapshot>(
       stream: _chatService.getChatRoom(widget.roomId),
       builder: (context, snapshot) {
-        final memberCount = snapshot.hasData && snapshot.data!.data() != null
-            ? ((snapshot.data!.data() as Map<String, dynamic>)['memberCount'] as int?) ?? 0
-            : 0;
+        final data = snapshot.data?.value as Map<dynamic, dynamic>?;
+        final memberCount = data?['memberCount'] ?? 0;
 
         return PopupMenuButton<String>(
           icon: Stack(
@@ -236,12 +228,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: UserStatusIndicator(userId: user.uid, size: 10),
+                  child: UserStatusIndicator(userId: user.uid, size: 10), // This might need adjustment if user status is also moved to RTDB
                 ),
             ],
           ),
           itemBuilder: (context) => [
-            // 프로필 정보 (비활성)
             PopupMenuItem<String>(
               enabled: false,
               child: Column(
@@ -282,7 +273,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               ),
             ),
             const PopupMenuDivider(),
-            // 채팅방 정보
             const PopupMenuItem<String>(
               value: 'info',
               child: Row(
@@ -293,7 +283,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 ],
               ),
             ),
-            // 환승 (나가기)
             const PopupMenuItem<String>(
               value: 'leave',
               child: Row(
@@ -371,10 +360,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // 기본 뒤로 가기 동작 방지
+      canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) async {
         if (!didPop) {
-          // 뒤로 가기 시 채팅방에서 나가고 채팅방 리스트로 돌아가기
           await _handleBackToList();
         }
       },
@@ -392,43 +380,22 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         ),
         body: Column(
           children: [
-            // 메시지 리스트
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
+              child: StreamBuilder<List<Message>>(
                 stream: _chatService.getMessages(widget.roomId),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return ErrorStateWidget(
-                      message: '메시지를 불러오는 중 오류가 발생했습니다.\n${snapshot.error}',
-                      onRetry: () {
-                        setState(() {});
-                      },
-                      icon: Icons.chat_bubble_outline,
-                    );
+                    return Center(child: Text('오류: ${snapshot.error}'));
                   }
-
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(height: 16),
-                          Text(
-                            '메시지를 불러오는 중...',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
 
-                  final messages = _chatService.parseMessages(snapshot.data!);
+                  final messages = snapshot.data ?? [];
 
                   if (messages.isEmpty) {
-                    return const EmptyStateWidget(
-                      message: '첫 메시지를 보내보세요!\n새로운 대화를 시작해보세요.',
-                      icon: Icons.chat_bubble_outline,
+                    return const Center(
+                      child: Text('첫 메시지를 보내 새로운 대화를 시작해보세요.'),
                     );
                   }
 
@@ -443,13 +410,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           ? messages[index + 1]
                           : null;
 
-                      final isConsecutive =
-                          nextMessage != null &&
+                      final isConsecutive = nextMessage != null &&
                           nextMessage.senderId == message.senderId &&
-                          message.timestamp
-                                  .difference(nextMessage.timestamp)
-                                  .inMinutes <
-                              5;
+                          message.timestamp.difference(nextMessage.timestamp).inMinutes < 5;
 
                       return MessageBubble(
                         message: message,
@@ -460,8 +423,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 },
               ),
             ),
-
-            // 메시지 입력부
             EnhancedMessageInput(
               onSendMessage: _sendMessage,
               isLoading: _isSending,
@@ -473,7 +434,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     );
   }
 
-  /// 채팅방 나가기 확인 다이얼로그 표시
   Future<void> _showLeaveChatRoomDialog() async {
     final shouldLeave = await showDialog<bool>(
       context: context,
@@ -490,15 +450,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('현재 채팅방에서 나가시겠습니까?'),
+              const Text('현재 채팅방에서 나가시겠습니까?'),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
+                  color: Colors.orange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.orange.withValues(alpha: 0.3),
+                    color: Colors.orange.withOpacity(0.3),
                   ),
                 ),
                 child: Column(
@@ -555,34 +515,27 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
   }
 
-  /// 채팅방 나가기 로직 처리
   Future<void> _leaveChatRoom() async {
     try {
-      // 버그 및 디버깅용 로깅
       debugPrint('[CHAT_ROOM] 🚇 채팅방 나가기 시작: ${widget.roomId}');
-      _isLeavingRoom = true; // 환승 상태 표시
+      _isLeavingRoom = true;
 
-      // 지하철 채팅방인 경우 위치 서비스에서 해제
       if (_isTrainChatRoom) {
         _locationService.exitChatRoom();
         debugPrint('[CHAT_ROOM] 📍 위치 서비스에서 채팅방 해제');
       }
 
-      // 채팅방 멤버 수 감소
       await _chatService.decrementMemberCount(widget.roomId);
       debugPrint('[CHAT_ROOM] 👥 멤버 수 감소 완료');
 
-      // 현재 채팅방 정보 삭제 (환승이므로)
       _currentRoomService.exitCurrentRoom();
       debugPrint('[CHAT_ROOM] 🏠 현재 채팅방 정보 삭제 완료');
 
-      // 채팅방 리스트로 돌아가기 (메인 네비게이션으로)
       if (mounted) {
         Navigator.of(context).pop();
         debugPrint('[CHAT_ROOM] 🔄 채팅방 리스트로 이동 완료');
       }
 
-      // 성공 메시지 표시
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -615,24 +568,19 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     try {
       debugPrint('[CHAT_ROOM] 🔙 뒤로가기 버튼 눌러짐: ${widget.roomId}');
       
-      // 지하철 채팅방에서 나가기 (위치 서비스에서 해제)
       if (_isTrainChatRoom) {
         _locationService.exitChatRoom();
       }
       
-      // 채팅방 멤버 수 감소
       await _chatService.decrementMemberCount(widget.roomId);
       debugPrint('[CHAT_ROOM] 👥 멤버 수 감소 완료 (뒤로가기)');
       
-      // 뒤로가기이므로 채팅방 정보 유지 (삭제하지 않음)
       debugPrint('[CHAT_ROOM] 🏠 뒤로가기이므로 채팅방 정보 유지');
       
-      // 예상치 못한 dispose 방지
       _isLeavingRoom = true;
       
-      // 채팅방 리스트로 돌아가기
       if (mounted) {
-        Navigator.of(context).pop(true); // 뒤로가기로 돌아갔음을 알림
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       debugPrint('[CHAT_ROOM] ❌ 뒤로가기 실패: $e');
@@ -646,5 +594,4 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       }
     }
   }
-
 }

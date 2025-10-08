@@ -502,7 +502,6 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
 
   List<Widget> _buildNearbyTrainChatRooms() {
     return _nearbyTrains.map((train) {
-      final distance = train.distanceFromUser?.toStringAsFixed(0) ?? '0';
       final lineColor = _getSubwayLineColor(train.subwayNm);
       final directionInfo = _getDirectionInfo(train.updnLine);
       final directionColor = _getDirectionColor(train.updnLine);

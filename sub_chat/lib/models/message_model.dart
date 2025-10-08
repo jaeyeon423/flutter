@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class Message {
   final String id;
@@ -19,16 +19,14 @@ class Message {
     this.type = MessageType.text,
   });
 
-  factory Message.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    
+  factory Message.fromRtdb(String id, Map<dynamic, dynamic> data) {
     return Message(
-      id: doc.id,
+      id: id,
       roomId: data['roomId'] ?? '',
       text: data['text'] ?? '',
       senderId: data['senderId'] ?? '',
       senderName: data['senderName'] ?? '',
-      timestamp: (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(data['timestamp'] ?? 0),
       type: MessageType.values.firstWhere(
         (e) => e.name == data['type'],
         orElse: () => MessageType.text,
@@ -36,13 +34,13 @@ class Message {
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toRtdb() {
     return {
       'roomId': roomId,
       'text': text,
       'senderId': senderId,
       'senderName': senderName,
-      'timestamp': FieldValue.serverTimestamp(),
+      'timestamp': ServerValue.timestamp, // RTDB server-side timestamp
       'type': type.name,
     };
   }
@@ -73,14 +71,12 @@ class ChatRoom {
     this.lastMessage,
   });
 
-  factory ChatRoom.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    
+  factory ChatRoom.fromRtdb(String id, Map<dynamic, dynamic> data) {
     return ChatRoom(
-      id: doc.id,
+      id: id,
       name: data['name'] ?? '',
       description: data['description'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(data['createdAt'] ?? 0),
       memberCount: data['memberCount'] ?? 0,
       lastMessage: data['lastMessage'] != null 
           ? _parseLastMessage(data['lastMessage'])
@@ -88,14 +84,14 @@ class ChatRoom {
     );
   }
 
-  static Message _parseLastMessage(Map<String, dynamic> data) {
+  static Message _parseLastMessage(Map<dynamic, dynamic> data) {
     return Message(
-      id: '',
-      roomId: '',
+      id: '', // lastMessage doesn't have a separate ID
+      roomId: '', // Not needed for the preview
       text: data['text'] ?? '',
       senderId: data['senderId'] ?? '',
       senderName: data['senderName'] ?? '',
-      timestamp: (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(data['timestamp'] ?? 0),
     );
   }
 }
