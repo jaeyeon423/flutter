@@ -180,7 +180,17 @@ class _ChatRoomListScreenState extends State<ChatRoomListScreen> {
         roomId,
         train,
       );
-      if (shouldTransfer != true) {
+      if (shouldTransfer == true) {
+        // 환승 시, 이전 방의 멤버 수를 감소시키는 로직
+        final oldRoomId = _currentRoomService.getCurrentRoom()?['roomId'] as String?;
+        if (oldRoomId != null) {
+          await _chatService.decrementMemberCount(oldRoomId);
+        }
+        // 현재 방 정보도 초기화
+        _currentRoomService.exitCurrentRoom();
+      }
+
+      if (shouldTransfer != true && !isReconnect) {
         return; // 사용자가 취소하거나 대화상자를 닫은 경우
       }
     }

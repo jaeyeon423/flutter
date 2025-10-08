@@ -171,27 +171,48 @@ class ChatService {
   }
 
   Future<void> decrementMemberCount(String roomId) async {
-    debugPrint('[RTDB] 👥 멤버 수 감소 시작: $roomId');
-    final metadataRef = _database.ref('chatRooms/$roomId/metadata');
-    
+    debugPrint('[RTDB] 👥 멤버 수 감소 트랜잭션 시작: $roomId');
+    final roomRef = _database.ref('chatRooms/$roomId');
+
     try {
-      final snapshot = await metadataRef.get();
-      if (snapshot.exists) {
-        final currentCount = (snapshot.value as Map?)?['memberCount'] ?? 0;
-        if (currentCount > 0) {
-          await metadataRef.update({
-            'memberCount': ServerValue.increment(-1),
-            'updatedAt': ServerValue.timestamp,
-          });
-          debugPrint('[RTDB] ✅ 멤버 수 감소: $roomId (-> ${currentCount - 1})');
-        } else {
-          debugPrint('[RTDB] ⚠️ 멤버 수가 이미 0임: $roomId');
+      final result = await roomRef.runTransaction((Object? roomData) {
+        if (roomData == null) {
+          // 채팅방이 이미 존재하지 않으므로 트랜잭션 중단
+          debugPrint('[RTDB] ⚠️ 트랜잭션 중단: 채팅방이 존재하지 않음: $roomId');
+          return Transaction.abort();
         }
+
+        final roomMap = Map<String, dynamic>.from(roomData as Map);
+        final metadata = Map<String, dynamic>.from(roomMap['metadata'] as Map);
+        final currentCount = metadata['memberCount'] as int? ?? 0;
+
+        if (currentCount <= 0) {
+          // 멤버가 0명이거나 음수이면 더 이상 감소시키지 않음
+          debugPrint('[RTDB] ⚠️ 트랜잭션 중단: 멤버 수가 이미 0 이하임: $roomId');
+          return Transaction.abort();
+        }
+
+        if (currentCount == 1) {
+          // 마지막 멤버가 나가는 경우, 채팅방 전체를 삭제
+          debugPrint('[RTDB] 🔥 마지막 멤버 퇴장. 채팅방 삭제: $roomId');
+          return Transaction.success(null); // 데이터를 null로 설정하여 노드 삭제
+        } else {
+          // 멤버 수만 1 감소
+          metadata['memberCount'] = currentCount - 1;
+          metadata['updatedAt'] = ServerValue.timestamp;
+          roomMap['metadata'] = metadata;
+          return Transaction.success(roomMap);
+        }
+      });
+
+      if (result.committed) {
+        debugPrint('[RTDB] ✅ 멤버 수 감소 트랜잭션 성공: $roomId');
       } else {
-        debugPrint('[RTDB] ⚠️ 채팅방이 존재하지 않음: $roomId');
+        debugPrint('[RTDB] ⚠️ 멤버 수 감소 트랜잭션 실패 또는 중단: $roomId');
       }
     } catch (e) {
-      debugPrint('[RTDB] ❌ 멤버 수 감소 실패: $roomId - $e');
+      debugPrint('[RTDB] ❌ 멤버 수 감소 트랜잭션 오류: $roomId - $e');
+      // 트랜잭션 실패 시 예외를 던지지 않을 수 있음 (정책에 따라 결정)
     }
   }
 
